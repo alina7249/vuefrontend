@@ -768,5 +768,4 @@ const onInputBlur = (event) => {
   .brand-logo h1 {
     font-size: 24px;
   }
-}</style>
 </style>
