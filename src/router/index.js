@@ -4,6 +4,7 @@ import UserCenterView from '../views/UserCenterView.vue'
 import GrowthBenefitsView from '../views/GrowthBenefitsView.vue'
 import UserHomeView from '../views/UserHomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import LoginView from '../views/LoginView.vue'
 
 // 模拟登录状态存储
 const isLoggedIn = () => {
@@ -50,15 +51,14 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      component: LoginView,
     },
     {
       path: '/register',
       name: 'register',
       component: RegisterView,
     },
-  ],
-]
+  ]
 })
 
 // 添加全局前置路由守卫
