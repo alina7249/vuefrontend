@@ -85,10 +85,46 @@ const isCheckedIn = (day) => {
 </script>
 
 <style scoped>
+:root {
+  --primary-color: #00bcd4;
+  --primary-hover: #00acc1;
+  --secondary-color: #673ab7;
+  --accent-color: #ff5722;
+  --dark-bg: #121212;
+  --card-bg: #1e1e1e;
+  --border-color: #333;
+  --text-color: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-light: #757575;
+  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
+  --glow: 0 0 10px rgba(0, 188, 212, 0.5);
+}
+
 .growth-benefits {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background-color: var(--dark-bg);
+  min-height: calc(100vh - 120px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰元素 */
+.growth-benefits::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(103, 58, 183, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 40% 70%, rgba(255, 87, 34, 0.05) 0%, transparent 15%);
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .page-title {
@@ -96,29 +132,57 @@ const isCheckedIn = (day) => {
   font-weight: 700;
   text-align: center;
   margin-bottom: 10px;
+  color: var(--text-color);
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  z-index: 1;
 }
 
 .page-subtitle {
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 16px;
   margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
 }
 
 .section-title {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--primary-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background-color: var(--primary-color);
+  opacity: 0.5;
 }
 
 /* 签到日历部分 */
 .check-in-section {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow);
   margin-bottom: 40px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
 .calendar-header {
@@ -126,29 +190,36 @@ const isCheckedIn = (day) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .calendar-month {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
 .consecutive-days {
   display: flex;
   align-items: center;
   gap: 10px;
+  background-color: rgba(0, 188, 212, 0.1);
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: 1px solid rgba(0, 188, 212, 0.3);
 }
 
 .days-number {
   font-size: 36px;
   font-weight: 700;
-  color: #3498db;
+  color: var(--primary-color);
+  text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
 }
 
 .days-text {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .calendar-grid {
@@ -173,8 +244,8 @@ const isCheckedIn = (day) => {
 }
 
 .calendar-day span {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,12 +253,17 @@ const isCheckedIn = (day) => {
   font-size: 16px;
   font-weight: 500;
   transition: all 0.3s ease;
+  color: var(--text-secondary);
+  background-color: var(--dark-bg);
+  border: 1px solid var(--border-color);
 }
 
 .calendar-day .checked-in {
-  background-color: #3498db;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   position: relative;
+  border: none;
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
 }
 
 .check-mark {
@@ -203,29 +279,60 @@ const isCheckedIn = (day) => {
 }
 
 .check-in-button {
-  background-color: #3498db;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
   border: none;
-  padding: 12px 40px;
+  padding: 14px 40px;
   border-radius: 25px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .check-in-button:hover {
-  background-color: #2980b9;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+  box-shadow: var(--glow);
+}
+
+.check-in-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.check-in-button:hover::before {
+  left: 100%;
 }
 
 /* 成长等级部分 */
 .level-section {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.level-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
 }
 
 .level-info {
@@ -233,6 +340,7 @@ const isCheckedIn = (day) => {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .current-level {
@@ -240,24 +348,49 @@ const isCheckedIn = (day) => {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  min-width: 120px;
 }
 
 .level-text {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .level-badge {
-  background-color: #f1c40f;
-  width: 60px;
-  height: 60px;
+  background: linear-gradient(135deg, var(--accent-color), #ff9800);
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 24px;
   color: white;
+  position: relative;
+  box-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
+}
+
+.level-badge::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--accent-color), #ff9800, var(--accent-color));
+  animation: rotate 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .level-progress {
@@ -267,22 +400,122 @@ const isCheckedIn = (day) => {
 .progress-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 10px;
-  background-color: #e9ecef;
-  border-radius: 5px;
+  height: 12px;
+  background-color: var(--dark-bg);
+  border-radius: 6px;
   overflow: hidden;
+  border: 1px solid var(--border-color);
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #f1c40f;
+  background: linear-gradient(90deg, var(--accent-color), #ff9800);
   transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .growth-benefits {
+    padding: 15px;
+  }
+  
+  .page-title {
+    font-size: 28px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+  }
+  
+  .check-in-section,
+  .level-section {
+    padding: 20px;
+  }
+  
+  .calendar-day span {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .days-number {
+    font-size: 30px;
+  }
+  
+  .level-badge {
+    width: 70px;
+    height: 70px;
+    font-size: 20px;
+  }
+  
+  .check-in-button {
+    padding: 12px 30px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .page-subtitle {
+    font-size: 14px;
+  }
+  
+  .calendar-week {
+    gap: 5px;
+  }
+  
+  .calendar-day span {
+    width: 35px;
+    height: 35px;
+    font-size: 13px;
+  }
+  
+  .level-info {
+    flex-direction: column;
+  }
+  
+  .progress-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .check-in-button {
+    padding: 10px 25px;
+    font-size: 15px;
+  }
 }
 </style>

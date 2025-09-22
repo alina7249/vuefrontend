@@ -1,5 +1,9 @@
 <template>
   <div class="learn-container">
+    <!-- 科技感背景装饰 -->
+    <div class="circuit-bg"></div>
+    <div class="binary-code"></div>
+    
     <!-- 页面头部 -->
     <div class="learn-header">
       <h1>学习计算机</h1>
@@ -164,20 +168,27 @@
 
 <style scoped>
 :root {
-  --primary-color: #3e7bf2;
-  --primary-hover: #2a5bda;
-  --border-color: #e0e0e0;
-  --bg-color: #f5f6f8;
-  --text-color: #333;
-  --text-light: #666;
+  --primary-color: #00bcd4;
+  --primary-hover: #00acc1;
+  --accent-color: #f50057;
+  --secondary-color: #4caf50;
+  --border-color: #2a3747;
+  --bg-color: #121212;
+  --dark-bg: #1e1e1e;
+  --card-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-light: #a0a0a0;
+  --text-secondary: #82b1ff;
   --white: #ffffff;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
 }
 
 .learn-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 /* 页面头部 */
@@ -185,16 +196,33 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 40px 20px;
-  background-color: var(--white);
+  background-color: var(--dark-bg);
   border-radius: 12px;
   box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.learn-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
 }
 
 .learn-header h1 {
   margin: 0 0 16px 0;
   font-size: 36px;
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--primary-color);
+  text-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+  background: linear-gradient(90deg, var(--primary-color), #4dd0e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .learn-header p {
@@ -216,17 +244,31 @@
 }
 
 .category-nav {
-  background-color: var(--white);
+  background-color: var(--dark-bg);
   border-radius: 8px;
   box-shadow: var(--shadow);
   padding: 20px;
+  border: 1px solid var(--border-color);
 }
 
 .nav-title {
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--primary-color);
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.nav-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
 }
 
 .category-item {
@@ -239,17 +281,39 @@
   color: var(--text-color);
   text-decoration: none;
   transition: all 0.3s ease;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 188, 212, 0.1), transparent);
+  transition: left 0.5s ease;
 }
 
 .category-item:hover {
-  background-color: var(--bg-color);
+  background-color: rgba(0, 188, 212, 0.05);
   color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateX(5px);
+}
+
+.category-item:hover::before {
+  left: 100%;
 }
 
 .category-item.active {
-  background-color: #e6f0ff;
+  background-color: rgba(0, 188, 212, 0.1);
   color: var(--primary-color);
   font-weight: 500;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
 }
 
 .category-icon {
@@ -268,30 +332,52 @@
   gap: 12px;
   margin-bottom: 20px;
   padding: 20px;
-  background-color: var(--white);
+  background-color: var(--dark-bg);
   border-radius: 8px;
   box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
 }
 
 .tag {
   padding: 8px 20px;
   background-color: var(--bg-color);
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   font-size: 14px;
   color: var(--text-color);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 188, 212, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .tag:hover {
-  background-color: #e6f0ff;
+  background-color: rgba(0, 188, 212, 0.05);
   color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.tag:hover::before {
+  opacity: 1;
 }
 
 .tag.active {
   background-color: var(--primary-color);
   color: var(--white);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
 }
 
 /* 文章列表 */
@@ -308,6 +394,19 @@
   border: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.article-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 188, 212, 0.05) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .article-item::after {
@@ -322,13 +421,15 @@
   transition: opacity 0.3s ease;
 }
 
+.article-item:hover::before,
 .article-item:hover::after {
   opacity: 1;
 }
 
 .article-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.2);
+  border-color: var(--primary-color);
 }
 
 .article-content {
@@ -341,10 +442,27 @@
   font-weight: 600;
   color: var(--text-color);
   transition: color 0.3s ease;
+  position: relative;
+  display: inline-block;
 }
 
 .article-item:hover .article-title {
   color: var(--primary-color);
+}
+
+.article-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.article-item:hover .article-title::after {
+  width: 100%;
 }
 
 .article-excerpt {
@@ -372,6 +490,7 @@
   padding: 2px 8px;
   border-radius: 12px;
   background-color: rgba(0, 188, 212, 0.1);
+  border: 1px solid rgba(0, 188, 212, 0.2);
 }
 
 .views,
@@ -388,8 +507,9 @@
 .article-tags .tag {
   padding: 4px 12px;
   font-size: 12px;
-  background-color: var(--dark-bg);
+  background-color: rgba(0, 188, 212, 0.05);
   border-color: var(--border-color);
+  color: var(--text-secondary);
 }
 
 /* 加载更多 */
@@ -400,13 +520,35 @@
 
 .load-more button {
   padding: 12px 32px;
-  background-color: var(--white);
-  border: 1px solid var(--border-color);
+  background-color: var(--dark-bg);
+  border: 1px solid var(--primary-color);
   border-radius: 6px;
   font-size: 14px;
-  color: var(--text-color);
+  color: var(--primary-color);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.load-more button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 188, 212, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.load-more button:hover::before {
+  left: 100%;
+}
+
+.load-more button:hover {
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+  transform: translateY(-2px);
 }
 
 .load-more button:hover {
@@ -440,6 +582,11 @@
   
   .article-tags {
     margin-left: 0;
+  }
+
+  /* 添加科技风格响应式调整 */
+  .learn-header h1 {
+    font-size: 32px;
   }
 }
 
