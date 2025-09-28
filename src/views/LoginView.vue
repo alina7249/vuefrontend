@@ -757,6 +757,7 @@ const onInputBlur = (event) => {
   .login-wrapper {
     border-radius: 12px;
   }
+}
   
   .form-input,
   .login-btn,
