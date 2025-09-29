@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
 const showUserMenu = ref(false)
@@ -50,19 +50,8 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-const toggleUserMenu = () => {
-  showUserMenu.value = !showUserMenu.value
-}
+const headerScrolled = ref(false)
 
-const navigateTo = (path) => {
-  router.push(path)
-  showUserMenu.value = false
-}
-
-const handleLogin = () => {
-  // 登录逻辑
-  router.push('/login')
-}
 // 添加滚动监听事件
 const handleScroll = () => {
   if (window.scrollY > 50) {
@@ -81,12 +70,26 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
+
+const toggleUserMenu = () => {
+  showUserMenu.value = !showUserMenu.value
+}
+
+const navigateTo = (path) => {
+  router.push(path)
+  showUserMenu.value = false
+}
+
+const handleLogin = () => {
+  // 登录逻辑
+  router.push('/login')
+}
 </script>
 
 <template>
   <div class="app-container">
     <!-- 顶部导航栏 -->
-    <header class="main-header":class="{ 'scrolled': headerScrolled }">
+    <header class="main-header" :class="{ 'scrolled': headerScrolled }">
       <div class="header-content">
         <div class="logo-section">
           <RouterLink to="/" class="logo">
@@ -216,13 +219,19 @@ onUnmounted(() => {
   --error-color: #f44336;
   --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
 }
-/* 添加电脑端特定样式 */
-@media (min-width: 1400px) {
-  .app-container {
-    background-size: 80% 80%;
-    background-position: center;
+/* 电脑端特定样式优化 */
+  @media (min-width: 1200px) {
+    .app-container {
+      background-size: 90% 90%;
+      background-position: center;
+    }
   }
-}
+  
+  @media (min-width: 1400px) {
+    .app-container {
+      background-size: 80% 80%;
+    }
+  }
 .app-container {
   min-height: 100vh;
   display: flex;
@@ -254,20 +263,35 @@ onUnmounted(() => {
 
 
 .header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-}
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
 
 .logo-section {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  
+  /* 大屏幕导航优化 */
+  @media (min-width: 1400px) {
+    .logo-section {
+      gap: 60px;
+    }
+    
+    .main-nav {
+      gap: 25px;
+    }
+    
+    .nav-item {
+      font-size: 15px;
+    }
+  }
 
 .logo {
   text-decoration: none;
@@ -320,10 +344,23 @@ onUnmounted(() => {
 
 /* 搜索框样式 */
 .search-section {
-  flex: 1;
-  max-width: 400px;
-  margin: 0 40px;
-}
+    flex: 1;
+    max-width: 500px;
+    margin: 0 60px;
+  }
+  
+  /* 大屏幕搜索框优化 */
+  @media (min-width: 1400px) {
+    .search-section {
+      max-width: 600px;
+      margin: 0 80px;
+    }
+    
+    .search-input {
+      height: 40px;
+      font-size: 15px;
+    }
+  }
 
 .search-input {
   width: 100%;
@@ -368,15 +405,15 @@ onUnmounted(() => {
 }
 
 /* 主内容区域样式优化 */
-.main-content {
-  flex: 1;
-  background-color: var(--dark-bg);
-  padding: 20px 0;
-  position: relative;
-  max-width: 1600px;
-  margin: 0 auto;
-  width: 100%;
-}
+  .main-content {
+    flex: 1;
+    background-color: var(--dark-bg);
+    padding: 30px 0;
+    position: relative;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+  }
 
 
 .create-btn {
@@ -586,11 +623,11 @@ onUnmounted(() => {
 }
 
 .footer-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-  text-align: center;
-}
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 30px;
+    text-align: center;
+  }
 
 .footer-links {
   display: flex;
@@ -618,19 +655,44 @@ onUnmounted(() => {
 }
 
 /* 响应式设计 */
-@media (max-width: 1200px) {
-  .header-content {
-    padding: 0 16px;
+  @media (max-width: 1400px) {
+    .header-content {
+      padding: 0 20px;
+    }
+    
+    .logo-section {
+      gap: 40px;
+    }
+    
+    .main-nav {
+      gap: 20px;
+    }
+    
+    .search-section {
+      max-width: 500px;
+      margin: 0 60px;
+    }
   }
   
-  .logo-section {
-    gap: 20px;
+  @media (max-width: 1200px) {
+    .header-content {
+      padding: 0 16px;
+      height: 65px;
+    }
+    
+    .logo-section {
+      gap: 30px;
+    }
+    
+    .main-nav {
+      gap: 16px;
+    }
+    
+    .search-section {
+      max-width: 400px;
+      margin: 0 40px;
+    }
   }
-  
-  .search-section {
-    margin: 0 20px;
-  }
-}
 
 @media (max-width: 992px) {
   .main-nav {
