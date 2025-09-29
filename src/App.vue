@@ -63,12 +63,30 @@ const handleLogin = () => {
   // 登录逻辑
   router.push('/login')
 }
+// 添加滚动监听事件
+const handleScroll = () => {
+  if (window.scrollY > 50) {
+    headerScrolled.value = true
+  } else {
+    headerScrolled.value = false
+  }
+}
+
+// 组件挂载时添加监听
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+// 组件卸载时移除监听
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
   <div class="app-container">
     <!-- 顶部导航栏 -->
-    <header class="main-header">
+    <header class="main-header":class="{ 'scrolled': headerScrolled }">
       <div class="header-content">
         <div class="logo-section">
           <RouterLink to="/" class="logo">
@@ -198,7 +216,13 @@ const handleLogin = () => {
   --error-color: #f44336;
   --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
 }
-
+/* 添加电脑端特定样式 */
+@media (min-width: 1400px) {
+  .app-container {
+    background-size: 80% 80%;
+    background-position: center;
+  }
+}
 .app-container {
   min-height: 100vh;
   display: flex;
@@ -212,14 +236,22 @@ const handleLogin = () => {
 
 /* 顶部导航栏样式 */
 .main-header {
-  background-color: rgba(18, 18, 18, 0.85);
-  backdrop-filter: blur(10px);
+  background-color: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(20px);
   box-shadow: var(--shadow);
   position: sticky;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid var(--border-color);
+   transition: all 0.3s ease; /* 添加过渡效果 */
 }
+/* 导航栏滚动效果 */
+.main-header.scrolled {
+  padding: 0;
+  background-color: rgba(18, 18, 18, 0.98);
+  box-shadow: 0 4px 20px rgba(0, 188, 212, 0.15);
+}
+
 
 .header-content {
   max-width: 1400px;
@@ -270,6 +302,22 @@ const handleLogin = () => {
   text-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
 }
 
+/* 添加导航项下划线效果 */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
 /* 搜索框样式 */
 .search-section {
   flex: 1;
@@ -292,7 +340,8 @@ const handleLogin = () => {
 
 .search-input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
+   transform: translateY(-1px);
 }
 
 /* 用户区域样式 */
@@ -301,6 +350,34 @@ const handleLogin = () => {
   align-items: center;
   gap: 20px;
 }
+
+/* 用户头像和下拉菜单样式优化 */
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  min-width: 280px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.2); /* 增强阴影效果 */
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  animation: dropdownSlideIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+/* 主内容区域样式优化 */
+.main-content {
+  flex: 1;
+  background-color: var(--dark-bg);
+  padding: 20px 0;
+  position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 
 .create-btn {
   color: var(--primary-color);
