@@ -1,4 +1,4 @@
-<template>
+git config --global user.name '贾思阳' <template>
   <div class="login-container">
     <!-- 背景装饰 -->
     <div class="bg-decoration">
