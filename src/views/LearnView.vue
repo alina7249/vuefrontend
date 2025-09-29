@@ -1,59 +1,57 @@
 <template>
   <div class="learn-container">
-    <!-- 科技感背景装饰 -->
-    <div class="circuit-bg"></div>
-    <div class="binary-code"></div>
+    <!-- 摄影风格背景装饰 -->
+    <div class="photo-bg"></div>
     
     <!-- 页面头部 -->
     <div class="learn-header">
-      <h1>学习计算机</h1>
-      <p>探索编程、开发工具、前端、后端、移动开发等技术领域</p>
+      <h1>探索摄影视界</h1>
+      <p>分享精彩瞬间，交流摄影技巧，发现视觉之美</p>
     </div>
     
     <!-- 侧边导航 -->
-    <div class="learn-layout">
       <aside class="learn-sidebar">
         <nav class="category-nav">
-          <h2 class="nav-title">学习分类</h2>
+          <h2 class="nav-title">摄影分类</h2>
           <a href="#" class="category-item active">
-            <span class="category-icon">📚</span>
-            <span>综合</span>
+            <span class="category-icon">📷</span>
+            <span>推荐作品</span>
           </a>
           <a href="#" class="category-item">
-            <span class="category-icon">👨‍💻</span>
-            <span>后端</span>
+            <span class="category-icon">🏞️</span>
+            <span>风景摄影</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">👤</span>
+            <span>人像摄影</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">🌆</span>
+            <span>城市建筑</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">🐾</span>
+            <span>野生动物</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">🍽️</span>
+            <span>美食摄影</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">📸</span>
+            <span>摄影技巧</span>
+          </a>
+          <a href="#" class="category-item">
+            <span class="category-icon">🔍</span>
+            <span>器材测评</span>
           </a>
           <a href="#" class="category-item">
             <span class="category-icon">🎨</span>
-            <span>前端</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">📱</span>
-            <span>Android</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">🍎</span>
-            <span>iOS</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">🤖</span>
-            <span>人工智能</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">🔧</span>
-            <span>开发工具</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">💼</span>
-            <span>程序员人生</span>
-          </a>
-          <a href="#" class="category-item">
-            <span class="category-icon">📖</span>
-            <span>阅读</span>
+            <span>后期处理</span>
           </a>
           <a href="#" class="category-item">
             <span class="category-icon">🏆</span>
-            <span>排行榜</span>
+            <span>热门榜单</span>
           </a>
         </nav>
       </aside>
@@ -66,87 +64,112 @@
           <button class="tag">最新</button>
         </div>
         
-        <!-- 内容列表 -->
+        <!-- 摄影作品列表 -->
         <div class="article-list">
-          <!-- 文章项 -->
+          <!-- 摄影作品项 -->
           <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/10/800/500') center/cover no-repeat;"></div>
             <div class="article-content">
-              <h3 class="article-title">Cursor你要毁了我吗</h3>
-              <p class="article-excerpt">最近在使用Cursor进行开发，发现它的AI功能确实很强大，但是有时候也会出现一些奇怪的小问题...</p>
+              <h3 class="article-title">山间晨雾</h3>
+              <p class="article-excerpt">清晨的山间云雾缭绕，宛如仙境。使用索尼A7R4和24-70mm F2.8镜头拍摄，ISO100，光圈F8，快门1/200s。</p>
               <div class="article-meta">
-                <span class="author">前端小王子</span>
-                <span class="views">38k 浏览</span>
-                <span class="likes">270 点赞</span>
+                <span class="author">自然摄影者</span>
+                <span class="views">12.5k 浏览</span>
+                <span class="likes">956 点赞</span>
                 <div class="article-tags">
-                  <span class="tag">Cursor</span>
-                  <span class="tag">AI编程</span>
-                  <span class="tag">VSCode</span>
+                  <span class="tag">风景</span>
+                  <span class="tag">晨雾</span>
+                  <span class="tag">索尼</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/26/800/500') center/cover no-repeat;"></div>
             <div class="article-content">
-              <h3 class="article-title">7000块帮朋友做了2个小程序和一个后台管理系统,值不值?</h3>
-              <p class="article-excerpt">朋友找我帮忙开发两个小程序和一个后台管理系统，总共给了7000块。这个价格在市场上算是个什么水平？</p>
+              <h3 class="article-title">城市夜景</h3>
+              <p class="article-excerpt">城市的夜晚灯火辉煌，展现出不一样的魅力。使用佳能5D4和16-35mm F2.8镜头，长时间曝光捕捉城市光影。</p>
               <div class="article-meta">
-                <span class="author">小程序开发</span>
-                <span class="views">25k 浏览</span>
-                <span class="likes">156 点赞</span>
+                <span class="author">城市探索者</span>
+                <span class="views">8.3k 浏览</span>
+                <span class="likes">742 点赞</span>
                 <div class="article-tags">
-                  <span class="tag">小程序开发</span>
-                  <span class="tag">后台管理</span>
+                  <span class="tag">城市</span>
+                  <span class="tag">夜景</span>
+                  <span class="tag">佳能</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/64/800/500') center/cover no-repeat;"></div>
             <div class="article-content">
-              <h3 class="article-title">小米汽车这薪资是认真的吗？</h3>
-              <p class="article-excerpt">看到小米汽车发布的招聘信息，薪资待遇确实很诱人，但是要求也很高。大家觉得这个薪资水平合理吗？</p>
+              <h3 class="article-title">人像摄影技巧分享</h3>
+              <p class="article-excerpt">分享10个提升人像摄影水平的实用技巧，包括光线运用、构图方法、引导模特等方面的经验。</p>
               <div class="article-meta">
-                <span class="author">汽车工程师</span>
-                <span class="views">18k 浏览</span>
-                <span class="likes">89 点赞</span>
+                <span class="author">人像摄影师</span>
+                <span class="views">15.2k 浏览</span>
+                <span class="likes">1253 点赞</span>
                 <div class="article-tags">
-                  <span class="tag">小米</span>
-                  <span class="tag">汽车</span>
-                  <span class="tag">前端</span>
+                  <span class="tag">人像</span>
+                  <span class="tag">技巧</span>
+                  <span class="tag">教程</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/42/800/500') center/cover no-repeat;"></div>
             <div class="article-content">
-              <h3 class="article-title">分享10个炸天的油猴脚本2025最新版!</h3>
-              <p class="article-excerpt">整理了10个非常实用的油猴脚本，包括网页增强、广告屏蔽、功能扩展等，个个炸天的让你的浏览器更加强大！</p>
+              <h3 class="article-title">野生动物瞬间</h3>
+              <p class="article-excerpt">在非洲草原上捕捉到的精彩瞬间，狮子家族的日常生活。使用尼康D5和600mm F4镜头，远距离拍摄。</p>
               <div class="article-meta">
-                <span class="author">脚本达人</span>
-                <span class="views">32k 浏览</span>
-                <span class="likes">234 点赞</span>
+                <span class="author">野生动物摄影师</span>
+                <span class="views">10.8k 浏览</span>
+                <span class="likes">867 点赞</span>
                 <div class="article-tags">
-                  <span class="tag">油猴脚本</span>
-                  <span class="tag">浏览器</span>
+                  <span class="tag">野生动物</span>
+                  <span class="tag">非洲</span>
+                  <span class="tag">尼康</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/96/800/500') center/cover no-repeat;"></div>
             <div class="article-content">
-              <h3 class="article-title">Docker+Kubernetes从入门到精通</h3>
-              <p class="article-excerpt">从零开始学习容器化技术，掌握Docker和Kubernetes的核心概念和实践技巧，成为DevOps工程师。</p>
+              <h3 class="article-title">美食摄影布光技巧</h3>
+              <p class="article-excerpt">详解美食摄影中的布光方法，如何让食物看起来更加诱人，以及常用的道具和背景选择。</p>
               <div class="article-meta">
-                <span class="author">DevOps专家</span>
-                <span class="views">56k 浏览</span>
-                <span class="likes">432 点赞</span>
+                <span class="author">美食摄影师</span>
+                <span class="views">7.6k 浏览</span>
+                <span class="likes">624 点赞</span>
                 <div class="article-tags">
-                  <span class="tag">Docker</span>
-                  <span class="tag">Kubernetes</span>
-                  <span class="tag">DevOps</span>
+                  <span class="tag">美食</span>
+                  <span class="tag">布光</span>
+                  <span class="tag">技巧</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="article-item">
+            <div class="photo-preview" style="background: url('https://picsum.photos/id/25/800/500') center/cover no-repeat;"></div>
+            <div class="article-content">
+              <h3 class="article-title">极简主义摄影</h3>
+              <p class="article-excerpt">探讨极简主义摄影的构图原则和审美价值，如何通过简洁的画面表达深刻的主题。</p>
+              <div class="article-meta">
+                <span class="author">艺术摄影师</span>
+                <span class="views">9.4k 浏览</span>
+                <span class="likes">798 点赞</span>
+                <div class="article-tags">
+                  <span class="tag">极简</span>
+                  <span class="tag">艺术</span>
+                  <span class="tag">构图</span>
                 </div>
               </div>
             </div>
@@ -168,19 +191,19 @@
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --accent-color: #f50057;
-  --secondary-color: #4caf50;
-  --border-color: #2a3747;
-  --bg-color: #121212;
-  --dark-bg: #1e1e1e;
-  --card-bg: #1e1e1e;
-  --text-color: #e0e0e0;
-  --text-light: #a0a0a0;
-  --text-secondary: #82b1ff;
+  --primary-color: #3a7bd5;
+  --primary-hover: #2968c8;
+  --accent-color: #f093fb;
+  --secondary-color: #4facfe;
+  --border-color: #2c3e50;
+  --bg-color: #f8f9fa;
+  --dark-bg: #e9ecef;
+  --card-bg: #ffffff;
+  --text-color: #212529;
+  --text-light: #6c757d;
+  --text-secondary: #495057;
   --white: #ffffff;
-  --shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
+  --shadow: 0 4px 12px rgba(58, 123, 213, 0.15);
 }
 
 .learn-container {
@@ -434,7 +457,7 @@
   box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
 }
 
-/* 文章列表 */
+/* 摄影作品列表 */
   .article-list {
     margin-bottom: 30px;
     display: grid;
@@ -458,7 +481,38 @@
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* 摄影预览图样式 */
+  .photo-preview {
+    height: 220px;
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.5s ease;
+  }
+  
+  .article-item:hover .photo-preview {
+    transform: scale(1.03);
+  }
+  
+  .photo-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .article-item:hover .photo-preview::before {
+    opacity: 1;
   }
   
   /* 大屏幕文章项优化 */

@@ -7,18 +7,18 @@
       </div>
       <div class="user-details">
         <div class="username-row">
-          <h1>admin</h1>
+          <h1>摄影爱好者</h1>
           <div class="action-buttons">
-            <button class="edit-btn">编辑</button>
-            <button class="settings-btn">设置</button>
+            <button class="edit-btn">编辑资料</button>
+            <button class="upload-btn">上传作品</button>
           </div>
         </div>
-        <p>掘友等级 IV.1</p>
+        <p>摄影师等级 LV.3</p>
         <div class="level-progress">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: 50%;"></div>
+            <div class="progress-fill" style="width: 75%;"></div>
           </div>
-          <span class="exp-text">75/150</span>
+          <span class="exp-text">150/200</span>
         </div>
       </div>
     </div>
@@ -26,20 +26,20 @@
     <!-- 用户统计数据 -->
     <div class="user-stats">
       <div class="stat-item">
-        <span class="stat-value">1</span>
+        <span class="stat-value">12</span>
         <span class="stat-label">关注</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">0</span>
+        <span class="stat-value">28</span>
         <span class="stat-label">粉丝</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">1</span>
+        <span class="stat-value">56</span>
         <span class="stat-label">收藏</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">2</span>
-        <span class="stat-label">文章</span>
+        <span class="stat-value">24</span>
+        <span class="stat-label">作品</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">2024-11-21</span>
@@ -50,16 +50,16 @@
     <!-- 快捷入口 -->
     <div class="quick-access">
       <div class="access-item">
-        <div class="access-icon">💻</div>
-        <span>课程中心</span>
+        <div class="access-icon">📷</div>
+        <span>上传作品</span>
       </div>
       <div class="access-item">
-        <div class="access-icon">🎁</div>
-        <span>我的优惠</span>
+        <div class="access-icon">🖼️</div>
+        <span>我的作品集</span>
       </div>
       <div class="access-item">
-        <div class="access-icon">📝</div>
-        <span>我的报名</span>
+        <div class="access-icon">❤️</div>
+        <span>我的收藏</span>
       </div>
     </div>
 
@@ -68,21 +68,31 @@
       <aside class="side-nav">
         <nav>
           <a href="#" class="nav-link active">我的主页</a>
-          <a href="/growth" class="nav-link">成长福利</a>
-          <a href="#" class="nav-link">内容笔记</a>
-          <a href="/member" class="nav-link">会员中心</a>
-          <a href="#" class="nav-link">课程中心</a>
-          <a href="#" class="nav-link">我的优惠</a>
-          <a href="#" class="nav-link">我的报名</a>
-          <a href="#" class="nav-link">我的足迹</a>
+          <a href="#" class="nav-link">我的作品集</a>
+          <a href="#" class="nav-link">我的收藏</a>
+          <a href="#" class="nav-link">我的喜欢</a>
+          <a href="#" class="nav-link">关注动态</a>
+          <a href="#" class="nav-link">消息通知</a>
+          <a href="#" class="nav-link">个人设置</a>
         </nav>
       </aside>
       
       <main class="content-area">
         <!-- 内容区域 -->
         <div class="welcome-message">
-          <h2>欢迎回来，admin！</h2>
-          <p>这是您的个人主页，可以查看和管理您的所有信息。</p>
+          <h2>欢迎回来，摄影爱好者！</h2>
+          <p>这是您的个人主页，展示您的摄影作品和活动动态。</p>
+        </div>
+        
+        <!-- 最近作品预览 -->
+        <div class="recent-photos">
+          <h3>最近作品</h3>
+          <div class="photos-grid">
+            <div class="photo-item" style="background: url('https://picsum.photos/id/1015/400/300') center/cover no-repeat;"></div>
+            <div class="photo-item" style="background: url('https://picsum.photos/id/1016/400/300') center/cover no-repeat;"></div>
+            <div class="photo-item" style="background: url('https://picsum.photos/id/1018/400/300') center/cover no-repeat;"></div>
+            <div class="photo-item" style="background: url('https://picsum.photos/id/1019/400/300') center/cover no-repeat;"></div>
+          </div>
         </div>
       </main>
     </div>
@@ -97,21 +107,21 @@ const router = useRouter()
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --secondary-color: #673ab7;
-  --accent-color: #ff5722;
-  --dark-bg: #121212;
-  --card-bg: #1e1e1e;
-  --border-color: #333;
-  --text-color: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-light: #757575;
-  --success-color: #4caf50;
-  --warning-color: #ff9800;
-  --error-color: #f44336;
-  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
-  --glow: 0 0 10px rgba(0, 188, 212, 0.5);
+  --primary-color: #3a7bd5;
+  --primary-hover: #2968c8;
+  --secondary-color: #4facfe;
+  --accent-color: #f093fb;
+  --dark-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #e9ecef;
+  --text-color: #212529;
+  --text-secondary: #6c757d;
+  --text-light: #adb5bd;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --shadow: 0 4px 15px rgba(58, 123, 213, 0.1);
+  --glow: 0 0 10px rgba(58, 123, 213, 0.3);
 }
 
 .user-home {
@@ -227,7 +237,7 @@ const router = useRouter()
   gap: 10px;
 }
 
-.edit-btn, .settings-btn {
+.edit-btn, .upload-btn {
   padding: 8px 16px;
   border: 1px solid var(--border-color);
   background-color: var(--card-bg);
@@ -238,10 +248,22 @@ const router = useRouter()
   color: var(--text-secondary);
 }
 
-.edit-btn:hover, .settings-btn:hover {
+.edit-btn:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
-  background-color: rgba(0, 188, 212, 0.1);
+  background-color: rgba(58, 123, 213, 0.1);
+}
+
+.upload-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.upload-btn:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: white;
 }
 
 .user-details p {
@@ -322,7 +344,7 @@ const router = useRouter()
   font-weight: 600;
   color: var(--primary-color);
   margin-bottom: 4px;
-  text-shadow: 0 0 5px rgba(0, 188, 212, 0.3);
+  text-shadow: 0 0 5px rgba(58, 123, 213, 0.3);
 }
 
 .stat-label {
@@ -430,12 +452,12 @@ const router = useRouter()
 }
 
 .nav-link:hover {
-  background-color: rgba(0, 188, 212, 0.1);
+  background-color: rgba(58, 123, 213, 0.1);
   color: var(--primary-color);
 }
 
 .nav-link.active {
-  background-color: rgba(0, 188, 212, 0.2);
+  background-color: rgba(58, 123, 213, 0.2);
   color: var(--primary-color);
   font-weight: 500;
 }
@@ -487,7 +509,7 @@ const router = useRouter()
   color: var(--text-secondary);
 }
 
-/* 添加更多科技感装饰 */
+/* 添加摄影风格装饰 */
 .content-area::before {
   content: '';
   position: absolute;
@@ -496,6 +518,58 @@ const router = useRouter()
   width: 100%;
   height: 3px;
   background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+/* 最近作品预览样式 */
+.recent-photos {
+  margin-top: 30px;
+}
+
+.recent-photos h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 12px;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.photo-item {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  border: 2px solid var(--border-color);
+}
+
+.photo-item:hover {
+  transform: scale(1.03);
+  box-shadow: var(--glow);
+  border-color: var(--primary-color);
+}
+
+.photo-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  transition: height 0.3s ease;
+}
+
+.photo-item:hover::after {
+  height: 100%;
 }
 
 /* 响应式设计 */
@@ -518,6 +592,10 @@ const router = useRouter()
     flex: 1;
     min-width: 120px;
     text-align: center;
+  }
+  
+  .photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
 

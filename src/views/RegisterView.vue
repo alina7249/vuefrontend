@@ -3,26 +3,20 @@
     <!-- 背景装饰 -->
     <div class="bg-decoration">
       <div class="circuit-bg"></div>
-      <div class="binary-code"></div>
     </div>
     
     <div class="register-wrapper">
       <!-- 侧边品牌信息 -->
       <div class="brand-side">
         <div class="brand-logo">
-          <div class="terminal-icon">
-            <div class="terminal-top"></div>
-            <div class="terminal-screen">
-              <div class="code-line">10101010</div>
-              <div class="code-line">01010101</div>
-              <div class="code-line">10101010</div>
-            </div>
+          <div class="camera-icon">
+            📷
           </div>
-          <h1>TechLearn Hub</h1>
+          <h1>摄影视界</h1>
         </div>
         <div class="brand-slogan">
-          <p>加入我们的技术社区</p>
-          <p>开启你的学习之旅</p>
+          <p>加入我们的摄影社区</p>
+          <p>分享你的精彩瞬间</p>
         </div>
         <div class="feature-list">
           <div class="feature-item">
@@ -31,11 +25,11 @@
           </div>
           <div class="feature-item">
             <div class="feature-icon">👥</div>
-            <span>专业的技术交流</span>
+            <span>专业的摄影交流</span>
           </div>
           <div class="feature-item">
             <div class="feature-icon">🚀</div>
-            <span>快速成长路径</span>
+            <span>展示你的作品</span>
           </div>
         </div>
       </div>
@@ -44,7 +38,7 @@
       <div class="register-form-container">
         <div class="form-header">
           <h2>创建新账号</h2>
-          <p>加入技术学习社区，探索无限可能</p>
+          <p>加入摄影视界，分享你的摄影作品</p>
         </div>
         
         <div class="tabs">
@@ -288,22 +282,22 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 计算机科技风格配色方案 */
+/* 摄影交流网站配色方案 */
 :root {
-  --primary-color: #00bcd4;
-  --primary-dark: #008ba3;
-  --secondary-color: #6c63ff;
-  --accent-color: #ff6584;
-  --bg-dark: #121212;
-  --bg-light: #1e1e1e;
-  --bg-lighter: #2a2a2a;
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --border-color: #333333;
-  --success-color: #4caf50;
-  --error-color: #f44336;
-  --shadow: 0 4px 20px rgba(0, 188, 212, 0.15);
-  --glow: 0 0 10px rgba(0, 188, 212, 0.5);
+  --primary-color: #1a73e8;
+  --primary-dark: #1557b0;
+  --secondary-color: #4285f4;
+  --accent-color: #ea4335;
+  --bg-dark: #f8f9fa;
+  --bg-light: #ffffff;
+  --bg-lighter: #f5f5f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --success-color: #34a853;
+  --error-color: #ea4335;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --glow: 0 0 10px rgba(26, 115, 232, 0.3);
 }
 
 /* 基础布局 */
@@ -339,26 +333,10 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(108, 99, 255, 0.05) 0%, transparent 25%),
-    radial-gradient(circle at 40% 70%, rgba(255, 101, 132, 0.05) 0%, transparent 15%);
+    radial-gradient(circle at 10% 20%, rgba(26, 115, 232, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(66, 133, 244, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 40% 70%, rgba(234, 67, 53, 0.05) 0%, transparent 15%);
   background-size: 100% 100%;
-}
-
-.binary-code {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  font-family: monospace;
-  font-size: 12px;
-  line-height: 12px;
-  opacity: 0.03;
-  overflow: hidden;
-  background-image: 
-    linear-gradient(to bottom, transparent, var(--bg-dark)),
-    repeating-linear-gradient(90deg, transparent, transparent 9px, var(--primary-color) 9px, var(--primary-color) 10px);
 }
 
 /* 主容器 */
@@ -378,12 +356,12 @@ onUnmounted(() => {
 .brand-side {
   flex: 1;
   padding: 60px;
-  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, var(--secondary-color) 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* 终端图标 */
+/* 相机图标 */
 .brand-logo {
   display: flex;
   align-items: center;
@@ -391,67 +369,20 @@ onUnmounted(() => {
   margin-bottom: 60px;
 }
 
-.terminal-icon {
+.camera-icon {
+  font-size: 48px;
   width: 60px;
-  height: 45px;
-  background: var(--bg-dark);
-  border-radius: 8px 8px 0 0;
-  position: relative;
-}
-
-.terminal-top {
-  width: 100%;
-  height: 8px;
-  background: var(--bg-lighter);
-  border-radius: 8px 8px 0 0;
-  position: relative;
-}
-
-.terminal-top::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 8px;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background: #ff5f56;
-  border-radius: 50%;
-}
-
-.terminal-top::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 18px;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background: #ffbd2e;
-  border-radius: 50%;
-}
-
-.terminal-screen {
-  padding: 4px;
-  font-family: monospace;
-  font-size: 8px;
-  color: var(--success-color);
-}
-
-.code-line {
-  height: 7px;
-  overflow: hidden;
-  animation: typing 2s steps(8) infinite;
-}
-
-@keyframes typing {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
 }
 
 .brand-logo h1 {
-  color: var(--text-primary);
+  color: white;
   font-size: 32px;
   font-weight: 700;
   margin: 0;
@@ -464,7 +395,7 @@ onUnmounted(() => {
 }
 
 .brand-slogan p {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 18px;
   margin: 8px 0;
   line-height: 1.5;
@@ -494,7 +425,7 @@ onUnmounted(() => {
 }
 
 .feature-item span {
-  color: var(--text-primary);
+  color: white;
   font-size: 16px;
 }
 

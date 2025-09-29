@@ -92,45 +92,42 @@ const handleLogin = () => {
     <header class="main-header" :class="{ 'scrolled': headerScrolled }">
       <div class="header-content">
         <div class="logo-section">
-          <RouterLink to="/" class="logo">
-            <span class="logo-text">稀土掘金</span>
-          </RouterLink>
+          <a href="#" class="logo" @click="navigateTo('/')">
+            <span class="logo-text">摄影视界</span>
+          </a>
           
           <nav class="main-nav">
-            <RouterLink to="/learn" class="nav-item">首页</RouterLink>
-            <RouterLink to="/learn" class="nav-item">学习</RouterLink>
-            <a href="#" class="nav-item">沸点</a>
-            <a href="#" class="nav-item">课程</a>
-            <a href="#" class="nav-item">直播</a>
-            <a href="#" class="nav-item">活动</a>
-            <a href="#" class="nav-item">AI刷题</a>
-            <a href="#" class="nav-item">APP</a>
-            <a href="#" class="nav-item">插件</a>
+            <a href="#" class="nav-item" @click="navigateTo('/')">首页</a>
+            <a href="#" class="nav-item" @click="navigateTo('/discover')">发现</a>
+            <a href="#" class="nav-item" @click="navigateTo('/community')">社区</a>
+            <a href="#" class="nav-item" @click="navigateTo('/equipment')">器材</a>
+            <a href="#" class="nav-item" @click="navigateTo('/academy')">学院</a>
+            <a href="#" class="nav-item" @click="navigateTo('/about')">关于我们</a>
           </nav>
         </div>
         
         <div class="search-section">
-          <input type="text" placeholder="搜索掘金上的金" class="search-input" />
+          <input type="text" placeholder="搜索作品/摄影师/话题..." class="search-input" />
         </div>
         
         <div class="user-section">
-          <a href="#" class="create-btn">创作者中心</a>
+          <a href="#" class="create-btn">上传作品</a>
           <a href="#" class="message-btn">消息</a>
           
           <div v-if="isLoggedIn" class="user-profile" @click="toggleUserMenu">
             <div class="avatar">
-              <img src="/favicon.ico" alt="用户头像" />
+              <img src="https://picsum.photos/id/1005/200" alt="用户头像" />
             </div>
             
             <div v-show="showUserMenu" class="user-dropdown">
               <div class="user-info-card">
                 <div class="user-info-header">
                   <div class="user-avatar">
-                    <img src="/favicon.ico" alt="用户头像" />
+                    <img src="https://picsum.photos/id/1005/200" alt="用户头像" />
                   </div>
                   <div class="user-details">
                     <div class="username">{{ currentUser.username }}</div>
-                    <div class="user-level">掘友等级 {{ currentUser.level }}</div>
+                    <div class="user-level">摄影师</div>
                   </div>
                 </div>
                 
@@ -144,12 +141,8 @@ const handleLogin = () => {
                     <span class="stat-label">粉丝</span>
                   </div>
                   <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.likes }}</span>
-                    <span class="stat-label">收藏</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.articles }}</span>
-                    <span class="stat-label">文章</span>
+                    <span class="stat-value">{{ currentUser.photos }}</span>
+                    <span class="stat-label">作品</span>
                   </div>
                   <div class="stat-item">
                     <span class="stat-value">{{ currentUser.joinDate }}</span>
@@ -162,17 +155,14 @@ const handleLogin = () => {
               
               <div class="menu-items">
                 <a href="#" class="menu-item" @click="navigateTo('/user')">我的主页</a>
-                <a href="#" class="menu-item" @click="navigateTo('/growth')">成长福利</a>
-                <a href="#" class="menu-item">内容笔记</a>
-                <a href="#" class="menu-item" @click="navigateTo('/member')">会员中心</a>
-                <a href="#" class="menu-item">课程中心</a>
-                <a href="#" class="menu-item">我的优惠</a>
-              <a href="#" class="menu-item">我的报名</a>
-              <a href="#" class="menu-item">我的足迹</a>
-              
-              <div class="menu-divider"></div>
-              
-              <a href="#" class="menu-item" @click="handleLogout">退出登录</a>
+                <a href="#" class="menu-item" @click="navigateTo('/gallery')">我的作品集</a>
+                <a href="#" class="menu-item" @click="navigateTo('/collections')">我的收藏</a>
+                <a href="#" class="menu-item" @click="navigateTo('/favorites')">我的喜欢</a>
+                <a href="#" class="menu-item" @click="navigateTo('/settings')">个人设置</a>
+                
+                <div class="menu-divider"></div>
+                
+                <a href="#" class="menu-item" @click="handleLogout">退出登录</a>
               </div>
             </div>
           </div>
@@ -192,11 +182,12 @@ const handleLogin = () => {
       <div class="footer-content">
         <div class="footer-links">
           <a href="#">关于我们</a>
-          <a href="#">联系我们</a>
+          <a href="#">联系方式</a>
+          <a href="#">使用条款</a>
           <a href="#">隐私政策</a>
-          <a href="#">用户协议</a>
+          <a href="#">帮助中心</a>
         </div>
-        <div class="copyright">© 2024 稀土掘金 All Rights Reserved.</div>
+        <div class="copyright">© 2024 摄影视界 PhotoVision All Rights Reserved.</div>
       </div>
     </footer>
   </div>
@@ -204,20 +195,20 @@ const handleLogin = () => {
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --secondary-color: #673ab7;
-  --accent-color: #ff5722;
-  --dark-bg: #121212;
-  --card-bg: #1e1e1e;
-  --border-color: #333;
-  --text-color: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-light: #757575;
-  --success-color: #4caf50;
-  --warning-color: #ff9800;
-  --error-color: #f44336;
-  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
+  --primary-color: #1a73e8;
+  --primary-hover: #1557b0;
+  --secondary-color: #4285f4;
+  --accent-color: #ea4335;
+  --dark-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #e0e0e0;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --text-light: #999999;
+  --success-color: #34a853;
+  --warning-color: #fbbc05;
+  --error-color: #ea4335;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 /* 电脑端特定样式优化 */
   @media (min-width: 1200px) {
@@ -238,8 +229,8 @@ const handleLogin = () => {
   flex-direction: column;
   background-color: var(--dark-bg);
   background-image: 
-    radial-gradient(circle at 20% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 80%, rgba(103, 58, 183, 0.05) 0%, transparent 20%);
+    radial-gradient(circle at 20% 20%, rgba(26, 115, 232, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 80% 80%, rgba(66, 133, 244, 0.05) 0%, transparent 20%);
   background-size: 100% 100%;
 }
 
