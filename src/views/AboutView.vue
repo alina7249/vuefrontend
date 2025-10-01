@@ -1,12 +1,12 @@
 <template>
   <div class="about">
-    <!-- 科技风格背景装饰 -->
-    <div class="circuit-bg"></div>
-    <div class="binary-code"></div>
+    <!-- 摄影风格背景装饰 -->
+    <div class="photo-bg"></div>
+    <div class="camera-pattern"></div>
     
     <div class="container">
       <div class="about-header">
-        <h1 class="tech-title">关于 TechLearn Hub</h1>
+        <h1 class="photo-title">关于 VisionShield 摄影平台</h1>
         <div class="title-decoration"></div>
       </div>
       
@@ -14,9 +14,9 @@
         <div class="about-section">
           <h2 class="section-title">我们的使命</h2>
           <p class="section-text">
-            TechLearn Hub 致力于为全球技术爱好者提供高质量的学习资源和互动平台，
-            帮助每个人在技术领域取得突破和成长。我们相信，通过优质的教育和社区支持，
-            每个人都能实现自己的技术梦想。
+            VisionShield 致力于为全球摄影爱好者提供高质量的分享平台和学习资源，
+            帮助每个人捕捉生活中的美好瞬间，探索摄影艺术的无限可能。我们相信，
+            每一张照片背后都有一个独特的故事，值得被发现和分享。
           </p>
         </div>
         
@@ -24,50 +24,50 @@
           <h2 class="section-title">我们的特色</h2>
           <div class="features-grid">
             <div class="feature-item">
-              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"></path></svg></div>
-              <h3 class="feature-title">高品质课程</h3>
-              <p class="feature-description">由行业专家精心打造的实战课程，涵盖前沿技术与实用技能</p>
+              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 15c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3m0-5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0-2C6.48 6 2 10.48 2 16s4.48 10 10 10 10-4.48 10-10S17.52 6 12 6zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg></div>
+              <h3 class="feature-title">高质量作品分享</h3>
+              <p class="feature-description">专业的摄影作品展示平台，支持高清图片上传和无压缩分享</p>
             </div>
             
             <div class="feature-item">
-              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg></div>
-              <h3 class="feature-title">交互式学习</h3>
-              <p class="feature-description">实时编码环境，让学习更具实践性，立即应用所学知识</p>
+              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29l-1.43-1.43zM15 9H5v6h10z"></path></svg></div>
+              <h3 class="feature-title">摄影技巧交流</h3>
+              <p class="feature-description">与全球摄影师交流心得，分享构图、用光、后期处理等专业技巧</p>
             </div>
             
             <div class="feature-item">
-              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"></path></svg></div>
-              <h3 class="feature-title">社区支持</h3>
-              <p class="feature-description">与全球开发者交流，分享经验，共同成长的活跃社区</p>
+              <div class="feature-icon"><svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M15 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-3-6l5.15 3.09-1.42 1.42L12 13.41l-2.73 2.73-1.42-1.42L9 12z"></path></svg></div>
+              <h3 class="feature-title">社区互动分享</h3>
+              <p class="feature-description">活跃的摄影社区，支持作品点赞、评论、收藏，发现志同道合的伙伴</p>
             </div>
           </div>
         </div>
         
         <div class="about-section">
-          <h2 class="section-title">团队介绍</h2>
+          <h2 class="section-title">核心团队</h2>
           <div class="team-grid">
             <div class="team-member">
               <div class="member-avatar">
-                <img src="https://picsum.photos/id/1/100/100" alt="团队成员">
+                <img src="https://picsum.photos/id/338/100/100" alt="摄影总监">
               </div>
-              <h3 class="member-name">张明</h3>
-              <p class="member-role">创始人 & CEO</p>
+              <h3 class="member-name">刘艺</h3>
+              <p class="member-role">创始人 & 摄影总监</p>
             </div>
             
             <div class="team-member">
               <div class="member-avatar">
-                <img src="https://picsum.photos/id/2/100/100" alt="团队成员">
+                <img src="https://picsum.photos/id/342/100/100" alt="技术总监">
               </div>
-              <h3 class="member-name">李华</h3>
+              <h3 class="member-name">陈技术</h3>
               <p class="member-role">技术总监</p>
             </div>
             
             <div class="team-member">
               <div class="member-avatar">
-                <img src="https://picsum.photos/id/3/100/100" alt="团队成员">
+                <img src="https://picsum.photos/id/349/100/100" alt="社区总监">
               </div>
-              <h3 class="member-name">王静</h3>
-              <p class="member-role">课程总监</p>
+              <h3 class="member-name">林夏</h3>
+              <p class="member-role">社区总监</p>
             </div>
           </div>
         </div>
@@ -78,18 +78,18 @@
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --secondary-color: #673ab7;
-  --accent-color: #ff5722;
+  --primary-color: #3498db;
+  --primary-hover: #2980b9;
+  --secondary-color: #e74c3c;
+  --accent-color: #f39c12;
   --dark-bg: #121212;
-  --card-bg: #1e1e1e;
+  --card-bg: #1a1a1a;
   --border-color: #333;
   --text-color: #ffffff;
   --text-secondary: #b0b0b0;
   --text-light: #757575;
-  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
-  --glow: 0 0 10px rgba(0, 188, 212, 0.5);
+  --shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+  --glow: 0 0 15px rgba(52, 152, 219, 0.4);
 }
 
 .about {
@@ -101,40 +101,33 @@
   padding: 40px 0;
 }
 
-/* 背景装饰 */
-.circuit-bg {
+/* 摄影风格背景装饰 */
+.photo-bg {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
-                    radial-gradient(circle at 80% 30%, rgba(103, 58, 183, 0.05) 0%, transparent 25%),
-                    radial-gradient(circle at 40% 70%, rgba(255, 87, 34, 0.05) 0%, transparent 15%);
+  background-image: radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 80% 30%, rgba(231, 76, 60, 0.05) 0%, transparent 25%),
+                    radial-gradient(circle at 40% 70%, rgba(243, 156, 18, 0.05) 0%, transparent 15%);
   background-size: 100% 100%;
   z-index: 0;
   pointer-events: none;
 }
 
-.binary-code {
+.camera-pattern {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   width: 300px;
-  opacity: 0.1;
-  background-image: repeating-linear-gradient(to bottom, var(--primary-color) 0px, var(--primary-color) 1px, transparent 1px, transparent 20px);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  font-family: monospace;
-  font-size: 12px;
-  white-space: pre;
-  overflow: hidden;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z'/%3E%3C/svg%3E");
+  background-size: 40px 40px;
+  background-repeat: repeat;
   z-index: 0;
   pointer-events: none;
-  line-height: 20px;
-  content: "010010010100101101001100010001010100000101010010010011100100011101000101010010010100101101001100010001010100000101010010010011100100011101000101010010010100101101001100010001010100000101010010010011100100011101000101010010010100101101001100010001010100000101010010010011100100011101000101";
 }
 
 .container {
@@ -151,7 +144,7 @@
   position: relative;
 }
 
-.tech-title {
+.photo-title {
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 20px;
@@ -263,7 +256,7 @@
 .feature-icon {
   width: 60px;
   height: 60px;
-  background-color: rgba(0, 188, 212, 0.1);
+  background-color: rgba(52, 152, 219, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -308,7 +301,7 @@
   overflow: hidden;
   margin: 0 auto 15px;
   border: 3px solid var(--primary-color);
-  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
 }
 
 .member-avatar img {
@@ -331,7 +324,7 @@
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
-  .tech-title {
+  .photo-title {
     font-size: 2.5rem;
   }
   
@@ -345,7 +338,7 @@
     padding: 30px 0;
   }
   
-  .tech-title {
+  .photo-title {
     font-size: 2rem;
   }
   
@@ -372,7 +365,7 @@
     padding: 0 15px;
   }
   
-  .tech-title {
+  .photo-title {
     font-size: 1.8rem;
   }
   

@@ -282,22 +282,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 摄影交流网站配色方案 */
+/* 摄影主题配色方案 */
 :root {
-  --primary-color: #1a73e8;
-  --primary-dark: #1557b0;
-  --secondary-color: #4285f4;
-  --accent-color: #ea4335;
-  --bg-dark: #f8f9fa;
+  --primary-color: #3498db;
+  --primary-dark: #2980b9;
+  --secondary-color: #2ecc71;
+  --accent-color: #e74c3c;
+  --bg-dark: #f5f5f5;
   --bg-light: #ffffff;
-  --bg-lighter: #f5f5f5;
+  --bg-lighter: #f9f9f9;
   --text-primary: #333333;
   --text-secondary: #666666;
   --border-color: #e0e0e0;
-  --success-color: #34a853;
-  --error-color: #ea4335;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --glow: 0 0 10px rgba(26, 115, 232, 0.3);
+  --success-color: #2ecc71;
+  --error-color: #e74c3c;
+  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.18);
+  --glow: 0 0 10px rgba(52, 152, 219, 0.3);
+  --transition: all 0.3s ease;
 }
 
 /* 基础布局 */
@@ -314,6 +317,9 @@ onUnmounted(() => {
   bottom: 0;
   z-index: 1000;
   overflow: hidden;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(52, 152, 219, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 80% 60%, rgba(46, 204, 113, 0.1) 0%, transparent 30%);
 }
 
 /* 背景装饰元素 */
@@ -324,6 +330,7 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   z-index: 0;
+  pointer-events: none;
 }
 
 .circuit-bg {
@@ -333,10 +340,16 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(26, 115, 232, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(66, 133, 244, 0.05) 0%, transparent 25%),
-    radial-gradient(circle at 40% 70%, rgba(234, 67, 53, 0.05) 0%, transparent 15%);
+    radial-gradient(circle at 20% 30%, rgba(52, 152, 219, 0.07) 0%, transparent 25%),
+    radial-gradient(circle at 80% 60%, rgba(46, 204, 113, 0.07) 0%, transparent 30%);
   background-size: 100% 100%;
+  animation: background-shift 20s ease infinite;
+}
+
+@keyframes background-shift {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
 /* 主容器 */
@@ -346,17 +359,28 @@ onUnmounted(() => {
   height: 700px;
   background: var(--bg-light);
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
   z-index: 1;
+  transition: var(--transition);
+}
+
+.register-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
 }
 
 /* 左侧品牌区域 */
 .brand-side {
   flex: 1;
   padding: 60px;
-  background: linear-gradient(135deg, #f8f9fa 0%, var(--secondary-color) 100%);
+  background: linear-gradient(135deg, #1e293b 0%, var(--primary-color) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -367,66 +391,87 @@ onUnmounted(() => {
   align-items: center;
   gap: 20px;
   margin-bottom: 60px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .camera-icon {
   font-size: 48px;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+  border-radius: 20px;
   backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
 }
 
 .brand-logo h1 {
   color: white;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 800;
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .brand-slogan {
   margin-bottom: 60px;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .brand-slogan p {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 18px;
-  margin: 8px 0;
+  font-size: 20px;
+  margin: 10px 0;
   line-height: 1.5;
+  font-weight: 300;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .feature-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  transition: var(--transition);
+  transform: translateY(10px);
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
 }
+
+.feature-item:nth-child(1) { animation-delay: 0.6s; }
+.feature-item:nth-child(2) { animation-delay: 0.8s; }
+.feature-item:nth-child(3) { animation-delay: 1s; }
 
 .feature-icon {
   font-size: 20px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .feature-item span {
   color: white;
   font-size: 16px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* 右侧注册表单区域 */
@@ -436,24 +481,54 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+}
+
+.register-form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 80% 20%, rgba(52, 152, 219, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 20% 80%, rgba(46, 204, 113, 0.05) 0%, transparent 25%);
+  pointer-events: none;
 }
 
 .form-header {
   text-align: center;
   margin-bottom: 40px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .form-header h2 {
   color: var(--text-primary);
-  font-size: 28px;
+  font-size: 32px;
   margin: 0 0 8px 0;
-  font-weight: 600;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.form-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 3px;
 }
 
 .form-header p {
   color: var(--text-secondary);
   font-size: 16px;
-  margin: 0;
+  margin: 15px 0 0 0;
+  line-height: 1.5;
 }
 
 /* 标签页 */
@@ -461,6 +536,7 @@ onUnmounted(() => {
   display: flex;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 30px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
 .tab-btn {
@@ -471,14 +547,15 @@ onUnmounted(() => {
   color: var(--text-secondary);
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   position: relative;
   outline: none;
+  font-weight: 500;
 }
 
 .tab-btn.active {
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .tab-btn.active::after {
@@ -487,14 +564,16 @@ onUnmounted(() => {
   bottom: -1px;
   left: 0;
   right: 0;
-  height: 2px;
-  background: var(--primary-color);
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
   box-shadow: var(--glow);
+  border-radius: 3px;
 }
 
 /* 表单样式 */
 .register-form {
   margin-bottom: 30px;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
 }
 
 .input-group {
@@ -502,6 +581,8 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   align-items: center;
+  animation: fadeInUp 0.5s ease-out;
+  transform-origin: top center;
 }
 
 .input-icon {
@@ -511,7 +592,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   color: var(--text-secondary);
   font-size: 16px;
-  transition: color 0.3s ease;
+  transition: var(--transition);
   z-index: 1;
 }
 
@@ -525,21 +606,30 @@ onUnmounted(() => {
   color: var(--text-primary);
   font-size: 16px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.form-input::placeholder {
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .code-input {
   border-radius: 8px 0 0 8px;
   margin-right: 0;
+  border-right: none;
 }
 
 .form-input:focus {
   border-color: var(--primary-color);
   box-shadow: var(--glow);
+  background-color: white;
 }
 
 .input-group.focused .input-icon {
   color: var(--primary-color);
+  transform: translateY(-50%) scale(1.1);
 }
 
 /* 验证码按钮 */
@@ -547,20 +637,37 @@ onUnmounted(() => {
   height: 50px;
   padding: 0 20px;
   background: var(--secondary-color);
-  color: var(--text-primary);
+  color: white;
   border: none;
   border-radius: 0 8px 8px 0;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
 }
 
 .verification-btn:hover:not(:disabled) {
-  background: #5a52d4;
+  background: #27ae60;
   transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(108, 99, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.verification-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.verification-btn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .verification-btn:disabled {
@@ -572,6 +679,7 @@ onUnmounted(() => {
 /* 协议选项 */
 .form-options {
   margin-bottom: 30px;
+  animation: fadeInUp 0.5s ease-out 0.4s both;
 }
 
 .agree-terms {
@@ -582,6 +690,7 @@ onUnmounted(() => {
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.4;
+  flex-wrap: wrap;
 }
 
 .agree-terms input[type="checkbox"] {
@@ -590,17 +699,20 @@ onUnmounted(() => {
   margin-top: 2px;
   accent-color: var(--primary-color);
   cursor: pointer;
+  transition: var(--transition);
 }
 
 .agreement-link {
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: var(--transition);
+  font-weight: 500;
 }
 
 .agreement-link:hover {
   color: var(--primary-dark);
   text-decoration: underline;
+  text-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
 }
 
 /* 注册按钮 */
@@ -608,19 +720,22 @@ onUnmounted(() => {
   width: 100%;
   height: 50px;
   background: var(--primary-color);
-  color: var(--text-primary);
+  color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   position: relative;
   overflow: hidden;
+  animation: fadeInUp 0.5s ease-out 0.5s both;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .register-btn::before {
@@ -641,7 +756,8 @@ onUnmounted(() => {
 .register-btn:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: var(--glow);
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  letter-spacing: 1px;
 }
 
 .register-btn:active {
@@ -652,10 +768,12 @@ onUnmounted(() => {
   background: var(--border-color);
   cursor: not-allowed;
   transform: none;
+  letter-spacing: 0.5px;
 }
 
 .register-loading {
   animation: spin 1s linear infinite;
+  font-size: 18px;
 }
 
 @keyframes spin {
@@ -667,6 +785,7 @@ onUnmounted(() => {
 .login-option {
   text-align: center;
   margin-top: 20px;
+  animation: fadeInUp 0.5s ease-out 0.6s both;
 }
 
 .login-option span {
@@ -678,14 +797,19 @@ onUnmounted(() => {
   color: var(--primary-color);
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   margin-left: 4px;
-  transition: color 0.3s ease;
+  transition: var(--transition);
+  position: relative;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .login-link:hover {
   color: var(--primary-dark);
-  text-decoration: underline;
+  text-decoration: none;
+  background-color: rgba(52, 152, 219, 0.1);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
 }
 
 /* 分隔线 */
@@ -693,6 +817,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   margin: 30px 0;
+  animation: fadeInUp 0.5s ease-out 0.7s both;
 }
 
 .divider::before,
@@ -707,6 +832,7 @@ onUnmounted(() => {
   padding: 0 20px;
   color: var(--text-secondary);
   font-size: 14px;
+  font-weight: 500;
 }
 
 /* 其他注册方式 */
@@ -714,6 +840,7 @@ onUnmounted(() => {
   display: flex;
   gap: 12px;
   margin-bottom: 30px;
+  animation: fadeInUp 0.5s ease-out 0.8s both;
 }
 
 .social-btn {
@@ -725,21 +852,70 @@ onUnmounted(() => {
   gap: 8px;
   background: var(--bg-lighter);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-primary);
   text-decoration: none;
   font-size: 14px;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: var(--transition);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.social-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: left 0.5s ease;
+  z-index: -1;
 }
 
 .social-btn:hover {
-  background: var(--border-color);
+  background: white;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--primary-color);
+}
+
+.social-btn:hover::before {
+  left: 100%;
 }
 
 .social-icon {
   font-size: 18px;
+}
+
+/* 动画定义 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    transform: scale(1.03);
+  }
+  100% {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+  }
 }
 
 /* 电脑端适配和响应式设计 */
@@ -747,11 +923,16 @@ onUnmounted(() => {
   .register-wrapper {
     width: 1000px;
     height: 600px;
+    transition: var(--transition);
   }
   
   .brand-side,
   .register-form-container {
     padding: 40px;
+  }
+  
+  .brand-logo h1 {
+    font-size: 32px;
   }
 }
 
@@ -760,11 +941,13 @@ onUnmounted(() => {
     width: 90%;
     height: auto;
     flex-direction: column;
+    transition: var(--transition);
   }
   
   .brand-side {
     text-align: center;
     padding: 40px 20px;
+    background: linear-gradient(180deg, #1e293b 0%, var(--primary-color) 100%);
   }
   
   .brand-logo {
@@ -782,6 +965,13 @@ onUnmounted(() => {
     flex-direction: column;
     flex: 1;
     min-width: 100px;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .feature-icon {
+    width: 45px;
+    height: 45px;
   }
 }
 
@@ -790,12 +980,17 @@ onUnmounted(() => {
     padding: 20px;
   }
   
+  .register-wrapper {
+    border-radius: 12px;
+  }
+  
   .register-form-container {
     padding: 30px 20px;
   }
   
   .other-register {
     flex-direction: column;
+    gap: 10px;
   }
   
   .input-group {
@@ -809,20 +1004,39 @@ onUnmounted(() => {
   
   .code-input {
     margin-bottom: 12px;
+    border-right: 2px solid var(--border-color);
   }
   
   .verification-btn {
     border-radius: 8px;
+    margin-top: 12px;
   }
   
   .form-header h2 {
-    font-size: 24px;
+    font-size: 26px;
+  }
+  
+  .form-header h2::after {
+    width: 40px;
+  }
+  
+  .register-btn {
+    letter-spacing: 0.3px;
+  }
+  
+  .agree-terms {
+    font-size: 13px;
   }
 }
 
 @media (max-width: 480px) {
+  .register-container {
+    padding: 10px;
+  }
+  
   .register-wrapper {
     border-radius: 12px;
+    width: 95%;
   }
   
   .form-input,
@@ -834,7 +1048,36 @@ onUnmounted(() => {
   }
   
   .brand-logo h1 {
-    font-size: 24px;
+    font-size: 26px;
+  }
+  
+  .brand-slogan p {
+    font-size: 18px;
+  }
+  
+  .camera-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 36px;
+  }
+  
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .feature-item span {
+    font-size: 14px;
+  }
+  
+  .divider span {
+    padding: 0 15px;
+    font-size: 12px;
+  }
+  
+  .login-option span,
+  .login-link {
+    font-size: 13px;
   }
 }
 </style>

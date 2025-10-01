@@ -92,20 +92,20 @@
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --secondary-color: #673ab7;
-  --accent-color: #ff5722;
-  --dark-bg: #121212;
-  --card-bg: #1e1e1e;
-  --border-color: #333;
+  --primary-color: #165DFF;
+  --primary-hover: #0E42D2;
+  --secondary-color: #36CFFB;
+  --accent-color: #FFB627;
+  --dark-bg: #0A0A0A;
+  --card-bg: #1A1A1A;
+  --border-color: #2D2D2D;
   --text-color: #ffffff;
   --text-secondary: #b0b0b0;
   --text-light: #757575;
-  --success-color: #4caf50;
-  --warning-color: #ff9800;
-  --error-color: #f44336;
-  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
+  --success-color: #00B42A;
+  --warning-color: #FF7D00;
+  --error-color: #F53F3F;
+  --shadow: 0 4px 15px rgba(22, 93, 255, 0.1);
 }
 
 .user-center {
@@ -137,7 +137,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(0, 188, 212, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 93, 255, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -154,7 +154,7 @@
   overflow: hidden;
   background-color: var(--card-bg);
   border: 3px solid var(--primary-color);
-  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 20px rgba(22, 93, 255, 0.3);
   position: relative;
 }
 
@@ -167,7 +167,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 188, 212, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 93, 255, 0.2) 0%, transparent 70%);
   animation: pulse 3s infinite;
 }
 
@@ -198,7 +198,7 @@
   font-weight: 600;
   color: var(--text-color);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+  text-shadow: 0 0 10px rgba(22, 93, 255, 0.2);
 }
 
 .level-badge {
@@ -210,7 +210,7 @@
   font-size: 14px;
   margin-bottom: 8px;
   font-weight: 500;
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 10px rgba(22, 93, 255, 0.3);
 }
 
 .level-progress {
@@ -347,7 +347,7 @@
 
 .benefit-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 188, 212, 0.15);
+  box-shadow: 0 5px 15px rgba(22, 93, 255, 0.15);
   border-color: var(--primary-color);
 }
 

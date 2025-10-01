@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>简单星空背景测试</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: #333;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-top: 100px;
+      color: #2A5C8C;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>星空背景测试 - 最简单版本</h1>
+    <p style="text-align: center;">如果星空背景正常工作，你应该能看到背景中有星星</p>
+  </div>
+  
+  <script>
+    // 最简单的星空背景实现
+    function createSimpleStarBackground() {
+      // 创建星空背景容器
+      const starBg = document.createElement('div');
+      starBg.style.position = 'fixed';
+      starBg.style.top = '0';
+      starBg.style.left = '0';
+      starBg.style.width = '100%';
+      starBg.style.height = '100%';
+      starBg.style.pointerEvents = 'none';
+      starBg.style.zIndex = '-2';
+      starBg.style.backgroundColor = 'rgba(42, 92, 140, 0.05)';
+      
+      // 创建星空覆盖层
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = 'rgba(240, 242, 245, 0.4)';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.zIndex = '-1';
+      
+      // 添加到body
+      document.body.appendChild(starBg);
+      document.body.appendChild(overlay);
+      
+      // 创建SVG元素
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', window.innerWidth);
+      svg.setAttribute('height', window.innerHeight);
+      
+      // 生成100个随机星点
+      for (let i = 0; i < 100; i++) {
+        const cx = Math.random() * window.innerWidth;
+        const cy = Math.random() * window.innerHeight;
+        const r = Math.random() > 0.7 ? 2 : 1; // 30%是大星点，70%是小星点
+        const fill = r === 2 ? '#D4AF37' : '#FFFFFF'; // 大星点浅金，小星点纯白
+        const opacity = 0.3 + Math.random() * 0.7;
+        
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        star.setAttribute('cx', cx);
+        star.setAttribute('cy', cy);
+        star.setAttribute('r', r);
+        star.setAttribute('fill', fill);
+        star.setAttribute('opacity', opacity);
+        
+        svg.appendChild(star);
+      }
+      
+      starBg.appendChild(svg);
+      
+      console.log('简单星空背景已创建');
+    }
+    
+    // 页面加载完成后创建星空背景
+    window.addEventListener('load', createSimpleStarBackground);
+  </script>
+</body>
+</html>

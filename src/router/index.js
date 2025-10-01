@@ -5,6 +5,7 @@ import GrowthBenefitsView from '../views/GrowthBenefitsView.vue'
 import UserHomeView from '../views/UserHomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
+import DiscoverView from '../views/DiscoverView.vue'
 
 // 模拟登录状态存储
 const isLoggedIn = () => {
@@ -47,6 +48,31 @@ const router = createRouter({
       path: '/learn',
       name: 'learn',
       component: () => import('../views/LearnView.vue'),
+    },
+    {
+      path: '/discover',
+      name: 'discover',
+      component: DiscoverView,
+    },
+    {
+      path: '/community',
+      name: 'community',
+      component: () => import('../views/CommunityView.vue'),
+    },
+    {
+      path: '/tutorials',
+      name: 'tutorials',
+      component: () => import('../views/TutorialsView.vue'),
+    },
+    {
+      path: '/equipment',
+      name: 'equipment',
+      component: () => import('../views/EquipmentView.vue'),
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: () => import('../views/UploadView.vue'),
     },
     {
       path: '/login',

@@ -100,28 +100,26 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
+// 后续可以添加交互逻辑
 </script>
 
 <style scoped>
 :root {
-  --primary-color: #3a7bd5;
-  --primary-hover: #2968c8;
-  --secondary-color: #4facfe;
-  --accent-color: #f093fb;
-  --dark-bg: #f8f9fa;
-  --card-bg: #ffffff;
-  --border-color: #e9ecef;
-  --text-color: #212529;
-  --text-secondary: #6c757d;
-  --text-light: #adb5bd;
-  --success-color: #28a745;
-  --warning-color: #ffc107;
-  --error-color: #dc3545;
-  --shadow: 0 4px 15px rgba(58, 123, 213, 0.1);
-  --glow: 0 0 10px rgba(58, 123, 213, 0.3);
+  --primary-color: #165DFF;
+  --primary-hover: #0E42D2;
+  --secondary-color: #36CFFB;
+  --accent-color: #FFB627;
+  --dark-bg: #0A0A0A;
+  --card-bg: #1A1A1A;
+  --border-color: #2D2D2D;
+  --text-color: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-light: #757575;
+  --success-color: #00B42A;
+  --warning-color: #FF7D00;
+  --error-color: #F53F3F;
+  --shadow: 0 4px 15px rgba(22, 93, 255, 0.1);
+  --glow: 0 0 10px rgba(22, 93, 255, 0.3);
 }
 
 .user-home {
@@ -143,9 +141,9 @@ const router = useRouter()
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(103, 58, 183, 0.05) 0%, transparent 25%),
-    radial-gradient(circle at 40% 70%, rgba(255, 87, 34, 0.05) 0%, transparent 15%);
+    radial-gradient(circle at 10% 20%, rgba(22, 93, 255, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(54, 207, 251, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 40% 70%, rgba(255, 182, 39, 0.05) 0%, transparent 15%);
   background-size: 100% 100%;
   z-index: 0;
   pointer-events: none;
@@ -174,7 +172,7 @@ const router = useRouter()
   margin-right: 20px;
   background-color: var(--card-bg);
   border: 3px solid var(--primary-color);
-  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 20px rgba(22, 93, 255, 0.3);
   position: relative;
 }
 
@@ -193,7 +191,7 @@ const router = useRouter()
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 188, 212, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22, 93, 255, 0.2) 0%, transparent 70%);
   animation: pulse 3s infinite;
 }
 
@@ -229,7 +227,7 @@ const router = useRouter()
   font-weight: 600;
   color: var(--text-color);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+  text-shadow: 0 0 10px rgba(22, 93, 255, 0.2);
 }
 
 .action-buttons {
@@ -344,7 +342,7 @@ const router = useRouter()
   font-weight: 600;
   color: var(--primary-color);
   margin-bottom: 4px;
-  text-shadow: 0 0 5px rgba(58, 123, 213, 0.3);
+  text-shadow: 0 0 5px rgba(22, 93, 255, 0.3);
 }
 
 .stat-label {
@@ -469,7 +467,7 @@ const router = useRouter()
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 188, 212, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(22, 93, 255, 0.1), transparent);
   transition: left 0.5s ease;
   z-index: -1;
 }
@@ -500,7 +498,7 @@ const router = useRouter()
   font-size: 24px;
   color: var(--text-color);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+  text-shadow: 0 0 10px rgba(22, 93, 255, 0.2);
 }
 
 .welcome-message p {

@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
@@ -7,36 +7,18 @@ const showUserMenu = ref(false)
 const isLoggedIn = ref(false)
 const currentUser = ref({
   username: 'admin',
-  level: 'IV.1',
-  exp: 75,
-  totalExp: 150,
-  following: 1,
-  followers: 0,
-  likes: 1,
-  articles: 2,
-  joinDate: '2024-11-21'
+  avatar: 'https://picsum.photos/id/64/40/40',
+  following: 128,
+  followers: 86,
+  likes: 356,
+  photos: 23,
+  joinDate: '2024'
 })
 
 // 初始化时检查登录状态
 const checkLoginStatus = () => {
   const loggedIn = localStorage.getItem('isLoggedIn') === 'true'
-  const expiryDateStr = localStorage.getItem('loginExpiry')
-  
-  if (loggedIn && expiryDateStr) {
-    // 检查是否过期
-    const expiryDate = new Date(expiryDateStr)
-    const now = new Date()
-    if (now > expiryDate) {
-      // 已过期，清除登录状态
-      localStorage.removeItem('isLoggedIn')
-      localStorage.removeItem('loginExpiry')
-      isLoggedIn.value = false
-    } else {
-      isLoggedIn.value = true
-    }
-  } else if (loggedIn) {
-    isLoggedIn.value = true
-  }
+  isLoggedIn.value = loggedIn
 }
 
 // 组件初始化时检查登录状态
@@ -88,46 +70,53 @@ const handleLogin = () => {
 
 <template>
   <div class="app-container">
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航栏 - 经典器材蓝灰调 -->
     <header class="main-header" :class="{ 'scrolled': headerScrolled }">
       <div class="header-content">
+        <!-- 品牌区域 -->
         <div class="logo-section">
           <a href="#" class="logo" @click="navigateTo('/')">
-            <span class="logo-text">摄影视界</span>
+            <div class="logo-icon">📷</div>
+            <div class="brand-text">
+              <span class="brand-name">LENSFLOW</span>
+              <span class="brand-tag">高级摄影社区</span>
+            </div>
           </a>
           
+          <!-- 导航菜单 -->
           <nav class="main-nav">
-            <a href="#" class="nav-item" @click="navigateTo('/')">首页</a>
-            <a href="#" class="nav-item" @click="navigateTo('/discover')">发现</a>
-            <a href="#" class="nav-item" @click="navigateTo('/community')">社区</a>
+            <a href="#" class="nav-item active" @click="navigateTo('/')">首页</a>
+            <a href="#" class="nav-item" @click="navigateTo('/discover')">发现作品</a>
+            <a href="#" class="nav-item" @click="navigateTo('/community')">社区动态</a>
+            <a href="#" class="nav-item" @click="navigateTo('/learn')">学习</a>
             <a href="#" class="nav-item" @click="navigateTo('/equipment')">器材</a>
-            <a href="#" class="nav-item" @click="navigateTo('/academy')">学院</a>
-            <a href="#" class="nav-item" @click="navigateTo('/about')">关于我们</a>
           </nav>
         </div>
         
+        <!-- 搜索框 -->
         <div class="search-section">
-          <input type="text" placeholder="搜索作品/摄影师/话题..." class="search-input" />
+          <input type="text" placeholder="搜索作品、用户、话题..." class="search-input" />
+          <i class="search-icon">🔍</i>
         </div>
         
+        <!-- 用户区域 -->
         <div class="user-section">
-          <a href="#" class="create-btn">上传作品</a>
-          <a href="#" class="message-btn">消息</a>
+          <button v-if="isLoggedIn" class="create-btn" @click="navigateTo('/upload')">上传作品</button>
           
           <div v-if="isLoggedIn" class="user-profile" @click="toggleUserMenu">
             <div class="avatar">
-              <img src="https://picsum.photos/id/1005/200" alt="用户头像" />
+              <img :src="currentUser.avatar" alt="用户头像" />
             </div>
             
             <div v-show="showUserMenu" class="user-dropdown">
               <div class="user-info-card">
                 <div class="user-info-header">
                   <div class="user-avatar">
-                    <img src="https://picsum.photos/id/1005/200" alt="用户头像" />
+                    <img :src="currentUser.avatar" alt="用户头像" />
                   </div>
                   <div class="user-details">
                     <div class="username">{{ currentUser.username }}</div>
-                    <div class="user-level">摄影师</div>
+                    <div class="user-level">专业摄影师</div>
                   </div>
                 </div>
                 
@@ -144,30 +133,28 @@ const handleLogin = () => {
                     <span class="stat-value">{{ currentUser.photos }}</span>
                     <span class="stat-label">作品</span>
                   </div>
-                  <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.joinDate }}</span>
-                    <span class="stat-label">加入</span>
-                  </div>
                 </div>
               </div>
               
               <div class="menu-divider"></div>
               
               <div class="menu-items">
-                <a href="#" class="menu-item" @click="navigateTo('/user')">我的主页</a>
-                <a href="#" class="menu-item" @click="navigateTo('/gallery')">我的作品集</a>
+                <a href="#" class="menu-item" @click="navigateTo('/user-center')">个人中心</a>
+                <a href="#" class="menu-item" @click="navigateTo('/upload')">上传作品</a>
                 <a href="#" class="menu-item" @click="navigateTo('/collections')">我的收藏</a>
-                <a href="#" class="menu-item" @click="navigateTo('/favorites')">我的喜欢</a>
                 <a href="#" class="menu-item" @click="navigateTo('/settings')">个人设置</a>
                 
                 <div class="menu-divider"></div>
                 
-                <a href="#" class="menu-item" @click="handleLogout">退出登录</a>
+                <a href="#" class="menu-item logout" @click="handleLogout">退出登录</a>
               </div>
             </div>
           </div>
           
-          <button v-else class="login-btn" @click="handleLogin">登录</button>
+          <div v-else class="auth-buttons">
+            <button class="login-btn" @click="navigateTo('/login')">登录</button>
+            <button class="register-btn" @click="navigateTo('/register')">注册</button>
+          </div>
         </div>
       </div>
     </header>
@@ -177,147 +164,157 @@ const handleLogin = () => {
       <RouterView />
     </main>
     
-    <!-- 页脚 -->
+    <!-- 页脚 - 经典器材蓝灰调 -->
     <footer class="main-footer">
       <div class="footer-content">
-        <div class="footer-links">
-          <a href="#">关于我们</a>
-          <a href="#">联系方式</a>
-          <a href="#">使用条款</a>
-          <a href="#">隐私政策</a>
-          <a href="#">帮助中心</a>
+        <!-- 品牌标志 -->
+        <div class="footer-brand">
+          <div class="logo-icon">📷</div>
+          <div class="brand-text">
+            <span class="brand-name">LENSFLOW</span>
+            <span class="brand-tag">高级摄影社区</span>
+          </div>
         </div>
-        <div class="copyright">© 2024 摄影视界 PhotoVision All Rights Reserved.</div>
+        
+        <!-- 导航链接 -->
+        <div class="footer-links">
+          <a href="#" @click="navigateTo('/')">首页</a>
+          <a href="#" @click="navigateTo('/discover')">发现作品</a>
+          <a href="#" @click="navigateTo('/community')">社区动态</a>
+          <a href="#" @click="navigateTo('/learn')">学习</a>
+          <a href="#" @click="navigateTo('/equipment')">器材</a>
+          <a href="#" @click="navigateTo('/about')">关于我们</a>
+        </div>
+        
+        <!-- 社交媒体链接 -->
+        <div class="social-links">
+          <a href="#" class="social-icon" title="Instagram">📸</a>
+          <a href="#" class="social-icon" title="Facebook">📱</a>
+          <a href="#" class="social-icon" title="Twitter">🐦</a>
+          <a href="#" class="social-icon" title="WeChat">💬</a>
+        </div>
+        
+        <!-- 版权信息 -->
+        <div class="copyright">© 2024 LENSFLOW 高级摄影交流社区 All Rights Reserved.</div>
       </div>
     </footer>
   </div>
 </template>
 
 <style scoped>
-:root {
-  --primary-color: #1a73e8;
-  --primary-hover: #1557b0;
-  --secondary-color: #4285f4;
-  --accent-color: #ea4335;
-  --dark-bg: #f8f9fa;
-  --card-bg: #ffffff;
-  --border-color: #e0e0e0;
-  --text-color: #333333;
-  --text-secondary: #666666;
-  --text-light: #999999;
-  --success-color: #34a853;
-  --warning-color: #fbbc05;
-  --error-color: #ea4335;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* 确保根元素背景透明，不遮挡星空背景 */
+#app {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
 }
-/* 电脑端特定样式优化 */
-  @media (min-width: 1200px) {
-    .app-container {
-      background-size: 90% 90%;
-      background-position: center;
-    }
-  }
-  
-  @media (min-width: 1400px) {
-    .app-container {
-      background-size: 80% 80%;
-    }
-  }
+
+/* 应用容器 */
 .app-container {
   min-height: 100vh;
+  background: transparent !important;
   display: flex;
   flex-direction: column;
-  background-color: var(--dark-bg);
-  background-image: 
-    radial-gradient(circle at 20% 20%, rgba(26, 115, 232, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 80%, rgba(66, 133, 244, 0.05) 0%, transparent 20%);
-  background-size: 100% 100%;
 }
 
-/* 顶部导航栏样式 */
+/* 导航栏样式 - 经典器材蓝灰调 */
 .main-header {
-  background-color: rgba(18, 18, 18, 0.95);
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow);
-  position: sticky;
+  background: var(--background-color);
+  border-bottom: 1px solid var(--primary-dark);
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
-  border-bottom: 1px solid var(--border-color);
-   transition: all 0.3s ease; /* 添加过渡效果 */
-}
-/* 导航栏滚动效果 */
-.main-header.scrolled {
-  padding: 0;
-  background-color: rgba(18, 18, 18, 0.98);
-  box-shadow: 0 4px 20px rgba(0, 188, 212, 0.15);
+  height: 72px;
+  transition: all 0.3s ease;
 }
 
+.main-header.scrolled {
+  height: 64px;
+  box-shadow: var(--shadow-medium);
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(var(--glass-blur));
+}
 
 .header-content {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 70px;
-  }
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+}
 
+/* 品牌区域样式 */
 .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-  }
-  
-  /* 大屏幕导航优化 */
-  @media (min-width: 1400px) {
-    .logo-section {
-      gap: 60px;
-    }
-    
-    .main-nav {
-      gap: 25px;
-    }
-    
-    .nav-item {
-      font-size: 15px;
-    }
-  }
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   text-decoration: none;
 }
 
-.logo-text {
-  color: var(--primary-color);
-  font-size: 24px;
-  font-weight: 700;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-transform: uppercase;
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  box-shadow: var(--shadow-light);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   letter-spacing: 1px;
 }
 
+.brand-tag {
+  font-size: 12px;
+  color: var(--accent-color);
+  font-weight: 400;
+}
+
+/* 导航菜单样式 */
 .main-nav {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: var(--spacing-lg);
 }
 
 .nav-item {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 0;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  padding: var(--spacing-xs) 0;
   position: relative;
   transition: all 0.3s ease;
 }
 
 .nav-item:hover {
   color: var(--primary-color);
-  text-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
 }
 
-/* 添加导航项下划线效果 */
 .nav-item::after {
   content: '';
   position: absolute;
@@ -325,7 +322,7 @@ const handleLogin = () => {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--primary-color);
+  background: var(--primary-color);
   transition: width 0.3s ease;
 }
 
@@ -333,140 +330,152 @@ const handleLogin = () => {
   width: 100%;
 }
 
-/* 搜索框样式 */
+.nav-item.active {
+  color: var(--primary-color);
+}
+
+.nav-item.active::after {
+  width: 100%;
+}
+
+/* 搜索框样式 - 器材风格 */
 .search-section {
-    flex: 1;
-    max-width: 500px;
-    margin: 0 60px;
-  }
-  
-  /* 大屏幕搜索框优化 */
-  @media (min-width: 1400px) {
-    .search-section {
-      max-width: 600px;
-      margin: 0 80px;
-    }
-    
-    .search-input {
-      height: 40px;
-      font-size: 15px;
-    }
-  }
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+}
 
 .search-input {
   width: 100%;
   height: 36px;
-  padding: 0 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
-  font-size: 14px;
-  outline: none;
+  padding: 0 var(--spacing-xl) 0 var(--spacing-md);
+  background: var(--surface-color);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
   transition: all 0.3s ease;
-  background-color: var(--card-bg);
-  color: var(--text-color);
 }
 
 .search-input:focus {
+  outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 15px rgba(0, 188, 212, 0.3);
-   transform: translateY(-1px);
+  box-shadow: 0 0 0 2px rgba(42, 92, 140, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.search-icon {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
 
 /* 用户区域样式 */
 .user-section {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: var(--spacing-md);
 }
-
-/* 用户头像和下拉菜单样式优化 */
-.user-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
-  min-width: 280px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.2); /* 增强阴影效果 */
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  animation: dropdownSlideIn 0.3s ease-out;
-  backdrop-filter: blur(10px);
-}
-
-/* 主内容区域样式优化 */
-  .main-content {
-    flex: 1;
-    background-color: var(--dark-bg);
-    padding: 30px 0;
-    position: relative;
-    max-width: 1600px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
 
 .create-btn {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-size: 14px;
-  padding: 8px 0;
-  transition: all 0.3s ease;
-}
-
-.message-btn {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  padding: 8px 0;
-  transition: all 0.3s ease;
-}
-
-.login-btn {
-  background-color: var(--primary-color);
-  color: var(--text-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
   border: none;
-  padding: 8px 20px;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.login-btn::before {
+.create-btn:hover {
+  box-shadow: 0 0 15px rgba(42, 92, 140, 0.3);
+  transform: translateY(-1px);
+}
+
+.create-btn::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transition: all 0.6s ease;
 }
 
-.login-btn:hover::before {
+.create-btn:hover::before {
   left: 100%;
 }
 
-.login-btn:hover {
-  background-color: var(--primary-hover);
-  box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+/* 登录/注册按钮 */
+.auth-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
 }
 
-/* 用户头像和下拉菜单样式 */
+.login-btn,
+.register-btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-light);
+}
+
+.login-btn {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.login-btn:hover {
+  background: var(--surface-color);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.register-btn {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.register-btn:hover {
+  background: var(--primary-light);
+  box-shadow: var(--shadow-medium);
+}
+
+/* 用户头像和下拉菜单 - 器材风格 */
 .user-profile {
   position: relative;
   cursor: pointer;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   overflow: hidden;
+  border: 2px solid var(--border-light);
+  transition: all 0.3s ease;
+  background: var(--surface-color);
+}
+
+.user-profile:hover .avatar {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(42, 92, 140, 0.3);
 }
 
 .avatar img {
@@ -479,14 +488,15 @@ const handleLogin = () => {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
-  min-width: 280px;
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
+  margin-top: var(--spacing-sm);
+  min-width: 240px;
+  background: var(--surface-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-medium);
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-light);
   animation: dropdownSlideIn 0.3s ease-out;
+  z-index: 1000;
 }
 
 @keyframes dropdownSlideIn {
@@ -501,15 +511,16 @@ const handleLogin = () => {
 }
 
 .user-info-card {
-  padding: 16px;
-  background: linear-gradient(135deg, var(--card-bg) 0%, #252525 100%);
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  background: linear-gradient(145deg, var(--surface-color), #2a2a2d);
 }
 
 .user-info-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .user-avatar {
@@ -517,6 +528,7 @@ const handleLogin = () => {
   height: 48px;
   border-radius: 50%;
   overflow: hidden;
+  border: 2px solid var(--primary-color);
 }
 
 .user-avatar img {
@@ -525,173 +537,182 @@ const handleLogin = () => {
   object-fit: cover;
 }
 
-.username {
-  font-size: 16px;
+.user-details .username {
   font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 4px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: var(--text-base);
+  color: var(--text-primary);
 }
 
-.user-level {
-  font-size: 12px;
-  color: var(--primary-color);
-  font-weight: 500;
+.user-details .user-level {
+  font-size: var(--text-xs);
+  color: var(--accent-color);
 }
 
 .user-stats {
   display: flex;
   justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-color);
 }
 
 .stat-item {
   text-align: center;
-  position: relative;
-  overflow: hidden;
 }
 
 .stat-value {
   display: block;
-  font-size: 16px;
   font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 2px;
-  transition: all 0.3s ease;
-}
-
-.stat-item:hover .stat-value {
-  color: var(--primary-color);
-  transform: scale(1.1);
+  color: var(--text-primary);
 }
 
 .stat-label {
-  font-size: 12px;
+  display: block;
+  font-size: var(--text-xs);
   color: var(--text-secondary);
 }
 
 .menu-divider {
   height: 1px;
-  background-color: var(--border-color);
+  background-color: var(--border-light);
 }
 
 .menu-items {
-  padding: 8px 0;
+  padding: var(--spacing-sm) 0;
 }
 
 .menu-item {
   display: block;
-  padding: 10px 20px;
-  color: var(--text-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  color: var(--darker-gray);
   text-decoration: none;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  font-size: var(--text-sm);
+  transition: all 0.3s ease;
 }
 
 .menu-item:hover {
-  background-color: rgba(0, 188, 212, 0.1);
+  background-color: var(--background-color);
   color: var(--primary-color);
 }
 
-.menu-item:hover::before {
-  transform: scaleY(1);
+.menu-item.logout {
+  color: #ff4d4f;
+}
+
+.menu-item.logout:hover {
+  background-color: rgba(255, 77, 79, 0.1);
 }
 
 /* 主内容区域样式 */
 .main-content {
   flex: 1;
-  background-color: var(--dark-bg);
-  padding: 20px 0;
+  padding-top: 72px;
+  padding-bottom: var(--spacing-xxl);
+  background: rgba(240, 242, 245, 0.3);
   position: relative;
+  backdrop-filter: blur(5px);
+  z-index: 1;
 }
 
-/* 页脚样式 */
+/* 页脚样式 - 经典器材蓝灰调 */
 .main-footer {
-  background-color: var(--card-bg);
-  padding: 20px 0;
-  border-top: 1px solid var(--border-color);
+  background: var(--surface-color);
+  border-top: 1px solid var(--primary-dark);
+  padding: var(--spacing-xl) 0;
 }
 
 .footer-content {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 30px;
-    text-align: center;
-  }
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
 
 .footer-links {
   display: flex;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 12px;
 }
 
 .footer-links a {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 14px;
-  transition: all 0.3s ease;
+  font-size: var(--text-sm);
+  transition: color 0.3s ease;
 }
 
 .footer-links a:hover {
   color: var(--primary-color);
-  text-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
+}
+
+.social-links {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.social-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-color);
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  border-color: var(--primary-color);
 }
 
 .copyright {
   color: var(--text-secondary);
-  font-size: 12px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: var(--text-xs);
+  text-align: center;
+  opacity: 0.6;
 }
 
 /* 响应式设计 */
-  @media (max-width: 1400px) {
-    .header-content {
-      padding: 0 20px;
-    }
-    
-    .logo-section {
-      gap: 40px;
-    }
-    
-    .main-nav {
-      gap: 20px;
-    }
-    
-    .search-section {
-      max-width: 500px;
-      margin: 0 60px;
-    }
+@media (max-width: 1200px) {
+  .header-content {
+    padding: 0 var(--spacing-lg);
   }
   
-  @media (max-width: 1200px) {
-    .header-content {
-      padding: 0 16px;
-      height: 65px;
-    }
-    
-    .logo-section {
-      gap: 30px;
-    }
-    
-    .main-nav {
-      gap: 16px;
-    }
-    
-    .search-section {
-      max-width: 400px;
-      margin: 0 40px;
-    }
+  .logo-section {
+    gap: var(--spacing-lg);
   }
+  
+  .main-nav {
+    gap: var(--spacing-md);
+  }
+  
+  .search-section {
+    max-width: 300px;
+  }
+}
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .main-nav {
     display: none;
   }
   
   .search-section {
-    max-width: none;
+    max-width: 250px;
   }
 }
 
@@ -700,8 +721,14 @@ const handleLogin = () => {
     display: none;
   }
   
-  .user-section {
-    gap: 12px;
+  .header-content {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
   }
 }
 </style>

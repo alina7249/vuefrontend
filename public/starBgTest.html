@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星空背景测试</title>
+  <script type="module">
+    // 直接导入并使用星空背景函数进行测试
+    import { initStarBackground, generateStarBackground } from '../src/assets/starBackground.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('测试页面加载完成，准备初始化星空背景...');
+      
+      // 测试generateStarBackground函数
+      try {
+        const testSvg = generateStarBackground(300, 300, 100);
+        console.log('SVG生成成功:', testSvg.substring(0, 100) + '...');
+      } catch (error) {
+        console.error('SVG生成失败:', error);
+      }
+      
+      // 初始化星空背景
+      try {
+        initStarBackground();
+        console.log('星空背景初始化成功');
+      } catch (error) {
+        console.error('星空背景初始化失败:', error);
+      }
+      
+      // 显示测试文本
+      const testDiv = document.createElement('div');
+      testDiv.style.position = 'relative';
+      testDiv.style.zIndex = '1';
+      testDiv.style.textAlign = 'center';
+      testDiv.style.marginTop = '20%';
+      testDiv.style.fontSize = '24px';
+      testDiv.style.color = '#333';
+      testDiv.textContent = '如果星空背景正常，应该能看到星星图案';
+      document.body.appendChild(testDiv);
+    });
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: transparent;
+    }
+    
+    /* 确保星空背景容器样式正确 */
+    .star-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 1;
+    }
+    
+    .star-bg svg {
+      width: 100%;
+      height: 100%;
+      background-color: rgba(42, 92, 140, 0.05);
+    }
+    
+    .star-big {
+      fill: #D4AF37;
+      opacity: 0.7;
+    }
+    
+    .star-small {
+      fill: #FFFFFF;
+      opacity: 0.5;
+    }
+    
+    .star-bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(240, 242, 245, 0.1);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- 星空背景将通过JavaScript动态创建 -->
+</body>
+</html>

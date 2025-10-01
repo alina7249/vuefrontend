@@ -1,7 +1,7 @@
 <template>
   <div class="growth-benefits">
-    <h1 class="page-title">成长福利</h1>
-    <p class="page-subtitle">每日签到，积累经验，解锁更多福利</p>
+    <h1 class="page-title">摄影成长之旅</h1>
+    <p class="page-subtitle">每日签到，积累摄影经验，解锁专业工具与社区特权</p>
     
     <!-- 每日签到部分 -->
     <div class="check-in-section">
@@ -68,8 +68,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
 // 模拟已签到的日期
 const checkedInDays = [1, 2, 3, 4, 5, 6, 7];
 
@@ -86,18 +84,18 @@ const isCheckedIn = (day) => {
 
 <style scoped>
 :root {
-  --primary-color: #00bcd4;
-  --primary-hover: #00acc1;
-  --secondary-color: #673ab7;
-  --accent-color: #ff5722;
+  --primary-color: #4CAF50;
+  --primary-hover: #45a049;
+  --secondary-color: #2196F3;
+  --accent-color: #FF9800;
   --dark-bg: #121212;
   --card-bg: #1e1e1e;
   --border-color: #333;
   --text-color: #ffffff;
   --text-secondary: #b0b0b0;
   --text-light: #757575;
-  --shadow: 0 4px 15px rgba(0, 188, 212, 0.1);
-  --glow: 0 0 10px rgba(0, 188, 212, 0.5);
+  --shadow: 0 4px 15px rgba(76, 175, 80, 0.1);
+  --glow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
 .growth-benefits {
@@ -119,9 +117,9 @@ const isCheckedIn = (day) => {
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 80% 30%, rgba(103, 58, 183, 0.05) 0%, transparent 25%),
-    radial-gradient(circle at 40% 70%, rgba(255, 87, 34, 0.05) 0%, transparent 15%);
+    radial-gradient(circle at 10% 20%, rgba(76, 175, 80, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(33, 150, 243, 0.05) 0%, transparent 25%),
+    radial-gradient(circle at 40% 70%, rgba(255, 152, 0, 0.05) 0%, transparent 15%);
   background-size: 100% 100%;
   z-index: 0;
   pointer-events: none;
@@ -204,17 +202,17 @@ const isCheckedIn = (day) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: rgba(0, 188, 212, 0.1);
+  background-color: rgba(76, 175, 80, 0.1);
   padding: 8px 16px;
   border-radius: 25px;
-  border: 1px solid rgba(0, 188, 212, 0.3);
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .days-number {
   font-size: 36px;
   font-weight: 700;
   color: var(--primary-color);
-  text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
 .days-text {
@@ -263,7 +261,7 @@ const isCheckedIn = (day) => {
   color: white;
   position: relative;
   border: none;
-  box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
 }
 
 .check-mark {
@@ -368,7 +366,7 @@ const isCheckedIn = (day) => {
   font-size: 24px;
   color: white;
   position: relative;
-  box-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
+  box-shadow: 0 0 20px rgba(255, 152, 0, 0.5);
 }
 
 .level-badge::before {
