@@ -1586,7 +1586,7 @@ export default {
   font-family: 'Roboto Mono', monospace;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .edit-container {
     flex-direction: column;
@@ -1598,46 +1598,6 @@ export default {
   
   .exif-inputs {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .upload-steps {
-    flex-wrap: wrap;
-  }
-  
-  .step-item {
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .step-connector {
-    display: none;
-  }
-  
-  .form-row {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 768px) {
-  .upload-container {
-    padding: var(--spacing-md);
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .filter-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .success-actions {
-    flex-direction: column;
   }
 }
 </style>

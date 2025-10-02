@@ -777,61 +777,10 @@ export default {
   cursor: not-allowed;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .community-content {
     grid-template-columns: 250px 1fr;
-  }
-}
-
-@media (max-width: 992px) {
-  .community-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar {
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  
-  .community-stats,
-  .trending-tags,
-  .upcoming-events {
-    flex: 1;
-    min-width: 200px;
-  }
-}
-
-@media (max-width: 768px) {
-  .community-container {
-    padding: var(--spacing-md);
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .sidebar {
-    flex-direction: column;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .topic-footer {
-    flex-direction: column;
-    gap: var(--spacing-md);
-    align-items: stretch;
-  }
-  
-  .topic-actions {
-    justify-content: center;
   }
 }
 </style>

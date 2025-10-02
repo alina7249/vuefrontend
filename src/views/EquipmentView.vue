@@ -951,66 +951,10 @@ export default {
   cursor: not-allowed;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .equipment-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .equipment-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-title {
-    font-size: 2rem;
-  }
-  
-  .filter-container {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .section-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-md);
-  }
-}
-
-@media (max-width: 768px) {
-  .equipment-container {
-    padding: var(--spacing-md);
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .search-container {
-    flex-direction: column;
-  }
-  
-  .search-input, .search-btn {
-    width: 100%;
-  }
-  
-  .featured-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .equipment-actions {
-    flex-direction: column;
-  }
-  
-  .compare-content {
-    flex-direction: column;
-    gap: var(--spacing-md);
   }
 }
 </style>

@@ -322,60 +322,6 @@
   font-size: 0.9rem;
 }
 
-/* 响应式设计 */
-@media (max-width: 1024px) {
-  .photo-title {
-    font-size: 2.5rem;
-  }
-  
-  .section-title {
-    font-size: 1.8rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .about {
-    padding: 30px 0;
-  }
-  
-  .photo-title {
-    font-size: 2rem;
-  }
-  
-  .section-title {
-    font-size: 1.6rem;
-  }
-  
-  .section-text {
-    font-size: 1rem;
-  }
-  
-  .features-grid,
-  .team-grid {
-    gap: 20px;
-  }
-  
-  .feature-item {
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 15px;
-  }
-  
-  .photo-title {
-    font-size: 1.8rem;
-  }
-  
-  .section-title {
-    font-size: 1.4rem;
-  }
-  
-  .member-avatar {
-    width: 100px;
-    height: 100px;
-  }
-}
+/* 响应式设计 - 仅保留PC端样式 */
+/* 已移除平板和移动端样式 */
 </style>

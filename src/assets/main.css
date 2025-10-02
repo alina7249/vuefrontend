@@ -284,47 +284,10 @@ button:hover::after, .tag:hover::after {
   z-index: -1;
 }
 
-/* 响应式适配 - PC端 */
+/* 响应式适配 - 仅保留PC端样式 */
 @media (min-width: 1200px) {
   .star-bg svg {
     /* 星点密度正常，动效完整 */
-  }
-}
-
-/* 响应式适配 - 平板端 */
-@media (max-width: 1199px) and (min-width: 768px) {
-  .star-bg svg {
-    transform: scale(0.8); /* 星点密度降低20% */
-  }
-  
-  /* 流动类动效禁用 */
-  .footer .star-big,
-  .footer .star-small {
-    animation: none;
-  }
-}
-
-/* 响应式适配 - 移动端 */
-@media (max-width: 767px) {
-  .star-bg svg {
-    transform: scale(0.6); /* 星点密度降低40% */
-  }
-  
-  /* 弱化动效强度 */
-  .star-big, .star-small {
-    animation-duration: 15s !important;
-    animation-play-state: running;
-  }
-  
-  /* 仅保留hover高亮基础动效 */
-  .hero-section .star-big,
-  .hero-section .star-small {
-    animation: none;
-  }
-  
-  .footer .star-big,
-  .footer .star-small {
-    animation: none;
   }
 }
 

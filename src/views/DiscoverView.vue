@@ -395,51 +395,10 @@ export default {
   cursor: not-allowed;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .photo-grid {
     grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .photo-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .page-title {
-    font-size: 2rem;
-  }
-  
-  .filter-section {
-    padding: var(--spacing-sm);
-  }
-}
-
-@media (max-width: 768px) {
-  .discover-container {
-    padding: var(--spacing-md);
-  }
-  
-  .photo-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-md);
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .search-container {
-    flex-direction: column;
-  }
-  
-  .search-input, .search-btn {
-    width: 100%;
   }
 }
 </style>

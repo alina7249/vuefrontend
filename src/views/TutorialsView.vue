@@ -733,48 +733,10 @@ export default {
   cursor: not-allowed;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .tutorials-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .tutorials-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .page-title {
-    font-size: 2rem;
-  }
-  
-  .section-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-md);
-  }
-}
-
-@media (max-width: 768px) {
-  .tutorials-container {
-    padding: var(--spacing-md);
-  }
-  
-  .page-title {
-    font-size: 1.8rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .featured-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .tutorial-actions {
-    flex-direction: column;
   }
 }
 </style>

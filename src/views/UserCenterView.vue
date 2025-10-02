@@ -456,52 +456,6 @@
   left: 100%;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .user-center {
-    padding: 15px;
-  }
-  
-  .user-header {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  
-  .user-info {
-    flex-direction: column;
-  }
-  
-  .upgrade-section {
-    text-align: center;
-  }
-  
-  .progress-bar {
-    width: 150px;
-  }
-  
-  .subscription-card {
-    flex-direction: column;
-    gap: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .username {
-    font-size: 20px;
-  }
-  
-  .section-title {
-    font-size: 20px;
-  }
-  
-  .benefits-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* 响应式设计 - 仅保留PC端样式 */
+/* 已移除平板和移动端样式 */
 </style>

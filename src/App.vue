@@ -687,7 +687,7 @@ const handleLogin = () => {
   opacity: 0.6;
 }
 
-/* 响应式设计 */
+/* 响应式设计 - 仅保留PC端样式 */
 @media (max-width: 1200px) {
   .header-content {
     padding: 0 var(--spacing-lg);
@@ -703,32 +703,6 @@ const handleLogin = () => {
   
   .search-section {
     max-width: 300px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .main-nav {
-    display: none;
-  }
-  
-  .search-section {
-    max-width: 250px;
-  }
-}
-
-@media (max-width: 768px) {
-  .search-section {
-    display: none;
-  }
-  
-  .header-content {
-    padding: 0 var(--spacing-md);
-  }
-  
-  .footer-links {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-sm);
   }
 }
 </style>

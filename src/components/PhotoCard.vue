@@ -308,14 +308,5 @@ export default {
   font-size: 1rem;
 }
 
-/* 适配响应式设计 */
-@media (max-width: 768px) {
-  .photo-image {
-    height: 200px;
-  }
-  
-  .photo-title {
-    font-size: 1.1rem;
-  }
-}
+/* 响应式设计 - 仅保留PC端样式 */
 </style>

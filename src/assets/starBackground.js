@@ -787,21 +787,8 @@ function addStarAnimations() {
       filter: blur(30px);
     }
     
-    /* 针对不同设备类型的优化 */
-    @media (max-width: 767px) {
-      .star-big, .star-small, .star-medium {
-        animation-duration: 2s !important;
-      }
-      
-      .galaxy-band {
-        filter: blur(10px);
-        stroke-width: 20px !important;
-      }
-      
-      .nebula {
-        filter: blur(20px);
-      }
-    }
+    /* 响应式设计 - 仅保留PC端样式 */
+    /* 已移除移动端优化 */
   `;
   
   document.head.appendChild(style);
