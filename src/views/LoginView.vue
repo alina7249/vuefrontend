@@ -1,10 +1,6 @@
 <template>
   <div class="login-container">
-    <!-- 背景图片 -->
-    <div class="login-bg">
-      <img src="https://picsum.photos/id/1015/1920/1080" alt="摄影背景" />
-      <div class="overlay"></div>
-    </div>
+    <!-- 使用全局星空背景 -->
     
     <!-- 主登录卡片 -->
     <div class="login-card">
@@ -105,9 +101,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouterLink } from 'vue-router'
+import { initStarBackground } from '@/assets/starBackground.js'
 
 const router = useRouter()
 const username = ref('admin')
@@ -162,6 +159,11 @@ const handleLogin = () => {
 }
 
 // 第三方登录按钮直接使用alert提示，无需单独函数
+
+// 组件挂载时初始化星空背景
+onMounted(() => {
+  initStarBackground();
+});
 </script>
 
 <style scoped>
@@ -183,19 +185,19 @@ const handleLogin = () => {
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 主容器布局 */
+/* 主容器布局 - 确保背景透明以便显示星空 */
 .login-container {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: var(--dark-bg);
+  background-color: transparent;
   padding: 20px;
   overflow: hidden;
 }
 
-/* 背景图片 - 摄影主题优化 */
+/* 星空背景 - 直接使用全局星空背景，移除自定义背景 */
 .login-bg {
   position: absolute;
   top: 0;
@@ -204,19 +206,7 @@ const handleLogin = () => {
   height: 100%;
   z-index: -1;
   overflow: hidden;
-}
-
-.login-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.4) contrast(1.1);
-  transform: scale(1.02);
-  transition: transform 12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.login-bg:hover img {
-  transform: scale(1.1);
+  background-color: transparent;
 }
 
 .login-bg .overlay {
@@ -225,8 +215,8 @@ const handleLogin = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 30% 40%, rgba(0, 188, 212, 0.25) 0%, transparent 40%),
-              radial-gradient(circle at 70% 60%, rgba(255, 152, 0, 0.2) 0%, transparent 40%);
+  background: radial-gradient(circle at 30% 40%, rgba(0, 188, 212, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 70% 60%, rgba(255, 152, 0, 0.05) 0%, transparent 40%);
 }
 
 /* 登录卡片 - 摄影主题优化 */
@@ -263,27 +253,6 @@ const handleLogin = () => {
   overflow: hidden;
 }
 
-.brand-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('https://picsum.photos/id/1018/800/1200');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.15;
-  z-index: 0;
-  transform: scale(1.05);
-  animation: scaleBackground 20s infinite alternate;
-}
-
-@keyframes scaleBackground {
-  0% { transform: scale(1.05); }
-  100% { transform: scale(1.15); }
-}
-
 /* 顶部渐变装饰条 */
 .brand-section::after {
   content: '';
@@ -301,7 +270,7 @@ const handleLogin = () => {
   gap: 12px;
   margin-bottom: 20px;
   position: relative;
-  z-index: 1;
+  z-index: 10;
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -317,6 +286,15 @@ const handleLogin = () => {
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
   transition: transform 0.3s ease;
+}
+
+/* 增强文本可见性 */
+.brand-section h1,
+.brand-slogan,
+.feature-item span {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
 }
 
 .logo-icon:hover {
