@@ -1,654 +1,391 @@
+<template>
+  <div id="app">
+    <!-- 导航栏 -->
+    <header class="main-header" :class="{ 'scrolled': headerScrolled }">
+      <div class="container">
+        <nav class="nav">
+          <div class="nav-brand">
+            <router-link to="/" class="brand-link">
+              <span class="brand-icon">📷</span>
+              <span class="brand-name">摄影社区</span>
+            </router-link>
+          </div>
+          
+          <!-- 桌面导航菜单 -->
+          <div class="nav-menu">
+            <router-link to="/" class="nav-item">首页</router-link>
+            <router-link to="/discover" class="nav-item">发现</router-link>
+            <router-link to="/community" class="nav-item">社区</router-link>
+            <router-link to="/learn" class="nav-item">学习</router-link>
+            <router-link to="/equipment" class="nav-item">器材</router-link>
+            <router-link to="/events" class="nav-item">活动</router-link>
+          </div>
+          
+          <!-- 用户菜单 -->
+          <div class="nav-user">
+            <!-- 未登录状态 -->
+            <template v-if="!userStore.isLoggedIn">
+              <router-link to="/login" class="nav-item">登录</router-link>
+              <router-link to="/register" class="nav-item">注册</router-link>
+            </template>
+            
+            <!-- 登录状态 -->
+            <template v-else>
+              <button @click="showUserMenu = !showUserMenu" class="user-avatar-button">
+                <img 
+                  :src="userStore.currentUser.avatar" 
+                  alt="用户头像" 
+                  class="user-avatar"
+                />
+                <span class="user-name">{{ userStore.currentUser.username }}</span>
+                <span class="dropdown-icon">▼</span>
+              </button>
+              
+              <!-- 用户下拉菜单 -->
+              <div v-if="showUserMenu" class="user-dropdown">
+                <router-link to="/user/center" class="dropdown-item">个人中心</router-link>
+                <router-link to="/user/works" class="dropdown-item">我的作品</router-link>
+                <router-link to="/user/favorites" class="dropdown-item">我的收藏</router-link>
+                <router-link to="/user/messages" class="dropdown-item">消息通知</router-link>
+                <div class="dropdown-divider"></div>
+                <button @click="handleLogout" class="dropdown-item logout-item">退出登录</button>
+              </div>
+            </template>
+          </div>
+        </nav>
+      </div>
+    </header>
+    
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <RouterView />
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>摄影社区</h3>
+            <p>捕捉精彩瞬间，分享艺术之美</p>
+          </div>
+          
+          <div class="footer-section">
+            <h4>快速链接</h4>
+            <ul>
+              <li><router-link to="/">首页</router-link></li>
+              <li><router-link to="/discover">发现</router-link></li>
+              <li><router-link to="/community">社区</router-link></li>
+              <li><router-link to="/learn">学习</router-link></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h4>支持</h4>
+            <ul>
+              <li><a href="#">帮助中心</a></li>
+              <li><a href="#">联系我们</a></li>
+              <li><a href="#">隐私政策</a></li>
+              <li><a href="#">服务条款</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h4>关注我们</h4>
+            <div class="social-links">
+              <a href="#" class="social-link">微博</a>
+              <a href="#" class="social-link">微信</a>
+              <a href="#" class="social-link">抖音</a>
+              <a href="#" class="social-link">小红书</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2024 摄影社区. 保留所有权利.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
+
 <script setup>
 import { RouterView, useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useUserStore } from './stores/user.js'
 
 const router = useRouter()
+const userStore = useUserStore()
 const showUserMenu = ref(false)
-const isLoggedIn = ref(false)
-const currentUser = ref({
-  username: 'admin',
-  avatar: 'https://picsum.photos/id/64/40/40',
-  following: 128,
-  followers: 86,
-  likes: 356,
-  photos: 23,
-  joinDate: '2024'
-})
+const headerScrolled = ref(false)
 
 // 初始化时检查登录状态
-const checkLoginStatus = () => {
-  const loggedIn = localStorage.getItem('isLoggedIn') === 'true'
-  isLoggedIn.value = loggedIn
-}
+onMounted(() => {
+  checkLoginStatus()
+  window.addEventListener('scroll', handleScroll)
+})
 
-// 组件初始化时检查登录状态
-checkLoginStatus()
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+
+// 检查登录状态
+const checkLoginStatus = () => {
+  userStore.checkLoginStatus()
+}
 
 // 处理登出
 const handleLogout = () => {
-  localStorage.removeItem('isLoggedIn')
-  localStorage.removeItem('loginExpiry')
-  isLoggedIn.value = false
+  userStore.logout()
+  showUserMenu.value = false
   router.push('/login')
 }
 
-const headerScrolled = ref(false)
-
-// 添加滚动监听事件
+// 处理滚动事件
 const handleScroll = () => {
   if (window.scrollY > 50) {
     headerScrolled.value = true
   } else {
     headerScrolled.value = false
   }
-}
-
-// 组件挂载时添加监听
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-// 组件卸载时移除监听
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
-
-const toggleUserMenu = () => {
-  showUserMenu.value = !showUserMenu.value
-}
-
-const navigateTo = (path) => {
-  router.push(path)
-  showUserMenu.value = false
-}
-
-const handleLogin = () => {
-  // 登录逻辑
-  router.push('/login')
+  
+  // 点击页面其他地方关闭用户菜单
+  if (showUserMenu.value) {
+    showUserMenu.value = false
+  }
 }
 </script>
 
-<template>
-  <div class="app-container">
-    <!-- 顶部导航栏 - 经典器材蓝灰调 -->
-    <header class="main-header" :class="{ 'scrolled': headerScrolled }">
-      <div class="header-content">
-        <!-- 品牌区域 -->
-        <div class="logo-section">
-          <a href="#" class="logo" @click="navigateTo('/')">
-            <div class="logo-icon">📷</div>
-            <div class="brand-text">
-              <span class="brand-name">LENSFLOW</span>
-              <span class="brand-tag">高级摄影社区</span>
-            </div>
-          </a>
-          
-          <!-- 导航菜单 -->
-          <nav class="main-nav">
-            <a href="#" class="nav-item active" @click="navigateTo('/')">首页</a>
-            <a href="#" class="nav-item" @click="navigateTo('/discover')">发现作品</a>
-            <a href="#" class="nav-item" @click="navigateTo('/community')">社区动态</a>
-            <a href="#" class="nav-item" @click="navigateTo('/learn')">学习</a>
-            <a href="#" class="nav-item" @click="navigateTo('/equipment')">器材</a>
-          </nav>
-        </div>
-        
-        <!-- 搜索框 -->
-        <div class="search-section">
-          <input type="text" placeholder="搜索作品、用户、话题..." class="search-input" />
-          <i class="search-icon">🔍</i>
-        </div>
-        
-        <!-- 用户区域 -->
-        <div class="user-section">
-          <button v-if="isLoggedIn" class="create-btn" @click="navigateTo('/upload')">上传作品</button>
-          
-          <div v-if="isLoggedIn" class="user-profile" @click="toggleUserMenu">
-            <div class="avatar">
-              <img :src="currentUser.avatar" alt="用户头像" />
-            </div>
-            
-            <div v-show="showUserMenu" class="user-dropdown">
-              <div class="user-info-card">
-                <div class="user-info-header">
-                  <div class="user-avatar">
-                    <img :src="currentUser.avatar" alt="用户头像" />
-                  </div>
-                  <div class="user-details">
-                    <div class="username">{{ currentUser.username }}</div>
-                    <div class="user-level">专业摄影师</div>
-                  </div>
-                </div>
-                
-                <div class="user-stats">
-                  <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.following }}</span>
-                    <span class="stat-label">关注</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.followers }}</span>
-                    <span class="stat-label">粉丝</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-value">{{ currentUser.photos }}</span>
-                    <span class="stat-label">作品</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="menu-divider"></div>
-              
-              <div class="menu-items">
-                <a href="#" class="menu-item" @click="navigateTo('/user-center')">个人中心</a>
-                <a href="#" class="menu-item" @click="navigateTo('/upload')">上传作品</a>
-                <a href="#" class="menu-item" @click="navigateTo('/collections')">我的收藏</a>
-                <a href="#" class="menu-item" @click="navigateTo('/settings')">个人设置</a>
-                
-                <div class="menu-divider"></div>
-                
-                <a href="#" class="menu-item logout" @click="handleLogout">退出登录</a>
-              </div>
-            </div>
-          </div>
-          
-          <div v-else class="auth-buttons">
-            <button class="login-btn" @click="navigateTo('/login')">登录</button>
-            <button class="register-btn" @click="navigateTo('/register')">注册</button>
-          </div>
-        </div>
-      </div>
-    </header>
-    
-    <!-- 主内容区域 -->
-    <main class="main-content">
-      <RouterView />
-    </main>
-    
-    <!-- 页脚 - 经典器材蓝灰调 -->
-    <footer class="main-footer">
-      <div class="footer-content">
-        <!-- 品牌标志 -->
-        <div class="footer-brand">
-          <div class="logo-icon">📷</div>
-          <div class="brand-text">
-            <span class="brand-name">LENSFLOW</span>
-            <span class="brand-tag">高级摄影社区</span>
-          </div>
-        </div>
-        
-        <!-- 导航链接 -->
-        <div class="footer-links">
-          <a href="#" @click="navigateTo('/')">首页</a>
-          <a href="#" @click="navigateTo('/discover')">发现作品</a>
-          <a href="#" @click="navigateTo('/community')">社区动态</a>
-          <a href="#" @click="navigateTo('/learn')">学习</a>
-          <a href="#" @click="navigateTo('/equipment')">器材</a>
-          <a href="#" @click="navigateTo('/about')">关于我们</a>
-        </div>
-        
-        <!-- 社交媒体链接 -->
-        <div class="social-links">
-          <a href="#" class="social-icon" title="Instagram">📸</a>
-          <a href="#" class="social-icon" title="Facebook">📱</a>
-          <a href="#" class="social-icon" title="Twitter">🐦</a>
-          <a href="#" class="social-icon" title="WeChat">💬</a>
-        </div>
-        
-        <!-- 版权信息 -->
-        <div class="copyright">© 2024 LENSFLOW 高级摄影交流社区 All Rights Reserved.</div>
-      </div>
-    </footer>
-  </div>
-</template>
-
 <style scoped>
-/* 确保根元素背景透明，不遮挡星空背景 */
-#app {
-  background: transparent !important;
-  position: relative;
-  z-index: 1;
-}
-
-/* 应用容器 */
-.app-container {
-  min-height: 100vh;
-  background: transparent !important;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 导航栏样式 - 经典器材蓝灰调 */
 .main-header {
-  background: var(--background-color);
-  border-bottom: 1px solid var(--primary-dark);
+  background-color: white;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  height: 72px;
-  transition: all 0.3s ease;
-}
-
-.main-header.scrolled {
-  height: 64px;
-  box-shadow: var(--shadow-medium);
-  background: rgba(26, 26, 26, 0.95);
-  backdrop-filter: blur(var(--glass-blur));
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-xl);
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-lg);
-}
-
-/* 品牌区域样式 */
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xl);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  text-decoration: none;
-}
-
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 20px;
+  z-index: 1000;
+  transition: all var(--transition-normal);
   box-shadow: var(--shadow-light);
 }
 
-.brand-text {
+.main-header.scrolled {
+  box-shadow: var(--shadow-medium);
+  padding: var(--spacing-xs) 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.nav {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) 0;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  color: var(--dark-color);
+  text-decoration: none;
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+  margin-right: var(--spacing-sm);
 }
 
 .brand-name {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  letter-spacing: 1px;
 }
 
-.brand-tag {
-  font-size: 12px;
-  color: var(--accent-color);
-  font-weight: 400;
-}
-
-/* 导航菜单样式 */
-.main-nav {
+.nav-menu {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
 }
 
 .nav-item {
-  color: var(--text-secondary);
+  color: var(--dark-gray);
   text-decoration: none;
-  font-size: var(--text-sm);
-  font-weight: 400;
-  padding: var(--spacing-xs) 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
   position: relative;
-  transition: all 0.3s ease;
 }
 
 .nav-item:hover {
   color: var(--primary-color);
 }
 
-.nav-item::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--primary-color);
-  transition: width 0.3s ease;
-}
-
-.nav-item:hover::after {
-  width: 100%;
-}
-
-.nav-item.active {
+.nav-item.router-link-active {
   color: var(--primary-color);
 }
 
-.nav-item.active::after {
-  width: 100%;
-}
-
-/* 搜索框样式 - 器材风格 */
-.search-section {
-  flex: 1;
-  max-width: 400px;
-  position: relative;
-}
-
-.search-input {
-  width: 100%;
-  height: 36px;
-  padding: 0 var(--spacing-xl) 0 var(--spacing-md);
-  background: var(--surface-color);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(42, 92, 140, 0.1);
-}
-
-.search-input::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.7;
-}
-
-.search-icon {
+.nav-item.router-link-active::after {
+  content: '';
   position: absolute;
-  right: var(--spacing-md);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-color);
 }
 
-/* 用户区域样式 */
-.user-section {
+.nav-user {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
 }
 
-.create-btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.create-btn:hover {
-  box-shadow: 0 0 15px rgba(42, 92, 140, 0.3);
-  transform: translateY(-1px);
-}
-
-.create-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: all 0.6s ease;
-}
-
-.create-btn:hover::before {
-  left: 100%;
-}
-
-/* 登录/注册按钮 */
-.auth-buttons {
+.user-avatar-button {
   display: flex;
-  gap: var(--spacing-sm);
-}
-
-.login-btn,
-.register-btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  align-items: center;
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-light);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-normal);
 }
 
-.login-btn {
-  background: transparent;
-  color: var(--text-secondary);
+.user-avatar-button:hover {
+  background-color: var(--light-gray);
 }
 
-.login-btn:hover {
-  background: var(--surface-color);
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.register-btn {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.register-btn:hover {
-  background: var(--primary-light);
-  box-shadow: var(--shadow-medium);
-}
-
-/* 用户头像和下拉菜单 - 器材风格 */
-.user-profile {
-  position: relative;
-  cursor: pointer;
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
+.user-avatar {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid var(--border-light);
-  transition: all 0.3s ease;
-  background: var(--surface-color);
+  margin-right: var(--spacing-xs);
 }
 
-.user-profile:hover .avatar {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 10px rgba(42, 92, 140, 0.3);
+.user-name {
+  font-size: 0.875rem;
+  color: var(--dark-color);
+  margin-right: var(--spacing-xs);
 }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.dropdown-icon {
+  font-size: 0.75rem;
+  color: var(--medium-gray);
+  transition: transform var(--transition-normal);
+}
+
+.user-avatar-button:hover .dropdown-icon {
+  transform: rotate(180deg);
 }
 
 .user-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: var(--spacing-sm);
-  min-width: 240px;
-  background: var(--surface-color);
-  border-radius: var(--radius-sm);
+  margin-top: var(--spacing-xs);
+  background-color: white;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-medium);
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-  animation: dropdownSlideIn 0.3s ease-out;
-  z-index: 1000;
+  min-width: 160px;
+  z-index: 1001;
 }
 
-@keyframes dropdownSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.user-info-card {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--border-light);
-  background: linear-gradient(145deg, var(--surface-color), #2a2a2d);
-}
-
-.user-info-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.user-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid var(--primary-color);
-}
-
-.user-avatar img {
+.dropdown-item {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-details .username {
-  font-weight: 600;
-  font-size: var(--text-base);
-  color: var(--text-primary);
-}
-
-.user-details .user-level {
-  font-size: var(--text-xs);
-  color: var(--accent-color);
-}
-
-.user-stats {
-  display: flex;
-  justify-content: space-between;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-value {
-  display: block;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.stat-label {
-  display: block;
-  font-size: var(--text-xs);
-  color: var(--text-secondary);
-}
-
-.menu-divider {
-  height: 1px;
-  background-color: var(--border-light);
-}
-
-.menu-items {
-  padding: var(--spacing-sm) 0;
-}
-
-.menu-item {
-  display: block;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  color: var(--darker-gray);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--dark-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color var(--transition-normal);
   text-decoration: none;
-  font-size: var(--text-sm);
-  transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-  background-color: var(--background-color);
-  color: var(--primary-color);
+.dropdown-item:hover {
+  background-color: var(--light-gray);
+  color: var(--dark-color);
 }
 
-.menu-item.logout {
-  color: #ff4d4f;
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--light-gray);
+  margin: var(--spacing-xs) 0;
 }
 
-.menu-item.logout:hover {
-  background-color: rgba(255, 77, 79, 0.1);
+.logout-item {
+  color: var(--danger-color);
 }
 
-/* 主内容区域样式 */
+.logout-item:hover {
+  background-color: var(--light-gray);
+  color: var(--danger-color);
+}
+
 .main-content {
   flex: 1;
-  padding-top: 72px;
-  padding-bottom: var(--spacing-xxl);
-  background: rgba(240, 242, 245, 0.3);
-  position: relative;
-  backdrop-filter: blur(5px);
-  z-index: 1;
+  margin-top: 72px; /* 导航栏高度 */
+  padding: var(--spacing-lg) 0;
 }
 
-/* 页脚样式 - 经典器材蓝灰调 */
 .main-footer {
-  background: var(--surface-color);
-  border-top: 1px solid var(--primary-dark);
+  background-color: white;
+  border-top: 1px solid var(--light-gray);
   padding: var(--spacing-xl) 0;
 }
 
 .footer-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
 }
 
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+.footer-section h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--dark-color);
 }
 
-.footer-links {
-  display: flex;
-  gap: var(--spacing-lg);
-  flex-wrap: wrap;
-  justify-content: center;
+.footer-section h4 {
+  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--dark-color);
 }
 
-.footer-links a {
-  color: var(--text-secondary);
+.footer-section p {
+  color: var(--medium-gray);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.footer-section a {
+  color: var(--medium-gray);
   text-decoration: none;
-  font-size: var(--text-sm);
-  transition: color 0.3s ease;
+  font-size: 0.875rem;
+  transition: color var(--transition-normal);
 }
 
-.footer-links a:hover {
+.footer-section a:hover {
   color: var(--primary-color);
 }
 
@@ -657,52 +394,37 @@ const handleLogin = () => {
   gap: var(--spacing-md);
 }
 
-.social-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--background-color);
-  border: 1px solid var(--border-light);
-  border-radius: 50%;
-  color: var(--text-secondary);
+.social-link {
+  color: var(--medium-gray);
   text-decoration: none;
-  font-size: 16px;
-  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  transition: color var(--transition-normal);
 }
 
-.social-icon:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  border-color: var(--primary-color);
+.social-link:hover {
+  color: var(--primary-color);
 }
 
-.copyright {
-  color: var(--text-secondary);
-  font-size: var(--text-xs);
+.footer-bottom {
   text-align: center;
-  opacity: 0.6;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--light-gray);
 }
 
-/* 响应式设计 - 仅保留PC端样式 */
-@media (max-width: 1200px) {
-  .header-content {
-    padding: 0 var(--spacing-lg);
+.footer-bottom p {
+  color: var(--medium-gray);
+  font-size: 0.875rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
   }
   
-  .logo-section {
+  .footer-content {
+    grid-template-columns: 1fr;
     gap: var(--spacing-lg);
-  }
-  
-  .main-nav {
-    gap: var(--spacing-md);
-  }
-  
-  .search-section {
-    max-width: 300px;
   }
 }
 </style>

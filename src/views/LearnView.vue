@@ -1,6 +1,5 @@
 <template>
   <div class="learn-container">
-    
     <!-- 页面头部 - 主视觉模块 -->
     <div class="learn-header">
       <h1 class="page-title">探索摄影视界</h1>
@@ -237,22 +236,7 @@ const handleCategoryClick = (category) => {
   max-width: 1600px;
   margin: 0 auto;
   padding: 30px;
-  position: relative;
-  z-index: 1;
   min-height: calc(100vh - 200px);
-}
-
-/* 确保星空背景能透过 */
-.learn-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  opacity: var(--star-opacity-content, 0.05);
-  z-index: -1;
 }
 
 /* 大屏幕优化 */
@@ -429,16 +413,15 @@ const handleCategoryClick = (category) => {
 
 /* 标签栏 */
 .tag-bar {
-  margin-bottom: 40px;
-  padding: 24px 30px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E2E8F0;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(5px);
-}
+    margin-bottom: 40px;
+    padding: 24px 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E2E8F0;
+    position: relative;
+    z-index: 1;
+  }
 
 .tag-bar::before {
   content: '';
@@ -485,16 +468,15 @@ const handleCategoryClick = (category) => {
 
 /* 内容区块 */
 .content-section {
-  margin-bottom: 40px;
-  padding: 30px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #E2E8F0;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(5px);
-}
+    margin-bottom: 40px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E2E8F0;
+    position: relative;
+    z-index: 1;
+  }
 
 .content-section::before {
   content: '';
@@ -561,16 +543,15 @@ const handleCategoryClick = (category) => {
 }
 
 .work-item {
-  background-color: rgba(248, 250, 252, 0.95);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(5px);
-}
+    background-color: rgba(248, 250, 252, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
 
 .work-item:hover {
   transform: translateY(-5px);

@@ -7,7 +7,7 @@
     </div>
     
     <!-- 分类导航 -->
-    <div class="category-nav glass-effect">
+    <div class="category-nav">
       <button 
         class="category-btn" 
         v-for="category in categories" 
@@ -56,7 +56,7 @@
       </div>
       
       <div class="tutorials-grid">
-        <div class="tutorial-card glass-effect" v-for="tutorial in filteredTutorials" :key="tutorial.id">
+        <div class="tutorial-card" v-for="tutorial in filteredTutorials" :key="tutorial.id">
           <div class="tutorial-image-wrapper">
             <img :src="tutorial.imageUrl" :alt="tutorial.title" class="tutorial-image" />
             <div class="tutorial-duration">{{ formatDuration(tutorial.duration) }}</div>

@@ -33,7 +33,7 @@
     <div class="upload-content">
       <!-- 步骤1：选择照片 -->
       <div v-if="currentStep === 1" class="upload-step-1">
-        <div class="upload-box glass-effect" @click="triggerFileInput">
+        <div class="upload-box" @click="triggerFileInput">
           <input 
             type="file" 
             ref="fileInput" 
@@ -83,7 +83,7 @@
           </div>
           
           <!-- 编辑工具 -->
-          <div class="edit-tools glass-effect">
+            <div class="edit-tools">
             <h3 class="tools-title">编辑工具</h3>
             
             <!-- 滤镜选择 -->
@@ -223,7 +223,7 @@
       
       <!-- 步骤3：填写信息 -->
       <div v-else-if="currentStep === 3" class="upload-step-3">
-        <div class="upload-form glass-effect">
+        <div class="upload-form">
           <h3 class="form-title">作品信息</h3>
           
           <div class="form-group">

@@ -10,7 +10,7 @@
       <div class="search-container">
         <input 
           type="text" 
-          class="search-input glass-effect"
+          class="search-input"
           placeholder="搜索作品、摄影师或标签..."
           v-model="searchQuery"
         />
@@ -21,7 +21,7 @@
     </div>
     
     <!-- 筛选栏 -->
-    <div class="filter-section glass-effect">
+    <div class="filter-section">
       <div class="filter-group">
         <label class="filter-label">题材</label>
         <div class="filter-options">
@@ -228,7 +228,6 @@ export default {
 .discover-container {
   min-height: 100vh;
   padding: var(--spacing-lg) var(--spacing-xl);
-  position: relative;
 }
 
 .discover-header {

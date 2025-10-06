@@ -11,7 +11,7 @@
       <!-- 左侧边栏 -->
       <aside class="sidebar">
         <!-- 社区统计 -->
-        <div class="community-stats glass-effect">
+        <div class="community-stats">
           <h3 class="section-title">社区数据</h3>
           <div class="stats-grid">
             <div class="stat-item">
@@ -34,7 +34,7 @@
         </div>
         
         <!-- 热门标签 -->
-        <div class="trending-tags glass-effect">
+        <div class="trending-tags">
           <h3 class="section-title">热门标签</h3>
           <div class="tags-container">
             <a href="#" class="tag" v-for="tag in trendingTags" :key="tag.name">
@@ -45,7 +45,7 @@
         </div>
         
         <!-- 近期活动 -->
-        <div class="upcoming-events glass-effect">
+        <div class="upcoming-events">
           <h3 class="section-title">近期活动</h3>
           <div class="event-list">
             <div class="event-item" v-for="event in upcomingEvents" :key="event.id">
@@ -65,7 +65,7 @@
       <!-- 主内容区 -->
       <main class="community-main">
         <!-- 发帖表单 -->
-        <div class="post-form glass-effect">
+        <div class="post-form">
           <div class="form-header">
             <img src="https://picsum.photos/100/100?random=user" alt="Your avatar" class="user-avatar" />
             <button class="create-post-btn shutter-button" @click="createNewPost">发布新话题</button>
@@ -101,7 +101,7 @@
         
         <!-- 话题列表 -->
         <div class="topics-list">
-          <div class="topic-item glass-effect" v-for="topic in filteredTopics" :key="topic.id">
+          <div class="topic-item" v-for="topic in filteredTopics" :key="topic.id">
             <div class="topic-header">
               <div class="topic-author">
                 <img :src="topic.author.avatar" :alt="topic.author.name" class="author-avatar" />
@@ -354,7 +354,6 @@ export default {
 .community-container {
   min-height: 100vh;
   padding: var(--spacing-lg) var(--spacing-xl);
-  position: relative;
 }
 
 .community-header {

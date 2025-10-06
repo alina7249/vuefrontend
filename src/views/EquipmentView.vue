@@ -7,7 +7,7 @@
     </div>
     
     <!-- 搜索和筛选 -->
-    <div class="search-filter-section glass-effect">
+    <div class="search-filter-section">
       <div class="search-container">
         <input 
           type="text" 
@@ -97,7 +97,7 @@
       </div>
       
       <div class="equipment-grid">
-        <div class="equipment-card glass-effect" v-for="item in filteredEquipment" :key="item.id">
+        <div class="equipment-card" v-for="item in filteredEquipment" :key="item.id">
           <img :src="item.imageUrl" :alt="item.name" class="equipment-image" />
           <div class="equipment-info">
             <div class="equipment-brand">{{ item.brand }}</div>

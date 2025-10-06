@@ -89,7 +89,6 @@
 <script setup>
 // 这里可以添加逻辑，如获取用户信息、会员状态等
 </script>
-
 <style scoped>
 :root {
   --primary-color: #165DFF;

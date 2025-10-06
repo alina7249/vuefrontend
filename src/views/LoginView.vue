@@ -1,55 +1,276 @@
 <template>
   <div class="login-container">
-    <!-- 使用全局星空背景 -->
-    
-    <!-- 主登录卡片 -->
     <div class="login-card">
-      <!-- 左侧品牌信息 -->
-      <div class="brand-section">
-        <div class="logo-container">
-          <div class="logo-icon">📷</div>
-          <h1>摄影视界</h1>
-        </div>
-        <p class="brand-slogan">捕捉精彩瞬间，分享艺术之美</p>
-        
-        <!-- 特色展示 -->
-        <div class="features">
-          <div class="feature-item">
-            <div class="feature-icon">🌟</div>
-            <span>高质量摄影作品</span>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">👥</div>
-            <span>专业摄影师社区</span>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">🎓</div>
-            <span>摄影技巧分享</span>
-          </div>
-        </div>
+      <div class="login-header">
+        <h1>摄影社区</h1>
+        <p>捕捉精彩瞬间，分享艺术之美</p>
       </div>
       
-      <!-- 右侧登录表单区域 -->
-      <div class="login-form-container">
-        <div class="form-header">
-          <h2>欢迎回来</h2>
-          <p>登录您的账号，继续摄影之旅</p>
+      <form @submit.prevent="handleLogin" class="login-form">
+        <div class="form-group">
+          <label for="username" class="form-label">用户名</label>
+          <input
+            id="username"
+            type="text"
+            v-model="username"
+            class="form-input"
+            placeholder="请输入用户名"
+          />
         </div>
         
-        <form class="login-form">
-          <div class="input-group">
-            <div class="input-icon">👤</div>
-            <input 
-              id="username" 
-              type="text" 
-              v-model="username" 
-              placeholder="用户名/邮箱/手机号"
-              class="form-input"
-              @focus="onInputFocus($event)"
-              @blur="onInputBlur($event)"
+        <div class="form-group">
+          <label for="password" class="form-label">密码</label>
+          <div class="password-input-container">
+            <input
+              id="password"
+              :type="showPassword ? 'text' : 'password'"
+              v-model="password"
+              class="form-input password-input"
+              placeholder="请输入密码"
             />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="password-toggle"
+              aria-label="显示/隐藏密码"
+            >
+              {{ showPassword ? '👁️‍🗨️' : '👁️' }}
+            </button>
           </div>
-          <div class="input-group">
+        </div>
+        
+        <div class="form-options">
+          <label class="remember-me">
+            <input
+              type="checkbox"
+              v-model="rememberMe"
+              class="form-checkbox"
+            />
+            <span class="remember-me-text">记住我</span>
+          </label>
+          
+          <button type="button" class="forgot-password">忘记密码？</button>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100 login-button">
+          {{ isLoggingIn ? '登录中...' : '登录' }}
+        </button>
+        
+        <div v-if="loginError" class="error-message">
+          {{ loginError }}
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user.js'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+// 表单数据
+const username = ref('admin')
+const password = ref('123456')
+const rememberMe = ref(false)
+const showPassword = ref(false)
+const isLoggingIn = ref(false)
+
+// 登录错误信息
+const loginError = ref('')
+
+// 切换密码可见性
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value
+}
+
+// 处理登录
+const handleLogin = async () => {
+  if (!username.value || !password.value) {
+    loginError.value = '请输入用户名和密码'
+    return
+  }
+  
+  isLoggingIn.value = true
+  loginError.value = ''
+  
+  try {
+    // 模拟登录请求延迟
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    const success = userStore.login(username.value, password.value, rememberMe.value)
+    
+    if (success) {
+      // 登录成功，跳转到主页
+      router.push('/')
+    } else {
+      // 登录失败，显示错误信息
+      loginError.value = userStore.loginError
+    }
+  } catch (error) {
+    loginError.value = '登录失败，请稍后重试'
+    console.error('登录错误:', error)
+  } finally {
+    isLoggingIn.value = false
+  }
+}
+</script>
+
+<style scoped>
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  padding: var(--spacing-md);
+}
+
+.login-card {
+  background-color: white;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.login-header h1 {
+  font-size: 2rem;
+  color: var(--dark-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.login-header p {
+  color: var(--medium-gray);
+  font-size: 0.875rem;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--dark-gray);
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--dark-color);
+  background-color: white;
+  transition: all var(--transition-normal);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.password-input {
+  padding-right: 40px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.remember-me-text {
+  margin-left: var(--spacing-xs);
+  font-size: 0.875rem;
+  color: var(--medium-gray);
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.login-button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.error-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--danger-color);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* 移动端适配 */
+@media (max-width: 575.98px) {
+  .login-card {
+    max-width: 100%;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-light);
+  }
+}
+</style>
             <div class="input-icon">🔒</div>
             <input 
               id="password" 
@@ -104,7 +325,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouterLink } from 'vue-router'
-import { initStarBackground } from '@/assets/starBackground.js'
 
 const router = useRouter()
 const username = ref('admin')
@@ -160,9 +380,14 @@ const handleLogin = () => {
 
 // 第三方登录按钮直接使用alert提示，无需单独函数
 
-// 组件挂载时初始化星空背景
+// 组件挂载时的其他初始化代码
 onMounted(() => {
-  initStarBackground();
+  // 确保文字清晰度
+  document.querySelectorAll('.login-card *').forEach(el => {
+    if (el instanceof HTMLElement) {
+      el.style.filter = 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))';
+    }
+  });
 });
 </script>
 
@@ -185,38 +410,16 @@ onMounted(() => {
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 主容器布局 - 确保背景透明以便显示星空 */
+/* 主容器布局 */
 .login-container {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: transparent;
+  background-color: #f5f5f5;
   padding: 20px;
   overflow: hidden;
-}
-
-/* 星空背景 - 直接使用全局星空背景，移除自定义背景 */
-.login-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-  background-color: transparent;
-}
-
-.login-bg .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 30% 40%, rgba(0, 188, 212, 0.05) 0%, transparent 40%),
-              radial-gradient(circle at 70% 60%, rgba(255, 152, 0, 0.05) 0%, transparent 40%);
 }
 
 /* 登录卡片 - 摄影主题优化 */
@@ -229,7 +432,6 @@ onMounted(() => {
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
-  backdrop-filter: blur(10px);
   transition: var(--transition);
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: fadeInUp 0.8s ease-out;
@@ -239,541 +441,3 @@ onMounted(() => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   transform: translateY(-5px);
 }
-
-/* 品牌部分 - 摄影主题优化 */
-.brand-section {
-  width: 50%;
-  padding: 60px;
-  background: linear-gradient(135deg, #1a237e, #1565c0);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 顶部渐变装饰条 */
-.brand-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 10;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.logo-icon {
-  font-size: 32px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
-  transition: transform 0.3s ease;
-}
-
-/* 增强文本可见性 */
-.brand-section h1,
-.brand-slogan,
-.feature-item span {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 10;
-}
-
-.logo-icon:hover {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.brand-section h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0;
-  background: linear-gradient(to right, #ffffff, #f0f0f0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* 品牌口号 - 摄影主题设计 */
-.brand-slogan {
-  font-size: 16px;
-  opacity: 0.9;
-  margin-bottom: 40px;
-  position: relative;
-  z-index: 1;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  animation: fadeInUp 0.6s ease-out 0.2s both;
-}
-
-/* 特色展示 - 摄影主题优化 */
-.features {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-/* 功能项动画 */
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 12px 16px;
-  border-radius: 8px;
-  transition: var(--transition);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInUp 0.6s ease-out both;
-}
-
-.feature-item:nth-child(1) { animation-delay: 0.4s; }
-.feature-item:nth-child(2) { animation-delay: 0.6s; }
-.feature-item:nth-child(3) { animation-delay: 0.8s; }
-
-.feature-item:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.2);
-}
-
-.feature-icon {
-  font-size: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.feature-item span {
-  color: white;
-  font-size: 16px;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* 登录表单部分 - 摄影主题优化 */
-.login-form-container {
-  width: 50%;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 表单背景装饰 */
-.login-form-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.05) 0%, transparent 25%),
-    radial-gradient(circle at 20% 80%, rgba(255, 152, 0, 0.05) 0%, transparent 25%);
-  pointer-events: none;
-}
-
-/* 表单头部 - 摄影主题设计 */
-.form-header {
-  text-align: center;
-  margin-bottom: 40px;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.form-header h2 {
-  color: var(--text-primary);
-  font-size: 32px;
-  margin: 0 0 8px 0;
-  font-weight: 700;
-  position: relative;
-  display: inline-block;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.form-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  border-radius: 3px;
-}
-
-.form-header p {
-  color: var(--text-secondary);
-  font-size: 16px;
-  margin: 0;
-}
-
-.login-form {
-  width: 100%;
-}
-
-/* 输入组 - 摄影主题优化 */
-.input-group {
-  position: relative;
-  margin-bottom: 24px;
-  animation: fadeInUp 0.6s ease-out both;
-  transform-origin: top center;
-}
-
-.input-group:nth-child(1) { animation-delay: 0.8s; }
-.input-group:nth-child(2) { animation-delay: 1s; }
-
-.input-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
-  font-size: 16px;
-  transition: var(--transition);
-  z-index: 1;
-}
-
-.input-group.focused .input-icon {
-  color: var(--primary-color);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.form-input {
-  width: 100%;
-  padding: 14px 16px 14px 48px;
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 16px;
-  transition: var(--transition);
-  background-color: white;
-  color: var(--text-primary);
-  font-weight: 500;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  position: relative;
-  z-index: 0;
-}
-
-.form-input::placeholder {
-  color: #999;
-  transition: var(--transition);
-  font-weight: 400;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  background-color: white;
-  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.15);
-  transform: translateY(-2px);
-}
-
-.form-input:focus::placeholder {
-  color: #ccc;
-}
-
-.form-input:hover:not(:focus) {
-  border-color: var(--primary-color);
-}
-
-/* 表单选项 - 摄影主题优化 */
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  animation: fadeInUp 0.6s ease-out 1.2s both;
-}
-
-.remember-me {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-
-.remember-me:hover {
-  color: var(--text-primary);
-}
-
-.remember-me input {
-  margin-right: 8px;
-  width: 18px;
-  height: 18px;
-  accent-color: var(--primary-color);
-  transition: var(--transition);
-}
-
-.forgot-password {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: var(--transition);
-  position: relative;
-  padding: 4px 0;
-}
-
-.forgot-password::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  transition: width 0.3s ease;
-}
-
-.forgot-password:hover {
-  color: var(--accent-color);
-}
-
-.forgot-password:hover::after {
-  width: 100%;
-}
-
-/* 登录按钮 - 摄影主题优化 */
-.login-btn {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
-  position: relative;
-  overflow: hidden;
-  animation: fadeInUp 0.6s ease-out 1.4s both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.login-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.login-btn:hover::before {
-  left: 100%;
-}
-
-.login-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 188, 212, 0.4);
-}
-
-.login-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 188, 212, 0.3);
-}
-
-.login-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 2px 6px rgba(0, 188, 212, 0.2);
-}
-
-.login-btn.login-error {
-  animation: shake 0.5s;
-  background: linear-gradient(135deg, var(--accent-color), #e53935);
-  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
-}
-
-.login-loading {
-  display: inline-block;
-  animation: spin 1s linear infinite;
-  font-size: 18px;
-}
-
-/* 分隔线 - 摄影主题优化 */
-.divider {
-  position: relative;
-  text-align: center;
-  margin: 30px 0;
-  color: var(--text-secondary);
-  animation: fadeInUp 0.6s ease-out 1.6s both;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: calc(50% - 20px);
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--border-color), transparent);
-}
-
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
-}
-
-/* 第三方登录 - 摄影主题优化 */
-.social-login {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
-  animation: fadeInUp 0.6s ease-out 1.8s both;
-}
-
-.social-btn {
-  flex: 1;
-  padding: 12px;
-  border: 2px solid var(--border-color);
-  background-color: white;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.social-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--primary-color);
-}
-
-.social-btn.google:hover {
-  border-color: #db4437;
-  color: #db4437;
-  box-shadow: 0 4px 12px rgba(219, 68, 55, 0.2);
-}
-
-.social-btn.wechat:hover {
-  border-color: #07C160;
-  color: #07C160;
-  box-shadow: 0 4px 12px rgba(7, 193, 96, 0.2);
-}
-
-.social-icon {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* 注册选项 - 摄影主题优化 */
-.register-option {
-  text-align: center;
-  font-size: 14px;
-  color: var(--text-secondary);
-  animation: fadeInUp 0.6s ease-out 2s both;
-}
-
-.register-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-  transition: var(--transition);
-  position: relative;
-  padding: 4px 0;
-}
-
-.register-link::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  transition: width 0.3s ease;
-  border-radius: 1px;
-}
-
-.register-link:hover {
-  color: var(--accent-color);
-}
-
-.register-link:hover::after {
-  width: 100%;
-}
-
-/* 动画定义 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(0, 188, 212, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0);
-  }
-}
-
-/* 响应式设计 - 仅保留PC端样式 */
-/* 已移除平板和移动端样式 */
-</style>
