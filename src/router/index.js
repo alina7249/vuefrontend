@@ -1,11 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import UserCenterView from '../views/UserCenterView.vue'
-import GrowthBenefitsView from '../views/GrowthBenefitsView.vue'
-import UserHomeView from '../views/UserHomeView.vue'
-import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
-import DiscoverView from '../views/DiscoverView.vue'
 
 // 模拟登录状态存储
 const isLoggedIn = () => {
@@ -22,37 +17,9 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-    {
-      path: '/user',
-      name: 'user',
-      component: UserHomeView,
-    },
-    {
-      path: '/growth',
-      name: 'growth',
-      component: GrowthBenefitsView,
-    },
-    {
-      path: '/member',
-      name: 'member',
-      component: UserCenterView,
-    },
-    {
-      path: '/learn',
-      name: 'learn',
-      component: () => import('../views/LearnView.vue'),
-    },
-    {
-      path: '/discover',
-      name: 'discover',
-      component: DiscoverView,
+      path: '/login',
+      name: 'login',
+      component: LoginView,
     },
     {
       path: '/community',
@@ -70,19 +37,9 @@ const router = createRouter({
       component: () => import('../views/EquipmentView.vue'),
     },
     {
-      path: '/upload',
-      name: 'upload',
-      component: () => import('../views/UploadView.vue'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView,
+      path: '/activities',
+      name: 'activities',
+      component: () => import('../views/ActivitiesView.vue'),
     },
   ]
 })
@@ -90,7 +47,7 @@ const router = createRouter({
 // 添加全局前置路由守卫
 router.beforeEach((to, from, next) => {
   // 需要登录才能访问的页面
-  const requiresAuth = ['user', 'growth', 'member', 'learn']
+  const requiresAuth = []
   
   // 检查是否需要登录
   if (requiresAuth.includes(to.name) && !isLoggedIn()) {

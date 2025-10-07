@@ -2,197 +2,262 @@
   <div class="login-container">
     <div class="login-card">
       <div class="login-header">
-        <h1>摄影社区</h1>
-        <p>捕捉精彩瞬间，分享艺术之美</p>
+        <h2>欢迎回来</h2>
+        <p>登录您的账号，开始摄影创作之旅</p>
       </div>
       
-      <form @submit.prevent="handleLogin" class="login-form">
+      <form class="login-form" @submit.prevent="handleLogin">
+        <!-- 错误提示 -->
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        
+        <!-- 用户名输入框 -->
         <div class="form-group">
           <label for="username" class="form-label">用户名</label>
           <input
-            id="username"
             type="text"
+            id="username"
             v-model="username"
             class="form-input"
+            :class="{ 'input-focused': usernameFocus }"
             placeholder="请输入用户名"
+            @focus="usernameFocus = true"
+            @blur="usernameFocus = false"
           />
         </div>
         
+        <!-- 密码输入框 -->
         <div class="form-group">
           <label for="password" class="form-label">密码</label>
-          <div class="password-input-container">
+          <div class="password-input-wrapper">
             <input
-              id="password"
               :type="showPassword ? 'text' : 'password'"
+              id="password"
               v-model="password"
               class="form-input password-input"
+              :class="{ 'input-focused': passwordFocus }"
               placeholder="请输入密码"
+              @focus="passwordFocus = true"
+              @blur="passwordFocus = false"
             />
             <button
               type="button"
-              @click="togglePasswordVisibility"
               class="password-toggle"
-              aria-label="显示/隐藏密码"
+              @click="togglePasswordVisibility"
+              aria-label="切换密码可见性"
             >
-              {{ showPassword ? '👁️‍🗨️' : '👁️' }}
+              {{ showPassword ? '隐藏' : '显示' }}
             </button>
           </div>
         </div>
         
+        <!-- 记住我和忘记密码 -->
         <div class="form-options">
           <label class="remember-me">
             <input
               type="checkbox"
               v-model="rememberMe"
-              class="form-checkbox"
+              class="remember-checkbox"
             />
-            <span class="remember-me-text">记住我</span>
+            <span class="remember-text">记住我</span>
           </label>
-          
-          <button type="button" class="forgot-password">忘记密码？</button>
+          <a href="#" class="forgot-password" @click.prevent="handleForgotPassword">
+            忘记密码？
+          </a>
         </div>
         
-        <button type="submit" class="btn btn-primary w-100 login-button">
-          {{ isLoggingIn ? '登录中...' : '登录' }}
+        <!-- 登录按钮 -->
+        <button
+          type="submit"
+          class="login-button"
+          :disabled="isLoading"
+        >
+          <span v-if="isLoading">登录中...</span>
+          <span v-else>登录</span>
         </button>
-        
-        <div v-if="loginError" class="error-message">
-          {{ loginError }}
-        </div>
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '../stores/user.js'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
-const router = useRouter()
-const userStore = useUserStore()
+const router = useRouter();
+const userStore = useUserStore();
 
 // 表单数据
-const username = ref('admin')
-const password = ref('123456')
-const rememberMe = ref(false)
-const showPassword = ref(false)
-const isLoggingIn = ref(false)
+const username = ref('admin');
+const password = ref('123456');
+const rememberMe = ref(false);
+const showPassword = ref(false);
 
-// 登录错误信息
-const loginError = ref('')
+// 状态变量
+const isLoading = ref(false);
+const errorMessage = ref('');
+const usernameFocus = ref(false);
+const passwordFocus = ref(false);
 
 // 切换密码可见性
 const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
+  showPassword.value = !showPassword.value;
+};
+
+// 处理忘记密码
+const handleForgotPassword = () => {
+  // 仅作界面展示，实际应用中应跳转到忘记密码页面
+  alert('忘记密码功能正在开发中...');
+};
 
 // 处理登录
 const handleLogin = async () => {
-  if (!username.value || !password.value) {
-    loginError.value = '请输入用户名和密码'
-    return
+  // 清除之前的错误信息
+  errorMessage.value = '';
+  
+  // 简单的表单验证
+  if (!username.value.trim()) {
+    errorMessage.value = '请输入用户名';
+    return;
   }
   
-  isLoggingIn.value = true
-  loginError.value = ''
+  if (!password.value) {
+    errorMessage.value = '请输入密码';
+    return;
+  }
+  
+  // 设置加载状态
+  isLoading.value = true;
   
   try {
-    // 模拟登录请求延迟
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 模拟网络请求延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    const success = userStore.login(username.value, password.value, rememberMe.value)
+    // 调用登录方法
+    const loginSuccess = userStore.login(username.value, password.value);
     
-    if (success) {
-      // 登录成功，跳转到主页
-      router.push('/')
+    if (loginSuccess) {
+      // 登录成功，跳转到首页
+      router.push('/');
     } else {
       // 登录失败，显示错误信息
-      loginError.value = userStore.loginError
+      errorMessage.value = '用户名或密码错误';
     }
   } catch (error) {
-    loginError.value = '登录失败，请稍后重试'
-    console.error('登录错误:', error)
+    // 处理异常情况
+    errorMessage.value = '登录失败，请稍后重试';
+    console.error('登录错误:', error);
   } finally {
-    isLoggingIn.value = false
+    // 重置加载状态
+    isLoading.value = false;
   }
-}
+};
 </script>
 
-<style scoped>
+<style>
+/* 登录容器样式 */
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  background-color: var(--background-color);
-  padding: var(--spacing-md);
+  background-color: #F8F9FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 
+/* 登录卡片样式 */
 .login-card {
-  background-color: white;
-  border: 1px solid var(--light-gray);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-medium);
-  padding: var(--spacing-xl);
+  background-color: #FFFFFF;
+  border: 1px solid #E9ECEF;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   width: 100%;
   max-width: 400px;
+  padding: 32px;
 }
 
+/* 登录头部样式 */
 .login-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 32px;
 }
 
-.login-header h1 {
-  font-size: 2rem;
-  color: var(--dark-color);
-  margin-bottom: var(--spacing-xs);
+.login-header h2 {
+  color: #212529;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .login-header p {
-  color: var(--medium-gray);
-  font-size: 0.875rem;
+  color: #6C757D;
+  font-size: 14px;
 }
 
+/* 登录表单样式 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 错误提示样式 */
+.error-message {
+  background-color: #F8D7DA;
+  color: #DC3545;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 表单组样式 */
 .form-group {
-  margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
+/* 表单标签样式 */
 .form-label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-size: 0.875rem;
+  color: #495057;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--dark-gray);
 }
 
+/* 表单输入框样式 */
 .form-input {
-  display: block;
-  width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--light-gray);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  color: var(--dark-color);
-  background-color: white;
-  transition: all var(--transition-normal);
+  background-color: #FFFFFF;
+  border: 1px solid #E9ECEF;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: #212529;
+  transition: border-color 0.2s ease;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+  border-color: #0D6EFD;
 }
 
-.password-input-container {
+/* 输入框焦点样式 */
+.input-focused {
+  border-color: #0D6EFD;
+}
+
+/* 密码输入框包装器 */
+.password-input-wrapper {
   position: relative;
 }
 
 .password-input {
-  padding-right: 40px;
+  padding-right: 60px;
 }
 
+/* 密码可见性切换按钮 */
 .password-toggle {
   position: absolute;
   right: 12px;
@@ -200,244 +265,98 @@ const handleLogin = async () => {
   transform: translateY(-50%);
   background: none;
   border: none;
-  font-size: 1.2rem;
+  color: #6C757D;
+  font-size: 14px;
   cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
+.password-toggle:hover {
+  color: #0D6EFD;
+  background-color: #F8F9FA;
+}
+
+/* 表单选项样式 */
 .form-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-lg);
+  margin-top: 8px;
 }
 
+/* 记住我样式 */
 .remember-me {
   display: flex;
   align-items: center;
+  gap: 8px;
   cursor: pointer;
 }
 
-.remember-me-text {
-  margin-left: var(--spacing-xs);
-  font-size: 0.875rem;
-  color: var(--medium-gray);
+.remember-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #0D6EFD;
 }
 
+.remember-text {
+  color: #6C757D;
+  font-size: 14px;
+}
+
+/* 忘记密码链接样式 */
 .forgot-password {
-  background: none;
-  border: none;
-  color: var(--primary-color);
-  font-size: 0.875rem;
-  cursor: pointer;
-  padding: 0;
+  color: #0D6EFD;
+  font-size: 14px;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .forgot-password:hover {
-  color: var(--primary-hover);
+  color: #0B5ED7;
   text-decoration: underline;
 }
 
+/* 登录按钮样式 */
 .login-button {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 0.875rem;
-  font-weight: 500;
-  width: 100%;
+  background-color: #0D6EFD;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 12px;
 }
 
-.error-message {
-  margin-top: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: rgba(220, 53, 69, 0.1);
-  border: 1px solid rgba(220, 53, 69, 0.2);
-  border-radius: var(--radius-md);
-  color: var(--danger-color);
-  font-size: 0.875rem;
-  text-align: center;
+.login-button:hover:not(:disabled) {
+  background-color: #0B5ED7;
 }
 
-/* 移动端适配 */
-@media (max-width: 575.98px) {
+.login-button:disabled {
+  background-color: #ADB5BD;
+  cursor: not-allowed;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
   .login-card {
-    max-width: 100%;
-    padding: var(--spacing-lg);
-    box-shadow: var(--shadow-light);
+    padding: 24px;
+  }
+  
+  .login-header h2 {
+    font-size: 20px;
+  }
+  
+  .form-input {
+    font-size: 14px;
+  }
+  
+  .login-button {
+    font-size: 14px;
   }
 }
 </style>
-            <div class="input-icon">🔒</div>
-            <input 
-              id="password" 
-              type="password" 
-              v-model="password" 
-              placeholder="密码"
-              class="form-input"
-              @focus="onInputFocus($event)"
-              @blur="onInputBlur($event)"
-            />
-          </div>
-          <div class="form-options">
-            <label class="remember-me">
-              <input type="checkbox" v-model="rememberMe" />
-              <span>记住我</span>
-            </label>
-            <a href="#" class="forgot-password">忘记密码？</a>
-          </div>
-          <button type="button" class="login-btn" @click="handleLogin" :disabled="isLoading">
-            <span class="login-text" v-if="!isLoading">登录</span>
-            <span class="login-loading" v-else>⟳</span>
-          </button>
-          
-          <!-- 分隔线 -->
-          <div class="divider">
-            <span>或</span>
-          </div>
-          
-          <!-- 第三方登录 -->
-          <div class="social-login">
-            <button type="button" class="social-btn google">
-              <span class="social-icon">G</span>
-              <span>Google 登录</span>
-            </button>
-            <button type="button" class="social-btn wechat">
-              <span class="social-icon">微信</span>
-              <span>微信登录</span>
-            </button>
-          </div>
-          
-          <div class="register-option">
-            <span>还没有账号？</span>
-            <RouterLink to="/register" class="register-link">立即注册</RouterLink>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { RouterLink } from 'vue-router'
-
-const router = useRouter()
-const username = ref('admin')
-const password = ref('123456')
-const rememberMe = ref(false)
-const isLoading = ref(false)
-
-// 处理输入框聚焦效果
-const onInputFocus = (event) => {
-  event.target.parentElement.classList.add('focused')
-}
-
-// 处理输入框失焦效果
-const onInputBlur = (event) => {
-  if (!event.target.value) {
-    event.target.parentElement.classList.remove('focused')
-  }
-}
-
-const handleLogin = () => {
-  // 模拟登录加载状态
-  isLoading.value = true
-  
-  // 模拟登录验证延迟
-  setTimeout(() => {
-    // 模拟登录验证
-    if (username.value === 'admin' && password.value === '123456') {
-      // 登录成功后设置登录状态
-      localStorage.setItem('isLoggedIn', 'true')
-      
-      // 如果用户选择记住我，则设置过期时间
-      if (rememberMe.value) {
-        // 设置7天过期时间
-        const expiryDate = new Date()
-        expiryDate.setDate(expiryDate.getDate() + 7)
-        localStorage.setItem('loginExpiry', expiryDate.toISOString())
-      }
-      
-      // 登录成功后跳转到首页
-      router.push('/')
-    } else {
-      // 登录失败动画
-      const loginBtn = document.querySelector('.login-btn')
-      loginBtn.classList.add('login-error')
-      setTimeout(() => {
-        loginBtn.classList.remove('login-error')
-      }, 1000)
-      alert('账号或密码错误，请重试')
-    }
-    isLoading.value = false
-  }, 1500)
-}
-
-// 第三方登录按钮直接使用alert提示，无需单独函数
-
-// 组件挂载时的其他初始化代码
-onMounted(() => {
-  // 确保文字清晰度
-  document.querySelectorAll('.login-card *').forEach(el => {
-    if (el instanceof HTMLElement) {
-      el.style.filter = 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8))';
-    }
-  });
-});
-</script>
-
-<style scoped>
-/* 摄影主题配色方案优化 */
-:root {
-  --primary-color: #00bcd4;
-  --secondary-color: #ff9800;
-  --accent-color: #ff5722;
-  --text-primary: #333;
-  --text-secondary: #666;
-  --bg-color: #f8f9fa;
-  --dark-bg: #121212;
-  --card-bg: #fff;
-  --border-color: #e0e0e0;
-  --border-radius: 16px;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.18);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 主容器布局 */
-.login-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
-  overflow: hidden;
-}
-
-/* 登录卡片 - 摄影主题优化 */
-.login-card {
-  position: relative;
-  width: 100%;
-  max-width: 900px;
-  display: flex;
-  background-color: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.login-card:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  transform: translateY(-5px);
-}
