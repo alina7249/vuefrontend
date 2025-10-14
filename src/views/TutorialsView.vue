@@ -5,6 +5,64 @@
       <h1>摄影教程</h1>
       <p>提升你的摄影技能，探索专业摄影知识</p>
     </div>
+  
+  <!-- 文章详情模态框 -->
+  <div id="article-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden" :class="{ 'flex': showArticleModal }">
+    <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-auto">
+      <div class="p-4 flex justify-between items-center border-b">
+        <h3 class="text-xl font-bold">教程详情</h3>
+        <button id="close-article-modal" class="text-gray-500 hover:text-gray-700 text-2xl" @click="closeArticleModal">×</button>
+      </div>
+      <div class="p-6">
+        <img id="article-image" :src="currentArticle?.thumbnailUrl" alt="教程封面" class="w-full h-64 object-cover rounded-lg mb-6">
+        <div class="mb-6">
+          <div class="flex items-center mb-4">
+            <span id="article-category" class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs mr-4">{{ getCategoryLabel(currentArticle?.category) }}</span>
+            <span id="article-author" class="text-gray-600">{{ currentArticle?.authorName }}</span>
+          </div>
+          <h4 id="article-title" class="text-2xl font-bold mb-4">{{ currentArticle?.title }}</h4>
+          <div class="flex justify-between items-center mb-6">
+            <div class="flex space-x-4">
+              <span id="article-likes" class="text-gray-500">❤️ {{ currentArticle?.likes }}</span>
+              <span id="article-comments" class="text-gray-500">💬 {{ currentArticle?.comments }}</span>
+            </div>
+            <span id="article-date" class="text-gray-400">{{ articleDate }}</span>
+          </div>
+          <div id="article-content" class="prose max-w-none text-gray-700 mb-6">
+            <p>{{ currentArticle?.excerpt }} 这是一篇详细的摄影教程，包含了丰富的专业知识和实用技巧。通过学习本教程，你将能够掌握更多摄影技能，提升你的作品质量。教程内容涵盖了理论知识和实践指导，适合不同水平的摄影爱好者学习。</p>
+          </div>
+        </div>
+        
+        <!-- 评论区域 -->
+        <div class="border-t pt-6">
+          <h4 class="text-lg font-bold mb-4">评论</h4>
+          <div id="article-comments-list" class="space-y-4 mb-6">
+            <div v-for="comment in articleComments" :key="comment.id" class="comment-item">
+              <div class="flex items-start gap-3">
+                <img :src="comment.avatar" alt="用户头像" class="w-8 h-8 rounded-full object-cover">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-medium text-gray-900">{{ comment.username }}</span>
+                    <span class="text-sm text-gray-500">{{ comment.time }}</span>
+                  </div>
+                  <p class="text-gray-700 text-sm">{{ comment.content }}</p>
+                </div>
+              </div>
+            </div>
+            <div v-if="articleComments.length === 0" class="text-center text-gray-500 py-6">
+              暂无评论，快来发表第一条评论吧！
+            </div>
+          </div>
+          
+          <!-- 评论表单 -->
+          <div>
+            <textarea id="article-comment-input" v-model="newArticleComment" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2" placeholder="写下你的评论..." rows="3"></textarea>
+            <button id="submit-article-comment" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" @click="submitArticleCommentModal">发表评论</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     
     <!-- 教程导航 -->
     <div class="tutorials-nav">
@@ -56,7 +114,7 @@
       </div>
       
       <div class="articles-list">
-        <div v-for="article in articlesData" :key="article.id" class="article-card" :data-id="article.id">
+        <div v-for="article in articlesData" :key="article.id" class="article-card" :data-id="article.id" @click="openArticleModal(article)">
           <div class="article-thumbnail">
             <img :src="article.thumbnailUrl" :alt="article.title" />
           </div>
@@ -508,6 +566,77 @@ const totalPages = ref(10);
 const articleCollectMenuFor = ref(null);
 const articleCommentFor = ref(null);
 const articleCommentText = ref('');
+
+// 文章详情模态框相关
+const showArticleModal = ref(false);
+const currentArticle = ref(null);
+const articleComments = ref([]);
+const newArticleComment = ref('');
+const articleDate = ref('');
+
+// 打开文章详情模态框
+const openArticleModal = (article) => {
+  currentArticle.value = article;
+  showArticleModal.value = true;
+  // 设置日期（模拟）
+  const now = new Date();
+  articleDate.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  // 加载评论（模拟）
+  loadArticleComments(article.id);
+};
+
+// 关闭文章详情模态框
+const closeArticleModal = () => {
+  showArticleModal.value = false;
+  currentArticle.value = null;
+  articleComments.value = [];
+  newArticleComment.value = '';
+};
+
+// 加载文章评论（模拟）
+const loadArticleComments = (articleId) => {
+  // 模拟评论数据
+  articleComments.value = [
+    {
+      id: 1,
+      username: '摄影爱好者',
+      avatar: 'https://picsum.photos/100/100?random=51',
+      content: '这篇教程真的很有帮助，学到了很多实用技巧！',
+      time: '2小时前'
+    },
+    {
+      id: 2,
+      username: '新手小白',
+      avatar: 'https://picsum.photos/100/100?random=52',
+      content: '谢谢分享，对我这样的新手非常友好！',
+      time: '昨天'
+    }
+  ];
+};
+
+// 提交评论
+const submitArticleCommentModal = () => {
+  if (!newArticleComment.value.trim() || !currentArticle.value) return;
+  
+  // 添加新评论
+  const newComment = {
+    id: articleComments.value.length + 1,
+    username: '当前用户', // 实际项目中应该是登录用户的信息
+    avatar: 'https://picsum.photos/100/100?random=50',
+    content: newArticleComment.value.trim(),
+    time: '刚刚'
+  };
+  
+  articleComments.value.unshift(newComment);
+  currentArticle.value.comments += 1;
+  newArticleComment.value = '';
+  
+  // 更新原数据中的评论数
+  const article = articlesData.value.find(a => a.id === currentArticle.value.id);
+  if (article) {
+    article.comments += 1;
+  }
+};
 
 // 初始化互动字段
 articlesData.value = articlesData.value.map(a => ({
@@ -1834,6 +1963,66 @@ const continuePath = (pathId) => {
 .path-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
+}
+
+/* 文章详情模态框样式 */
+#article-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+#article-modal.hidden {
+  display: none;
+}
+
+#article-modal .bg-white {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 64rem;
+  width: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+#article-image {
+  width: 100%;
+  height: 40rem;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 2.5rem;
+}
+
+#article-content {
+  color: #4B5563;
+  line-height: 1.8;
+}
+
+.comment-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+/* 文章卡片点击样式 */
+.article-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .path-header {

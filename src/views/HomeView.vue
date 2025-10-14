@@ -84,93 +84,37 @@
     <main class="content-area">
       <!-- 顶部筛选栏 -->
       <div class="filter-sort-bar">
-        <!-- 功能按钮 -->
-        <div class="sort-options">
-          <button 
-            v-for="option in sortOptions" 
-            :key="option.id"
-            class="sort-button"
-            :class="{ active: currentSort === option.id }"
-            @click="handleSortChange(option.id)"
-          >
-            {{ option.name }}
-          </button>
+        <!-- 筛选工具栏 - 左侧下拉框 -->
+        <div class="filter-dropdown-container">
+          <select class="filter-dropdown" v-model="currentSort" @change="loadWorks">
+            <option value="all">全部作品</option>
+            <option value="latest">最新上传</option>
+            <option value="popular">热门推荐</option>
+            <option value="likes">高赞作品</option>
+          </select>
         </div>
         
-        <!-- 搜索框 -->
+        <!-- 右侧搜索框 -->
         <div class="search-container">
           <input 
             type="text" 
             class="search-input"
-            placeholder="搜索作品、摄影师或标签..."
+            placeholder="搜索作品名、作者名..."
             v-model="searchQuery"
             @focus="showSearchSuggestions = true"
             @blur="setTimeout(() => showSearchSuggestions = false, 200)"
           />
           <div class="search-shortcut">Ctrl+K</div>
-          
-          <!-- AI联想提示 -->
-          <div v-if="showSearchSuggestions && searchQuery" class="search-suggestions">
-            <div 
-              v-for="suggestion in searchSuggestions" 
-              :key="suggestion.id"
-              class="suggestion-item"
-              @click="handleSuggestionClick(suggestion.text)"
-            >
-              {{ suggestion.text }}
-            </div>
-          </div>
         </div>
         
-        <!-- 高级筛选 -->
-        <div class="advanced-filter">
-          <select class="filter-select" v-model="cameraFilter">
-            <option value="">所有相机</option>
-            <option value="canon">佳能</option>
-            <option value="nikon">尼康</option>
-            <option value="sony">索尼</option>
-            <option value="fujifilm">富士</option>
-          </select>
-          
-          <select class="filter-select" v-model="lensFilter">
-            <option value="">所有焦段</option>
-            <option value="wide">广角</option>
-            <option value="standard">标准</option>
-            <option value="telephoto">长焦</option>
-            <option value="macro">微距</option>
-          </select>
-
-          <!-- 参数筛选：示例范围输入（简单占位，真实可替换为滑块） -->
-          <select class="filter-select" v-model="paramFilters.aperture" @change="loadWorks">
-            <option value="">光圈范围</option>
-            <option value="f/1.4-f/2.8">f/1.4-f/2.8</option>
-            <option value="f/2.8-f/5.6">f/2.8-f/5.6</option>
-            <option value="f/5.6-f/11">f/5.6-f/11</option>
-            <option value="f/11-f/22">f/11-f/22</option>
-          </select>
-          <select class="filter-select" v-model="paramFilters.shutter" @change="loadWorks">
-            <option value="">快门速度</option>
-            <option value="1/1000s-1/250s">1/1000s-1/250s</option>
-            <option value="1/250s-1/60s">1/250s-1/60s</option>
-            <option value="1/60s-1s">1/60s-1s</option>
-            <option value="1s-30s">1s-30s</option>
-          </select>
-          <select class="filter-select" v-model="paramFilters.iso" @change="loadWorks">
-            <option value="">ISO范围</option>
-            <option value="100-400">100-400</option>
-            <option value="400-1600">400-1600</option>
-            <option value="1600-6400">1600-6400</option>
-            <option value="6400-12800">6400-12800</option>
-          </select>
-        </div>
       </div>
       
-      <!-- 作品瀑布流 -->
+      <!-- 加载中状态 -->
       <div v-if="isLoading && worksData.length === 0" class="loading-container">
-        <div v-for="i in 3" :key="i" class="skeleton-card">
-          <div class="skeleton-placeholder"></div>
-          <div class="skeleton-progress"></div>
-          <div class="loading-text">加载中 {{ Math.floor(Math.random() * 40) + 30 }}%</div>
+        <div v-for="i in 9" :key="i" class="skeleton-card">
+          <div class="image-placeholder">
+            <div class="placeholder-animation"></div>
+          </div>
         </div>
       </div>
       
@@ -178,101 +122,42 @@
         <div class="empty-icon">📷</div>
         <p class="empty-text">暂无相关作品，换个分类试试吧～</p>
         <button class="back-to-categories" @click="selectCategory('all')">返回分类</button>
-        <button class="ai-recommend" @click="handleAIRecommendation">AI推荐分类</button>
       </div>
       
-      <div v-else class="masonry-grid">
+      <!-- 作品网格布局 - 每行3张，每张图片固定宽300px、高225px，间距20px -->
+      <div v-else class="grid-layout">
         <div 
           v-for="work in worksData" 
           :key="work.id"
-          class="work-card"
+          class="work-card gallery-item" 
           :data-id="work.id"
+          @click="handleWorkClick(work)"
         >
           <!-- 作品图片 -->
           <div class="work-image-container">
+            <!-- 图片加载占位符 -->
+            <div v-if="!work.loaded" class="image-placeholder">
+              <div class="placeholder-animation"></div>
+            </div>
+            <!-- 图片 -->
             <img 
               :src="work.imageUrl" 
               :alt="work.title"
               class="work-image"
+              v-if="work.loaded"
               @load="handleImageLoad"
               @error="handleImageError"
             />
-            <div v-if="!work.loaded" class="image-progress">
-              <div class="progress-bar" :style="{ width: work.progress + '%' }"></div>
-            </div>
-          </div>
-          
-          <!-- 作者信息 -->
-          <div class="author-info">
-            <img :src="work.authorAvatar" alt="作者头像" class="author-avatar" />
-            <div class="author-details">
-              <div class="author-name">{{ work.author }}</div>
-              <div class="post-time">{{ work.date }}</div>
-            </div>
-            <div v-if="work.authorVerified" class="verification-badge">{{ work.verificationText }}</div>
-          </div>
-          
-          <!-- 作品信息 -->
-          <div class="work-info">
-            <div class="category-tag">{{ work.category }}</div>
-            <h3 class="work-title">{{ work.title }}</h3>
-            <div class="work-location">{{ work.location }}</div>
-          </div>
-          
-          <!-- 互动按钮（移至 hover 层，底部旧样式删除） -->
-
-          <!-- Hover 白底详情层 -->
-          <div class="hover-detail">
-            <div class="hover-left">
-              <img :src="work.imageUrl.replace('/800/1000','/1200/1600')" :alt="work.title" class="hover-image" />
-            </div>
-            <div class="hover-right">
-              <h3 class="hover-title">{{ work.title }}</h3>
-              <div class="hover-author" @click.stop>
-                <img :src="work.authorAvatar" alt="作者头像" class="author-avatar" />
-                <div class="hover-author-meta">
-                  <a class="author-link" href="#" title="进入作者主页">{{ work.author }}</a>
-                  <div class="hover-sub">{{ work.date }} · {{ work.location }}</div>
+            <!-- Hover效果：黑色半透明遮罩 -->
+            <div class="card-hover-overlay">
+              <div class="overlay-content">
+                <div class="author-info-overlay">
+                  <img :src="work.authorAvatar" alt="作者头像" class="author-avatar-overlay">
+                  <span class="author-name-overlay">{{ work.author }}</span>
                 </div>
-              </div>
-              <div class="hover-exif">
-                <div class="exif-item"><span class="label">相机</span><span class="value">{{ work.camera }}</span></div>
-                <div class="exif-item"><span class="label">镜头</span><span class="value">{{ work.lens }}</span></div>
-                <div class="exif-item"><span class="label">光圈</span><span class="value">{{ work.aperture }}</span></div>
-                <div class="exif-item"><span class="label">快门</span><span class="value">{{ work.shutterSpeed }}</span></div>
-                <div class="exif-item"><span class="label">ISO</span><span class="value">{{ work.iso }}</span></div>
-                <div class="exif-item"><span class="label">时间/地点</span><span class="value">{{ work.date }} · {{ work.location }}</span></div>
-              </div>
-              <div class="hover-actions">
-                <button class="hover-btn like" :class="{ active: work.liked }" @click.stop="handleLike(work.id)">❤ {{ work.likes }}</button>
-                <div class="collect-wrap" @click.stop>
-                  <button class="hover-btn collect" :class="{ active: work.collected }" @click="toggleCollectMenu(work.id)">🔖 {{ work.collections }}</button>
-                  <div class="collect-menu" v-if="collectMenuFor === work.id">
-                    <div class="menu-title">加入个人灵感集</div>
-                    <div class="menu-item" @click="confirmCollect(work.id, '我的灵感A')">我的灵感A</div>
-                    <div class="menu-item" @click="confirmCollect(work.id, '我的灵感B')">我的灵感B</div>
-                    <div class="menu-item" @click="confirmCollect(work.id, '新建灵感集')">+ 新建灵感集</div>
-                  </div>
-                </div>
-                <div class="comment-wrap" @click.stop>
-                  <button class="hover-btn comment" @click="focusComment(work.id)">💬 {{ work.comments }}</button>
-                </div>
-                <div class="share-wrap" @click.stop>
-                  <button class="hover-btn share" @click="handleShareWithPreview(work.id)">🔗 分享</button>
-                </div>
-              </div>
-              <div class="hover-comment" v-if="commentFor === work.id" @click.stop>
-                <div class="rich-tools">
-                  <button class="tool" @click="insertEmoji('😊')">😊</button>
-                  <button class="tool" @click="insertEmoji('📷')">📷</button>
-                  <label class="tool upload">
-                    📎
-                    <input type="file" accept="image/*" @change="attachImage($event)" hidden />
-                  </label>
-                </div>
-                <textarea class="rich-input" v-model="commentText" placeholder="发表你的看法，支持表情与图片链接"></textarea>
-                <div class="comment-actions">
-                  <button class="submit" @click="submitComment(work.id)">发布</button>
+                <div class="likes-info" @click="(event) => handleLike(event, work.id)">
+                  <span class="like-icon">❤</span>
+                  <span class="likes-count">{{ work.likes }}</span>
                 </div>
               </div>
             </div>
@@ -291,8 +176,59 @@
         <span>🎉 已加载全部作品</span>
       </div>
       
-      <!-- 粒子反馈容器 -->
-      <div ref="particlesContainer" class="particles-container"></div>
+      <!-- 作品详情模态框 -->
+      <div id="photo-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center z-50 hidden" ref="modalRef">
+        <div class="modal-content bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-auto" ref="modalContentRef">
+          <div class="p-4 flex justify-between items-center border-b">
+            <h3 class="text-xl font-bold">作品详情</h3>
+            <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+          </div>
+          <div class="p-6">
+            <img id="modal-image" class="w-full h-auto object-contain rounded-lg mb-6" style="max-height: 70vh;">
+            <div class="mb-6">
+              <h4 id="modal-title" class="text-2xl font-bold mb-2"></h4>
+              <div class="flex items-center text-gray-600 mb-4">
+                <span id="modal-author"></span>
+                <span id="modal-category" class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm ml-4"></span>
+              </div>
+              <p id="modal-description" class="text-gray-700 mb-6">这张照片拍摄于清晨时分，阳光刚刚洒在山脉上，形成了美丽的光影效果。使用长曝光捕捉了云层的流动感。</p>
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex space-x-4">
+                  <button id="modal-like-btn" class="flex items-center text-gray-500 hover:text-red-500">
+                    <span class="text-xl mr-1">❤️</span>
+                    <span id="modal-like-count"></span>
+                  </button>
+                  <span class="text-gray-500">👁️ <span id="modal-views"></span> 次浏览</span>
+                </div>
+                <span id="modal-date" class="text-gray-400"></span>
+              </div>
+            </div>
+            
+            <!-- 评论区域 -->
+            <div class="border-t pt-6">
+              <h4 class="text-lg font-bold mb-4">评论 ({{ previewWork?.comments || 3 }})</h4>
+              <div id="comments-list" class="space-y-4 mb-6">
+                <div v-for="comment in previewWork?.commentList" :key="comment.id" class="bg-gray-50 p-4 rounded-lg fade-in">
+                  <div class="flex items-center mb-2">
+                    <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+                      <img :src="comment.avatar" :alt="comment.author" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-medium">{{ comment.author }}</span>
+                    <span class="text-gray-400 text-sm ml-auto">{{ comment.time }}</span>
+                  </div>
+                  <p class="text-gray-700">{{ comment.content }}</p>
+                </div>
+              </div>
+              
+              <!-- 评论表单 -->
+              <div>
+                <textarea id="comment-input" class="w-full p-3 border rounded-lg comment-input mb-2" placeholder="写下你的评论..." rows="3" v-model="commentText"></textarea>
+                <button id="submit-comment" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" @click="submitComment(previewWork?.id)">发表评论</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -309,25 +245,26 @@ const worksData = ref([]);
 const isLoading = ref(true);
 const hasMore = ref(true);
 const previewWork = ref(null);
-const currentSort = ref('recommend');
+const currentSort = ref('all');
 const cameraFilter = ref('');
 const lensFilter = ref('');
 const equipmentTags = ref([]); // 侧边栏多选标签
+
+// 模态框相关引用
+const modalRef = ref(null);
+const modalContentRef = ref(null);
+let currentWorkId = ref(null);
+let lastClickedWork = ref(null);
 const paramFilters = ref({ aperture: '', shutter: '', iso: '' });
 const searchQuery = ref('');
 const showSearchSuggestions = ref(false);
 const searchSuggestions = ref([]);
-const particlesContainer = ref(null);
 const showUserMenu = ref(false);
 const currentPage = ref(1);
 const isLoadingMore = ref(false);
 const isDarkMode = ref(true);
-const previewScale = ref(1);
-const previewTranslate = ref({ x: 0, y: 0 });
-const previewTransformStyle = computed(() => ({
-  transform: `scale(${previewScale.value}) translate(${previewTranslate.value.x}px, ${previewTranslate.value.y}px)`,
-  transition: 'transform 0.2s ease-out'
-}));
+// 注释掉重复声明的 commentText，下方已有相同变量声明
+// const commentText = ref('');
 
 // 分类数据
 const categories = ref([
@@ -373,6 +310,20 @@ const generateMockData = () => {
     '摄影师小明', '光影猎人', '城市记录者', '自然探索家', '人文摄影师',
     '风景大师', '人像专家', '街拍达人', '后期高手', '器材评测师'
   ];
+  const commentTexts = [
+    '这张照片拍得真不错！构图和光线都很到位，学习了。',
+    '色彩搭配很和谐，请问是用什么后期软件处理的？',
+    '这个角度选得很好，捕捉到了难得的瞬间。',
+    '景深控制得很棒，主体突出，背景虚化自然。',
+    '构图很有创意，有故事感。',
+    '请问这是在哪里拍的？景色太美了！',
+    '光效很特别，是自然光还是人工光？',
+    '后期处理得很自然，没有过度的感觉。'
+  ];
+  const commentAuthors = [
+    '摄影爱好者A', '新手求带', '光影追随者', '器材党', '风景控',
+    '人像爱好者', '街拍控', '后期大神'
+  ];
   
   const data = [];
   
@@ -380,6 +331,27 @@ const generateMockData = () => {
     const categoryIndex = Math.floor(Math.random() * categoryNames.length);
     const categoryId = categories.value.findIndex(cat => cat.name === categoryNames[categoryIndex]);
     const authorIndex = Math.floor(Math.random() * authors.length);
+    
+    // 生成随机评论数
+    const commentCount = Math.floor(Math.random() * 200);
+    // 创建评论列表
+    const commentList = [];
+    
+    // 为每个作品生成一些模拟评论
+    const numComments = Math.min(Math.floor(Math.random() * 5) + 1, 8); // 每个作品1-5条评论
+    for (let j = 0; j < numComments; j++) {
+      const commentAuthorIndex = Math.floor(Math.random() * commentAuthors.length);
+      const commentTextIndex = Math.floor(Math.random() * commentTexts.length);
+      const hoursAgo = Math.floor(Math.random() * 72) + 1; // 评论时间1-72小时前
+      
+      commentList.push({
+        id: Date.now() + j,
+        author: commentAuthors[commentAuthorIndex],
+        avatar: `https://picsum.photos/seed/comment${commentAuthorIndex}/40/40`,
+        content: commentTexts[commentTextIndex],
+        time: hoursAgo === 1 ? '1小时前' : `${hoursAgo}小时前`
+      });
+    }
     
     data.push({
       id: i,
@@ -392,7 +364,7 @@ const generateMockData = () => {
       authorVerified: authorIndex < 5,
       verificationText: ['资深摄影师', '官方认证', '人气创作者', '技术顾问', '教程讲师'][authorIndex % 5],
       likes: Math.floor(Math.random() * 1000),
-      comments: Math.floor(Math.random() * 200),
+      comments: commentCount,
       collections: Math.floor(Math.random() * 300),
       camera: cameraModels[Math.floor(Math.random() * cameraModels.length)],
       lens: lensModels[Math.floor(Math.random() * lensModels.length)],
@@ -408,11 +380,21 @@ const generateMockData = () => {
       liked: false,
       collected: false,
       loaded: false,
-      progress: 0
+      progress: 0,
+      commentList: commentList,
+      isFollowing: false // 默认未关注
     });
   }
   
   return data;
+};
+
+// 处理关注/取消关注
+const handleFollow = () => {
+  if (previewWork.value) {
+    previewWork.value.isFollowing = !previewWork.value.isFollowing;
+    // 这里可以添加关注状态的持久化逻辑或API调用
+  }
 };
 
 // 加载作品数据
@@ -564,6 +546,60 @@ const handleImageLoad = (event) => {
   }
 };
 
+// 全局事件处理
+onMounted(() => {
+  // 添加全局点击事件委托
+  document.addEventListener('click', handleGlobalClick);
+  
+  // 添加键盘事件监听
+  document.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  // 移除全局事件监听
+  document.removeEventListener('click', handleGlobalClick);
+  document.removeEventListener('keydown', handleKeyDown);
+});
+
+// 全局点击事件处理
+const handleGlobalClick = (e) => {
+  // 处理关闭按钮点击
+  if (e.target.closest('#close-modal')) {
+    e.preventDefault();
+    closeModal();
+  }
+  
+  // 处理模态框外部点击
+  if (e.target.id === 'photo-modal') {
+    closeModal();
+  }
+  
+  // 处理模态框内的点赞按钮点击
+  if (e.target.closest('#modal-like-btn')) {
+    const likeBtn = e.target.closest('#modal-like-btn');
+    const photoId = modalContentRef.value?.dataset.id;
+    if (photoId) {
+      handleLike(e, parseInt(photoId));
+    }
+  }
+};
+
+// 键盘事件处理
+const handleKeyDown = (e) => {
+  // ESC键关闭模态框
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+  
+  // 左右箭头导航
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    const isModalOpen = modalRef.value && !modalRef.value.classList.contains('hidden');
+    if (isModalOpen) {
+      navigatePreview(e.key === 'ArrowLeft' ? 'prev' : 'next');
+    }
+  }
+};
+
 // 处理图片加载错误
 const handleImageError = (event) => {
   const img = event.target;
@@ -597,30 +633,57 @@ const handleSuggestionClick = (text) => {
   loadWorks();
 };
 
-// 打开预览
-const openPreview = (workId) => {
-  const work = worksData.value.find(w => w.id === workId);
-  if (work) {
-    // 深拷贝作品数据，避免预览状态影响列表状态
-    previewWork.value = JSON.parse(JSON.stringify(work));
-    // 禁止背景滚动
-    document.body.style.overflow = 'hidden';
-    previewScale.value = 1;
-    previewTranslate.value = { x: 0, y: 0 };
+// 处理作品点击事件
+const handleWorkClick = (work) => {
+  // 设置当前选中的作品ID
+  currentWorkId.value = work.id;
+  lastClickedWork.value = work;
+  
+  // 填充模态框内容
+  document.getElementById('modal-image').src = work.imageUrl;
+  document.getElementById('modal-image').alt = work.title;
+  document.getElementById('modal-title').textContent = work.title;
+  document.getElementById('modal-author').textContent = work.author;
+  document.getElementById('modal-category').textContent = work.category;
+  document.getElementById('modal-like-count').textContent = work.likes;
+  document.getElementById('modal-views').textContent = work.views || 128;
+  document.getElementById('modal-date').textContent = work.date;
+  
+  // 为模态框内容添加data-id属性
+  if (modalContentRef.value) {
+    modalContentRef.value.dataset.id = work.id;
+  }
+  
+  // 显示模态框并添加动画
+  if (modalRef.value) {
+    modalRef.value.classList.remove('hidden');
+    modalRef.value.style.display = 'flex';
+    if (modalContentRef.value) {
+      modalContentRef.value.classList.add('fade-in');
+    }
+  }
+  
+  // 防止页面滚动
+  document.body.style.overflow = 'hidden';
+};
+
+// 关闭模态框函数
+const closeModal = () => {
+  if (modalRef.value && modalContentRef.value) {
+    modalContentRef.value.classList.remove('fade-in');
+    setTimeout(() => {
+      modalRef.value.classList.add('hidden');
+      modalRef.value.style.display = 'none';
+      document.body.style.overflow = '';
+    }, 300);
   }
 };
 
-// 关闭预览
-const closePreview = () => {
-  previewWork.value = null;
-  document.body.style.overflow = '';
-};
-
-// 导航预览
+// 导航预览 (保留但改为操作lastClickedWork)
 const navigatePreview = (direction) => {
-  if (!previewWork.value) return;
+  if (!lastClickedWork.value) return;
   
-  const currentIndex = worksData.value.findIndex(w => w.id === previewWork.value.id);
+  const currentIndex = worksData.value.findIndex(w => w.id === lastClickedWork.value.id);
   let newIndex;
   
   if (direction === 'prev') {
@@ -629,19 +692,29 @@ const navigatePreview = (direction) => {
     newIndex = currentIndex < worksData.value.length - 1 ? currentIndex + 1 : 0;
   }
   
-  previewWork.value = JSON.parse(JSON.stringify(worksData.value[newIndex]));
-  // 切换图重置缩放
-  previewScale.value = 1;
-  previewTranslate.value = { x: 0, y: 0 };
+  // 使用新的作品数据更新模态框
+  handleWorkClick(worksData.value[newIndex]);
 };
 
-// 处理点赞
-const handleLike = (workId) => {
-  const work = worksData.value.find(w => w.id === workId);
-  if (work) {
-    work.liked = !work.liked;
-    work.likes += work.liked ? 1 : -1;
-    createLikeParticles(workId);
+// 处理点赞按钮点击
+const handleLike = (event, workId) => {
+  event.stopPropagation(); // 防止触发卡片点击
+  
+  const workIndex = worksData.value.findIndex(w => w.id === workId);
+  if (workIndex !== -1) {
+    worksData.value[workIndex].likes += 1;
+    
+    // 更新模态框中的点赞数
+    const modalLikeCount = document.getElementById('modal-like-count');
+    if (modalLikeCount) {
+      modalLikeCount.textContent = worksData.value[workIndex].likes;
+    }
+    
+    // 更新按钮样式
+    if (event.target.closest('.like-btn')) {
+      const likeBtn = event.target.closest('.like-btn');
+      likeBtn.classList.add('text-red-500');
+    }
   }
 };
 
@@ -709,23 +782,40 @@ const attachImage = (evt) => {
 };
 const submitComment = (workId) => {
   const work = worksData.value.find(w => w.id === workId);
-  if (!work) return;
-  if (commentText.value.trim()) {
-    work.comments += 1;
-    commentText.value = '';
-    commentFor.value = null;
+  if (!work || !commentText.value.trim()) return;
+  
+  // 更新作品评论数
+  work.comments += 1;
+  
+  // 如果previewWork存在且ID匹配，添加评论到previewWork.commentList
+  if (previewWork.value && previewWork.value.id === workId) {
+    // 初始化commentList（如果不存在）
+    if (!previewWork.value.commentList) {
+      previewWork.value.commentList = [];
+    }
+    
+    // 创建新评论对象
+    const newComment = {
+      id: Date.now(), // 使用时间戳作为临时ID
+      author: "我", // 模拟当前用户
+      avatar: "https://picsum.photos/seed/user/40/40", // 模拟当前用户头像
+      content: commentText.value.trim(),
+      time: "刚刚" // 初始显示为"刚刚"
+    };
+    
+    // 将新评论添加到列表开头（倒序排列）
+    previewWork.value.commentList.unshift(newComment);
+    
+    // 更新previewWork的评论数
+    previewWork.value.comments = work.comments;
   }
+  
+  // 清空评论输入框
+  commentText.value = '';
+  commentFor.value = null;
 };
 
-// 预览缩放与拖拽
-const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-const zoomIn = () => { previewScale.value = clamp(previewScale.value + 0.2, 1, 3); };
-const zoomOut = () => { previewScale.value = clamp(previewScale.value - 0.2, 1, 3); };
-const resetZoom = () => { previewScale.value = 1; previewTranslate.value = { x: 0, y: 0 }; };
-const onPreviewWheel = (e) => {
-  const delta = e.deltaY > 0 ? -0.1 : 0.1;
-  previewScale.value = clamp(previewScale.value + delta, 1, 3);
-};
+// 预览导航功能保留 - 支持左右箭头切换
 
 // 处理AI推荐
 const handleAIRecommendation = () => {
@@ -802,81 +892,6 @@ const handleScroll = () => {
   }
 };
 
-// 创建点赞粒子效果
-const createLikeParticles = (workId) => {
-  if (!particlesContainer.value) return;
-  
-  const workElement = document.querySelector(`.work-card[data-id="${workId}"] .like-btn`);
-  if (!workElement) return;
-  
-  const rect = workElement.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  
-  // 创建3-5个粒子
-  const particleCount = Math.floor(Math.random() * 3) + 3;
-  
-  for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    particle.classList.add('particle');
-    
-    // 设置粒子样式
-    const size = Math.random() * 8 + 4;
-    const color = '#0D6EFD';
-    const angle = Math.random() * Math.PI * 2;
-    const distance = Math.random() * 30 + 20;
-    
-    particle.style.width = `${size}px`;
-    particle.style.height = `${size}px`;
-    particle.style.backgroundColor = color;
-    particle.style.borderRadius = '50%';
-    particle.style.position = 'fixed';
-    particle.style.left = `${centerX - size / 2}px`;
-    particle.style.top = `${centerY - size / 2}px`;
-    particle.style.pointerEvents = 'none';
-    particle.style.zIndex = '1000';
-    particle.style.opacity = '0.7';
-    
-    particlesContainer.value.appendChild(particle);
-    
-    // 动画效果
-    const startX = centerX - size / 2;
-    const startY = centerY - size / 2;
-    const endX = startX + Math.cos(angle) * distance;
-    const endY = startY + Math.sin(angle) * distance;
-    
-    let startTime = null;
-    const duration = 600;
-    
-    const animate = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      
-      // 使用ease-out缓动函数
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-      
-      const currentX = startX + (endX - startX) * easeProgress;
-      const currentY = startY + (endY - startY) * easeProgress;
-      const currentOpacity = 0.7 * (1 - progress);
-      
-      particle.style.left = `${currentX}px`;
-      particle.style.top = `${currentY}px`;
-      particle.style.opacity = currentOpacity;
-      
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // 移除粒子
-        if (particlesContainer.value && particle.parentNode) {
-          particlesContainer.value.removeChild(particle);
-        }
-      }
-    };
-    
-    requestAnimationFrame(animate);
-  }
-};
-
 // 键盘快捷键处理
 const handleKeydown = (event) => {
   // ESC键关闭预览
@@ -948,47 +963,40 @@ onUnmounted(() => {
 <style scoped>
 /* 主题色定义（PC端） */
 :root {
-  --pc-bg: #F5F8FF; /* 浅灰蓝 背景 */
+  --pc-bg: #FFFFFF; /* 白色背景 */
   --pc-nav: #2D3A4B; /* 顶部深灰蓝 */
   --pc-nav-hover: #3A4A5F; /* hover 微亮 */
-  --pc-sidebar: #EAEFF5; /* 侧边栏浅灰 */
+  --pc-sidebar: #F8FAFC; /* 侧边栏浅灰 */
   --pc-text: #2D3A4B; /* 主文字 */
-  --pc-muted: #555; /* 次文本 */
+  --pc-muted: #64748B; /* 次文本 */
   --pc-primary: #4A90E2; /* 主色 蓝 */
   --pc-accent: #E8B04C; /* 暖金 强调 */
   --pc-white: #FFFFFF;
   --pc-shadow: 0 3px 12px rgba(0,0,0,0.05);
-}
-/* 全局样式变量 */
-:root {
-  --primary-color: #38BDF8;
+  
+  /* 统一全局样式变量 */
+  --primary-color: var(--pc-primary);
   --secondary-color: #7C3AED;
-  --text-primary: #E2E8F0;
-  --text-secondary: #CBD5E1;
+  --text-primary: var(--pc-text);
+  --text-secondary: var(--pc-muted);
   --text-tertiary: #94A3B8;
-  --bg-gradient: linear-gradient(180deg, #16213E 0%, #2A2F4F 100%);
-  --bg-primary: #16213E;
-  --bg-secondary: #2A2F4F;
-  --bg-tertiary: rgba(255, 255, 255, 0.02);
-  --border-color: rgba(56, 189, 248, 0.2);
-  --hover-bg: rgba(56, 189, 248, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.02);
-  --neon-glow: 0 0 8px rgba(56, 189, 248, 0.3);
+  --bg-primary: var(--pc-bg);
+  --bg-secondary: #F1F5F9;
+  --bg-tertiary: #E2E8F0;
+  --border-color: #E2E8F0;
+  --hover-bg: #F1F5F9;
 }
 
-/* 浅色主题 */
+/* 浅色主题 - 保持简洁，无特效 */
 [data-theme="light"] {
-  --text-primary: #1E293B;
-  --text-secondary: #475569;
-  --text-tertiary: #64748B;
-  --bg-gradient: linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%);
-  --bg-primary: #F8FAFC;
-  --bg-secondary: #E2E8F0;
-  --bg-tertiary: rgba(0, 0, 0, 0.02);
-  --border-color: rgba(56, 189, 248, 0.3);
-  --hover-bg: rgba(56, 189, 248, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --neon-glow: 0 0 8px rgba(56, 189, 248, 0.4);
+  --text-primary: var(--pc-text);
+  --text-secondary: var(--pc-muted);
+  --text-tertiary: #94A3B8;
+  --bg-primary: var(--pc-bg);
+  --bg-secondary: #F1F5F9;
+  --bg-tertiary: #E2E8F0;
+  --border-color: #E2E8F0;
+  --hover-bg: #F1F5F9;
 }
 
 /* 整体布局 */
@@ -998,44 +1006,6 @@ onUnmounted(() => {
   background: var(--pc-bg);
   position: relative;
   overflow-x: hidden;
-}
-
-/* 背景粒子动画 */
-.app-container::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
-  animation: float 15s infinite linear;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* 光带流动效果 */
-.app-container::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 240px;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(180deg, 
-    transparent 0%, 
-    var(--primary-color) 20%, 
-    var(--secondary-color) 50%, 
-    var(--primary-color) 80%, 
-    transparent 100%
-  );
-  opacity: 0.3;
-  animation: flow 8s infinite linear;
-  pointer-events: none;
-  z-index: 2;
 }
 
 /* 顶部导航栏 */
@@ -1070,21 +1040,18 @@ onUnmounted(() => {
 
 .logo-icon {
   font-size: 32px;
-  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.3));
 }
 
 .navbar-logo .logo-text {
   font-size: 24px;
   font-weight: 700;
   color: var(--text-primary);
-  text-shadow: var(--neon-glow);
   transition: all 0.3s ease;
   font-family: 'Arial', sans-serif;
 }
 
 .navbar-logo:hover .logo-text {
   color: var(--primary-color);
-  text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
 }
 
 .navbar-nav {
@@ -1151,20 +1118,20 @@ onUnmounted(() => {
 }
 
 .theme-toggle-btn {
-  background: var(--glass-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: 8px;
-  border-radius: 50%;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
 .theme-toggle-btn:hover {
   background: var(--hover-bg);
@@ -1178,13 +1145,11 @@ onUnmounted(() => {
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--primary-color);
-  box-shadow: var(--neon-glow);
   transition: all 0.2s ease;
 }
 
 .user-avatar:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
 }
 
 .user-avatar img {
@@ -1194,16 +1159,15 @@ onUnmounted(() => {
 }
 
 .online-indicator {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
-  background: #10B981;
-  border: 2px solid var(--bg-primary);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background: #10B981;
+    border: 2px solid var(--bg-primary);
+    border-radius: 50%;
+  }
 
 /* 左侧分类导航栏 */
 .category-sidebar {
@@ -1257,17 +1221,16 @@ onUnmounted(() => {
 }
 
 .category-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: var(--pc-accent);
-  border-radius: 0 3px 3px 0;
-  animation: flow 1.5s infinite linear;
-}
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--pc-accent);
+    border-radius: 0 3px 3px 0;
+  }
 
 .category-item.active .category-icon,
 .category-item.active .category-name {
@@ -1306,7 +1269,6 @@ onUnmounted(() => {
   padding: 2px 4px;
   border-radius: 3px;
   font-weight: 600;
-  animation: glow 2s infinite alternate;
 }
 
 /* 个人快捷入口 */
@@ -1644,17 +1606,18 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
-/* 瀑布流网格 */
-.masonry-grid {
-  column-count: 3;
-  column-gap: 24px;
+/* 作品网格布局 - 固定网格 */
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 300px);
+  gap: 20px;
+  justify-content: center;
   margin-bottom: 32px;
 }
 
-/* 作品卡片 */
+/* 作品卡片 -> 固定宽度和高度 */
 .work-card {
-  display: inline-block;
-  width: 100%;
+  width: 300px;
   background-color: #fff;
   border: 1px solid #e9edf3;
   border-radius: 10px;
@@ -1663,90 +1626,140 @@ onUnmounted(() => {
   transition: all 0.3s ease;
   box-shadow: var(--pc-shadow);
   position: relative;
-  break-inside: avoid;
 }
 
-.work-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(56, 189, 248, 0.15);
-}
-
-/* 作品图片容器 */
+/* 作品图片容器 -> 固定尺寸 */
 .work-image-container {
   width: 100%;
+  height: 225px;
   overflow: hidden;
   position: relative;
 }
 
+/* 作品图片 */
 .work-image {
   width: 100%;
-  height: 550px;
+  height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
-  filter: contrast(1.1) saturate(1.05);
 }
 
+/* 图片hover放大效果 */
 .work-card:hover .work-image {
-  transform: scale(1.03);
-  border: 1px solid rgba(74, 144, 226, 0.5);
+  transform: scale(1.05);
 }
 
-/* Hover 白底详情层 */
-.hover-detail {
+/* Hover黑色半透明遮罩 */
+.card-hover-overlay {
   position: absolute;
-  inset: 0;
-  background: #fff;
-  color: var(--pc-text);
-  display: none;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 16px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: rgba(255,255,255,0.9);
+  transition: height 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  z-index: 3;
+  opacity: 0;
+  overflow: hidden;
 }
-.work-card:hover .hover-detail { display: grid; }
-.hover-left { display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.hover-image { max-width: 100%; max-height: 100%; object-fit: contain; }
-.hover-right { display: flex; flex-direction: column; gap: 12px; }
-.hover-title { font-size: 18px; font-weight: 700; }
-.hover-author { display: flex; gap: 8px; align-items: center; }
-.hover-author .author-avatar { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--pc-primary); }
-.hover-author-meta { display: flex; flex-direction: column; }
-.hover-author-meta .author-link { color: var(--pc-primary); text-decoration: none; }
-.hover-sub { font-size: 12px; color: #98a2b3; }
-.hover-exif { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
-.exif-item { display: flex; gap: 8px; font-size: 13px; }
-.exif-item .label { color: #7a869a; min-width: 68px; }
-.exif-item .value { color: var(--pc-text); font-weight: 500; }
-.hover-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.hover-btn { background: #F5F8FF; border: 1px solid #e9edf3; color: var(--pc-text); border-radius: 18px; padding: 6px 12px; font-size: 13px; }
-.hover-btn.like.active, .hover-btn.like:hover { background: rgba(13,110,253,0.08); border-color: #0D6EFD; color: #0D6EFD; }
-.collect-wrap, .comment-wrap, .share-wrap { position: relative; }
-.collect-menu { position: absolute; top: 36px; left: 0; background: #fff; border: 1px solid #e9edf3; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); min-width: 160px; z-index: 5; }
-.collect-menu .menu-title { padding: 8px 12px; font-size: 12px; color: #7a869a; border-bottom: 1px solid #e9edf3; }
-.collect-menu .menu-item { padding: 10px 12px; cursor: pointer; }
-.collect-menu .menu-item:hover { background: #F5F8FF; }
-.hover-comment { display: flex; flex-direction: column; gap: 8px; }
-.rich-tools { display: flex; gap: 6px; }
-.tool { background: #fff; border: 1px solid #e9edf3; border-radius: 6px; padding: 4px 8px; }
-.rich-input { width: 100%; min-height: 64px; padding: 8px; border: 1px solid #e9edf3; border-radius: 8px; resize: vertical; }
-.comment-actions { display: flex; justify-content: flex-end; }
-.comment-actions .submit { background: #4A90E2; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; }
 
-/* 图片加载进度 */
+.work-card:hover .card-hover-overlay {
+  height: 100%;
+  opacity: 1;
+}
+
+/* 遮罩内容 */
+.overlay-content {
+  width: 100%;
+}
+
+/* 作者信息 */
+.author-info-overlay {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.author-avatar-overlay {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.author-name-overlay {
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 点赞信息 */
+.likes-info {
+  display: flex;
+  align-items: center;
+  color: #333;
+  font-size: 13px;
+}
+
+.like-icon {
+  margin-right: 4px;
+  font-size: 15px;
+  color: #ff4757;
+}
+
+.likes-count {
+  font-weight: 500;
+}
+
+/* 图片加载占位符 */
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* 加载动画 */
+.placeholder-animation {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #ddd;
+  border-top-color: #0077ff;
+  border-radius: 50%;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 图片加载进度条 */
 .image-progress {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.2);
+  z-index: 2;
 }
 
 .progress-bar {
   height: 100%;
   background-color: var(--pc-primary);
-  transition: width 0.2s ease;
+  transition: width 0.3s ease;
 }
 
 /* 作者信息 */
@@ -1895,380 +1908,95 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
-/* 图片预览模态框 */
-.preview-modal {
+/* 作品详情模态框 */
+.modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 50;
   padding: 24px;
-}
-
-.preview-content {
-  width: 100%;
-  max-width: 1200px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(255,255,255,0.06);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* 预览关闭按钮 */
-.preview-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
+  overflow-x: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
 }
 
-.preview-close:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* 预览导航按钮 */
-.preview-nav {
-  position: absolute;
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 0 auto;
+  position: relative;
   top: 50%;
   transform: translateY(-50%);
-  width: 56px;
-  height: 56px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-.preview-nav.prev {
-  left: 16px;
-}
-
-.preview-nav.next {
-  right: 16px;
-}
-
-.preview-nav:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* 预览图片容器 */
-.preview-image-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: black;
-  overflow: hidden;
-}
-
-.preview-image {
-  max-width: 100%;
-  max-height: 60vh;
-  object-fit: contain;
-}
-
-/* 预览EXIF悬浮 */
-.exif-hover {
-  position: absolute;
-  left: 16px;
-  top: 16px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.exif-chip {
-  background: rgba(0,0,0,0.55);
-  color: #fff;
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-/* 预览信息 */
-.preview-info {
-  padding: 24px;
-  background-color: var(--glass-bg);
-  border-top: 1px solid var(--border-color);
-  overflow-y: auto;
-  max-height: 30vh;
-}
-
-.preview-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-}
-
-.preview-author {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.author-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.author-avatar-large {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid var(--primary-color);
-  box-shadow: var(--neon-glow);
-}
-
-.author-info-large {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.author-name-large {
-  font-size: 16px;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.verification-badge-large {
-  background: rgba(124, 58, 237, 0.2);
-  color: var(--secondary-color);
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-weight: 500;
-  align-self: flex-start;
-}
-
-.follow-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 20px;
+/* 评论输入框 */
+.comment-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 12px;
+  border: 1px solid #e9edf3;
+  border-radius: 8px;
+  resize: vertical;
   font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  color: var(--pc-text);
+  font-family: inherit;
 }
 
-.follow-button:hover {
-  background-color: #0ea5e9;
-}
-
-/* 预览EXIF信息 */
-.preview-exif h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 16px;
-}
-
-.exif-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.exif-grid-item {
-  font-size: 14px;
-}
-
-.exif-grid-label {
-  color: var(--text-tertiary);
-  display: block;
-  margin-bottom: 4px;
-}
-
-.exif-grid-value {
-  color: #fff;
-  font-weight: 500;
-}
-
-/* 预览互动按钮 */
-.preview-actions {
-  display: flex;
-  gap: 16px;
-}
-
-.action-button {
-  background-color: rgba(255,255,255,0.06);
-  color: #d0d6e0;
-  border: 1px solid rgba(255,255,255,0.12);
-  padding: 10px 20px;
-  border-radius: 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.action-button:hover {
-  background-color: rgba(255,255,255,0.14);
-  color: #fff;
-}
-
-.like-button:hover {
-  background-color: rgba(255, 77, 79, 0.1);
-  border-color: #FF4D4F;
-  color: #FF4D4F;
-}
-
-.comment-button:hover {
-  background-color: rgba(56, 189, 248, 0.1);
+.comment-input:focus {
+  outline: none;
   border-color: var(--pc-primary);
-  color: var(--pc-primary);
 }
 
-.collect-button:hover {
-  background-color: rgba(124, 58, 237, 0.1);
-  border-color: #7C3AED;
-  color: #7C3AED;
+/* 淡入动画 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
 }
 
-.share-button:hover {
-  background-color: rgba(25, 135, 84, 0.1);
-  border-color: #198754;
-  color: #198754;
-}
-
-/* 粒子效果容器 */
-.particles-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 999;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 动画定义 */
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-@keyframes shutter {
-  0% { background-position: 0 0, 0 0; opacity: 0.8; }
-  50% { background-position: 0 0, -100% 0; opacity: 1; }
-  100% { background-position: 0 0, -200% 0; opacity: 0.9; }
-}
-
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 5px rgba(56, 189, 248, 0.2);
-  }
-  100% {
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-  }
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translateY(-20px) rotate(180deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0px) rotate(360deg);
-    opacity: 0.7;
-  }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes pulse {
-  0% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
-@keyframes flow {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
+/* 模态框响应式样式 */
+@media (max-width: 768px) {
+  .modal {
+    padding: 16px;
   }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-}
-
-@keyframes progress-animation {
-  0% {
-    width: 0%;
-  }
-  50% {
-    width: 50%;
-  }
-  100% {
-    width: 100%;
+  
+  .modal-content {
+    max-width: 100%;
+    max-height: calc(100vh - 32px);
+    margin: 0;
   }
 }
 
 /* 响应式设计 */
-@media (max-width: 1200px) {
-  .masonry-grid { column-count: 2; column-gap: 20px; }
-}
-
 @media (max-width: 768px) {
   .top-navbar {
     height: 60px;
@@ -2307,6 +2035,33 @@ onUnmounted(() => {
   .category-sidebar {
     width: 60px;
     top: 60px;
+  }
+  
+  /* 模态框动画 */
+  .fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* 确保模态框居中 */
+  .modal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal.hidden {
+    display: none !important;
   }
   
   .category-name,
@@ -2352,47 +2107,29 @@ onUnmounted(() => {
     justify-content: center;
   }
   
-  .masonry-grid { column-count: 2; column-gap: 16px; }
-  
-  .work-image {
-    height: 400px;
+  /* 网格布局样式 - 移动端适配 */
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 20px;
   }
-  
-  .preview-content {
-    max-height: 100vh;
-    max-width: 100%;
-  }
-  
-  .preview-image {
-    max-height: 50vh;
-  }
-  
-  .exif-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .preview-actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 480px) {
-  .masonry-grid { column-count: 1; }
   
   .work-image {
     height: 350px;
   }
   
-  .preview-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+  /* 作品详情模态框移动端适配 */
+  .modal {
+    padding: 8px;
   }
   
-  .preview-close {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
+  .modal-content {
+    margin: 8px;
+    border-radius: 8px;
+  }
+  
+  .modal-content h4 {
+    font-size: 18px;
   }
 }
 </style>

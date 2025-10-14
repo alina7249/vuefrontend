@@ -916,7 +916,7 @@ const viewEventFromCalendar = (id) => {
 };
 </script>
 
-<style>
+<style scoped>
 /* 活动赛事容器样式 */
 .activities-container {
   max-width: 1400px;
@@ -1545,41 +1545,43 @@ const viewEventFromCalendar = (id) => {
 .competition-year {
   font-size: 14px;
   color: #6C757D;
+}
+
 /* 活动日历区域样式 */
-  .calendar-section {
-    margin-top: 32px;
-  }
+.calendar-section {
+  margin-top: 32px;
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.calendar-nav-button {
+  background-color: #FFFFFF;
+  border: 1px solid #E9ECEF;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
   
-  .calendar-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .calendar-nav-button {
-    background-color: #FFFFFF;
-    border: 1px solid #E9ECEF;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #495057;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .calendar-nav-button:hover {
-    background-color: #F8F9FA;
-    border-color: #0D6EFD;
-    color: #0D6EFD;
-  }
-  
-  .current-month {
-    font-size: 20px;
-    font-weight: 600;
-    color: #212529;
-    margin: 0;
-  }
+.calendar-nav-button:hover {
+  background-color: #F8F9FA;
+  border-color: #0D6EFD;
+  color: #0D6EFD;
+}
+
+.current-month {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
   
   .calendar-grid {
     background-color: #FFFFFF;
@@ -1859,7 +1861,7 @@ const viewEventFromCalendar = (id) => {
       border-radius: 8px;
     }
     
-    .calendar-grid {
+.calendar-grid {
       padding: 16px;
     }
     
@@ -1876,4 +1878,5 @@ const viewEventFromCalendar = (id) => {
       justify-content: center;
       width: 100%;
     }
+  }
 </style>
