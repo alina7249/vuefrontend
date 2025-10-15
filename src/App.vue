@@ -7,7 +7,6 @@
       </div>
       <div class="navbar-links">
         <router-link to="/" class="nav-link">首页</router-link>
-        <router-link to="/discover" class="nav-link">发现</router-link>
         <router-link to="/community" class="nav-link">社区</router-link>
         <router-link to="/tutorials" class="nav-link">教程</router-link>
         <router-link to="/equipment" class="nav-link">器材</router-link>

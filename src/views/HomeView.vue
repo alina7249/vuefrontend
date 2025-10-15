@@ -124,14 +124,14 @@
         <button class="back-to-categories" @click="selectCategory('all')">返回分类</button>
       </div>
       
-      <!-- 作品网格布局 - 每行3张，每张图片固定宽300px、高225px，间距20px -->
+      <!-- 作品网格布局 - 弹性布局，响应式适配，3:2比例 -->
       <div v-else class="grid-layout">
         <div 
           v-for="work in worksData" 
           :key="work.id"
           class="work-card gallery-item" 
           :data-id="work.id"
-          @click="handleWorkClick(work)"
+          @click="router.push('/photo/' + work.id)"
         >
           <!-- 作品图片 -->
           <div class="work-image-container">
@@ -139,27 +139,26 @@
             <div v-if="!work.loaded" class="image-placeholder">
               <div class="placeholder-animation"></div>
             </div>
-            <!-- 图片 -->
+            <!-- 图片 - 使用懒加载 -->
             <img 
               :src="work.imageUrl" 
               :alt="work.title"
               class="work-image"
               v-if="work.loaded"
+              loading="lazy"
               @load="handleImageLoad"
               @error="handleImageError"
             />
-            <!-- Hover效果：黑色半透明遮罩 -->
-            <div class="card-hover-overlay">
-              <div class="overlay-content">
-                <div class="author-info-overlay">
-                  <img :src="work.authorAvatar" alt="作者头像" class="author-avatar-overlay">
-                  <span class="author-name-overlay">{{ work.author }}</span>
-                </div>
-                <div class="likes-info" @click="(event) => handleLike(event, work.id)">
-                  <span class="like-icon">❤</span>
-                  <span class="likes-count">{{ work.likes }}</span>
-                </div>
-              </div>
+          </div>
+          <!-- 底部信息展示 -->
+          <div class="card-footer">
+            <div class="author-info">
+              <img :src="work.authorAvatar" alt="作者头像" class="author-avatar">
+              <span class="author-name">{{ work.author }}</span>
+            </div>
+            <div class="stats-info" @click="(event) => handleLike(event, work.id)">
+              <span class="like-icon">❤</span>
+              <span class="likes-count">{{ work.likes }}</span>
             </div>
           </div>
         </div>
@@ -176,65 +175,16 @@
         <span>🎉 已加载全部作品</span>
       </div>
       
-      <!-- 作品详情模态框 -->
-      <div id="photo-modal" class="modal fixed inset-0 bg-black bg-opacity-75 items-center justify-center z-50 hidden" ref="modalRef">
-        <div class="modal-content bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-auto" ref="modalContentRef">
-          <div class="p-4 flex justify-between items-center border-b">
-            <h3 class="text-xl font-bold">作品详情</h3>
-            <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
-          </div>
-          <div class="p-6">
-            <img id="modal-image" class="w-full h-auto object-contain rounded-lg mb-6" style="max-height: 70vh;">
-            <div class="mb-6">
-              <h4 id="modal-title" class="text-2xl font-bold mb-2"></h4>
-              <div class="flex items-center text-gray-600 mb-4">
-                <span id="modal-author"></span>
-                <span id="modal-category" class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm ml-4"></span>
-              </div>
-              <p id="modal-description" class="text-gray-700 mb-6">这张照片拍摄于清晨时分，阳光刚刚洒在山脉上，形成了美丽的光影效果。使用长曝光捕捉了云层的流动感。</p>
-              <div class="flex justify-between items-center mb-6">
-                <div class="flex space-x-4">
-                  <button id="modal-like-btn" class="flex items-center text-gray-500 hover:text-red-500">
-                    <span class="text-xl mr-1">❤️</span>
-                    <span id="modal-like-count"></span>
-                  </button>
-                  <span class="text-gray-500">👁️ <span id="modal-views"></span> 次浏览</span>
-                </div>
-                <span id="modal-date" class="text-gray-400"></span>
-              </div>
-            </div>
-            
-            <!-- 评论区域 -->
-            <div class="border-t pt-6">
-              <h4 class="text-lg font-bold mb-4">评论 ({{ previewWork?.comments || 3 }})</h4>
-              <div id="comments-list" class="space-y-4 mb-6">
-                <div v-for="comment in previewWork?.commentList" :key="comment.id" class="bg-gray-50 p-4 rounded-lg fade-in">
-                  <div class="flex items-center mb-2">
-                    <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
-                      <img :src="comment.avatar" :alt="comment.author" class="w-full h-full object-cover">
-                    </div>
-                    <span class="font-medium">{{ comment.author }}</span>
-                    <span class="text-gray-400 text-sm ml-auto">{{ comment.time }}</span>
-                  </div>
-                  <p class="text-gray-700">{{ comment.content }}</p>
-                </div>
-              </div>
-              
-              <!-- 评论表单 -->
-              <div>
-                <textarea id="comment-input" class="w-full p-3 border rounded-lg comment-input mb-2" placeholder="写下你的评论..." rows="3" v-model="commentText"></textarea>
-                <button id="submit-comment" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition" @click="submitComment(previewWork?.id)">发表评论</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
@@ -250,11 +200,7 @@ const cameraFilter = ref('');
 const lensFilter = ref('');
 const equipmentTags = ref([]); // 侧边栏多选标签
 
-// 模态框相关引用
-const modalRef = ref(null);
-const modalContentRef = ref(null);
-let currentWorkId = ref(null);
-let lastClickedWork = ref(null);
+
 const paramFilters = ref({ aperture: '', shutter: '', iso: '' });
 const searchQuery = ref('');
 const showSearchSuggestions = ref(false);
@@ -546,59 +492,9 @@ const handleImageLoad = (event) => {
   }
 };
 
-// 全局事件处理
-onMounted(() => {
-  // 添加全局点击事件委托
-  document.addEventListener('click', handleGlobalClick);
-  
-  // 添加键盘事件监听
-  document.addEventListener('keydown', handleKeyDown);
-});
 
-onUnmounted(() => {
-  // 移除全局事件监听
-  document.removeEventListener('click', handleGlobalClick);
-  document.removeEventListener('keydown', handleKeyDown);
-});
 
-// 全局点击事件处理
-const handleGlobalClick = (e) => {
-  // 处理关闭按钮点击
-  if (e.target.closest('#close-modal')) {
-    e.preventDefault();
-    closeModal();
-  }
-  
-  // 处理模态框外部点击
-  if (e.target.id === 'photo-modal') {
-    closeModal();
-  }
-  
-  // 处理模态框内的点赞按钮点击
-  if (e.target.closest('#modal-like-btn')) {
-    const likeBtn = e.target.closest('#modal-like-btn');
-    const photoId = modalContentRef.value?.dataset.id;
-    if (photoId) {
-      handleLike(e, parseInt(photoId));
-    }
-  }
-};
 
-// 键盘事件处理
-const handleKeyDown = (e) => {
-  // ESC键关闭模态框
-  if (e.key === 'Escape') {
-    closeModal();
-  }
-  
-  // 左右箭头导航
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-    const isModalOpen = modalRef.value && !modalRef.value.classList.contains('hidden');
-    if (isModalOpen) {
-      navigatePreview(e.key === 'ArrowLeft' ? 'prev' : 'next');
-    }
-  }
-};
 
 // 处理图片加载错误
 const handleImageError = (event) => {
@@ -633,57 +529,11 @@ const handleSuggestionClick = (text) => {
   loadWorks();
 };
 
-// 处理作品点击事件
-const handleWorkClick = (work) => {
-  // 设置当前选中的作品ID
-  currentWorkId.value = work.id;
-  lastClickedWork.value = work;
-  
-  // 填充模态框内容
-  document.getElementById('modal-image').src = work.imageUrl;
-  document.getElementById('modal-image').alt = work.title;
-  document.getElementById('modal-title').textContent = work.title;
-  document.getElementById('modal-author').textContent = work.author;
-  document.getElementById('modal-category').textContent = work.category;
-  document.getElementById('modal-like-count').textContent = work.likes;
-  document.getElementById('modal-views').textContent = work.views || 128;
-  document.getElementById('modal-date').textContent = work.date;
-  
-  // 为模态框内容添加data-id属性
-  if (modalContentRef.value) {
-    modalContentRef.value.dataset.id = work.id;
-  }
-  
-  // 显示模态框并添加动画
-  if (modalRef.value) {
-    modalRef.value.classList.remove('hidden');
-    modalRef.value.style.display = 'flex';
-    if (modalContentRef.value) {
-      modalContentRef.value.classList.add('fade-in');
-    }
-  }
-  
-  // 防止页面滚动
-  document.body.style.overflow = 'hidden';
-};
-
-// 关闭模态框函数
-const closeModal = () => {
-  if (modalRef.value && modalContentRef.value) {
-    modalContentRef.value.classList.remove('fade-in');
-    setTimeout(() => {
-      modalRef.value.classList.add('hidden');
-      modalRef.value.style.display = 'none';
-      document.body.style.overflow = '';
-    }, 300);
-  }
-};
-
-// 导航预览 (保留但改为操作lastClickedWork)
+// 导航预览功能保留 - 支持左右箭头切换
 const navigatePreview = (direction) => {
-  if (!lastClickedWork.value) return;
+  if (!previewWork.value) return;
   
-  const currentIndex = worksData.value.findIndex(w => w.id === lastClickedWork.value.id);
+  const currentIndex = worksData.value.findIndex(w => w.id === previewWork.value.id);
   let newIndex;
   
   if (direction === 'prev') {
@@ -692,8 +542,8 @@ const navigatePreview = (direction) => {
     newIndex = currentIndex < worksData.value.length - 1 ? currentIndex + 1 : 0;
   }
   
-  // 使用新的作品数据更新模态框
-  handleWorkClick(worksData.value[newIndex]);
+  // 使用新的作品数据更新预览
+  previewWork.value = worksData.value[newIndex];
 };
 
 // 处理点赞按钮点击
@@ -1182,6 +1032,8 @@ onUnmounted(() => {
   bottom: 0;
   z-index: 100;
   box-sizing: border-box;
+  border-radius: 0 12px 12px 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
 }
 
 
@@ -1196,9 +1048,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   padding: 14px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   position: relative;
   transition: all 0.2s ease;
   color: var(--pc-muted);
@@ -1207,7 +1059,7 @@ onUnmounted(() => {
 .category-item:hover {
   background: #fff;
   transform: translateX(3px) scale(1.02);
-  box-shadow: var(--pc-shadow);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .category-item:hover .category-icon,
@@ -1217,20 +1069,12 @@ onUnmounted(() => {
 
 .category-item.active {
   background: var(--pc-primary);
-  padding-left: 14px;
+  padding-left: 16px;
+  color: var(--pc-white);
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(74, 144, 226, 0.25);
+  transform: translateX(3px);
 }
-
-.category-item.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 60%;
-    background: var(--pc-accent);
-    border-radius: 0 3px 3px 0;
-  }
 
 .category-item.active .category-icon,
 .category-item.active .category-name {
@@ -1609,31 +1453,62 @@ onUnmounted(() => {
 /* 作品网格布局 - 固定网格 */
 .grid-layout {
   display: grid;
-  grid-template-columns: repeat(3, 300px);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
   justify-content: center;
   margin-bottom: 32px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+  .grid-layout {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 20px;
+  }
 }
 
 /* 作品卡片 -> 固定宽度和高度 */
 .work-card {
-  width: 300px;
   background-color: #fff;
   border: 1px solid #e9edf3;
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   box-shadow: var(--pc-shadow);
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 卡片hover放大效果 */
+.work-card:hover {
+  transform: translateY(-5px);
 }
 
 /* 作品图片容器 -> 固定尺寸 */
 .work-image-container {
   width: 100%;
-  height: 225px;
+  height: 0;
+  padding-bottom: 75%; /* 4:3 宽高比 */
   overflow: hidden;
   position: relative;
+  background-color: #f5f5f5;
+}
+
+.work-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* 作品图片 */
@@ -1650,53 +1525,53 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-/* Hover黑色半透明遮罩 */
-.card-hover-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0;
-  background: rgba(255,255,255,0.9);
-  transition: height 0.3s ease;
+/* 卡片底部信息 */
+.card-footer {
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 3;
-  opacity: 0;
-  overflow: hidden;
+  justify-content: space-between;
+  flex-shrink: 0;
 }
 
-.work-card:hover .card-hover-overlay {
-  height: 100%;
-  opacity: 1;
-}
-
-/* 遮罩内容 */
-.overlay-content {
-  width: 100%;
-}
-
-/* 作者信息 */
-.author-info-overlay {
+.author-info {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  flex: 1;
 }
 
-.author-avatar-overlay {
-  width: 32px;
-  height: 32px;
+.author-avatar {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   margin-right: 8px;
-  border: 2px solid #e0e0e0;
+  object-fit: cover;
 }
 
-.author-name-overlay {
+.author-name {
   color: #333;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #666;
+  font-size: 14px;
+}
+
+.stats-info:hover {
+  color: #e74c3c;
+}
+
+.like-icon {
+  font-size: 16px;
 }
 
 /* 点赞信息 */
