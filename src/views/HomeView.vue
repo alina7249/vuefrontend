@@ -2008,26 +2008,26 @@ onUnmounted(() => {
   }
   
   /* 网格布局样式 - 移动端适配 */
-.grid-layout {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 16px;
-}
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+  }
 
-.work-image {
-  height: auto; /* 保持3:2比例 */
-  border-radius: 8px 8px 0 0;
-}
+  .work-image {
+    height: auto; /* 保持3:2比例 */
+    border-radius: 8px 8px 0 0;
+  }
   
   /* 作品详情模态框移动端适配 */
-.modal {
-  padding: 12px;
-}
+  .modal {
+    padding: 12px;
+  }
 
-.modal-content {
-  margin: 0;
-  border-radius: 12px;
-}
+  .modal-content {
+    margin: 0;
+    border-radius: 12px;
+  }
   
   .modal-content h4 {
     font-size: 18px;
