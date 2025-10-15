@@ -1450,11 +1450,11 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
-/* 作品网格布局 - 固定网格 */
+/* 作品网格布局 - 弹性布局，响应式适配 */
 .grid-layout {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  gap: 16px;
   justify-content: center;
   margin-bottom: 32px;
   width: 100%;
@@ -1466,40 +1466,48 @@ onUnmounted(() => {
 /* 响应式调整 */
 @media (max-width: 1200px) {
   .grid-layout {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 0 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 16px;
   }
 }
 
-/* 作品卡片 -> 固定宽度和高度 */
+@media (max-width: 768px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* 作品卡片 */
 .work-card {
   background-color: #fff;
-  border: 1px solid #e9edf3;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease;
-  box-shadow: var(--pc-shadow);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-/* 卡片hover放大效果 */
+/* 卡片hover效果 */
 .work-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-/* 作品图片容器 -> 固定尺寸 */
+/* 作品图片容器 - 3:2 比例 */
 .work-image-container {
   width: 100%;
   height: 0;
-  padding-bottom: 75%; /* 4:3 宽高比 */
+  padding-bottom: 66.67%; /* 3:2 宽高比 */
   overflow: hidden;
   position: relative;
   background-color: #f5f5f5;
+  border-radius: 8px 8px 0 0;
 }
 
 .work-image {
@@ -1509,15 +1517,9 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* 作品图片 */
-.work-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
+  border-radius: 8px 8px 0 0;
 }
 
 /* 图片hover放大效果 */
@@ -1592,18 +1594,30 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-/* 图片加载占位符 */
+/* 图片加载占位符 - 骨架屏动画 */
 .image-placeholder {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #f0f0f0;
+  background: linear-gradient(45deg, #f1f5f9 25%, #e2e8f0 25%, #e2e8f0 50%, #f1f5f9 50%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0 100%);
+  background-size: 20px 20px;
+  animation: shimmer 1.5s infinite linear;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
+  border-radius: 8px 8px 0 0;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
 }
 
 /* 加载动画 */
@@ -1783,16 +1797,17 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
-/* 作品详情模态框 */
+/* 作品详情模态框 - 半透明背景和居中显示 */
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+  backdrop-filter: blur(4px); /* 背景模糊效果 */
   z-index: 50;
-  padding: 24px;
+  padding: 20px;
   overflow-x: hidden;
   display: flex;
   align-items: center;
@@ -1801,16 +1816,26 @@ onUnmounted(() => {
 
 .modal-content {
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
   margin: 0 auto;
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* 评论输入框 */
@@ -1983,25 +2008,26 @@ onUnmounted(() => {
   }
   
   /* 网格布局样式 - 移动端适配 */
-  .grid-layout {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 20px;
-  }
-  
-  .work-image {
-    height: 350px;
-  }
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+}
+
+.work-image {
+  height: auto; /* 保持3:2比例 */
+  border-radius: 8px 8px 0 0;
+}
   
   /* 作品详情模态框移动端适配 */
-  .modal {
-    padding: 8px;
-  }
-  
-  .modal-content {
-    margin: 8px;
-    border-radius: 8px;
-  }
+.modal {
+  padding: 12px;
+}
+
+.modal-content {
+  margin: 0;
+  border-radius: 12px;
+}
   
   .modal-content h4 {
     font-size: 18px;
