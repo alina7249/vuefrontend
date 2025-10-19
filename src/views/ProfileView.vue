@@ -717,8 +717,19 @@ onMounted(() => {
 /* 作品列表 */
 .works-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* 在大屏幕上使用固定的3列布局 */
+  grid-template-columns: repeat(3, 1fr);
+  /* 确保所有图片之间的间隙大小统一 */
   gap: 24px;
+  
+  /* 响应式调整 */
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .work-item {
@@ -728,6 +739,10 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  /* 确保所有作品项高度统一 */
+  height: 100%;
 }
 
 .work-item:hover {
@@ -736,7 +751,8 @@ onMounted(() => {
 }
 
 .work-image {
-  height: 200px;
+  /* 使用固定的宽高比，确保所有图片区域大小一致 */
+  aspect-ratio: 1 / 1;
   overflow: hidden;
 }
 
