@@ -27,10 +27,10 @@
             <span class="btn-icon">📤</span>
             <span class="btn-text">上传作品</span>
           </button>
-          <div class="user-avatar" @click="toggleUserMenu">
+          <router-link to="/user" class="user-avatar" title="查看个人主页">
             <img src="https://picsum.photos/seed/user/40/40" alt="用户头像" />
             <div class="online-indicator"></div>
-          </div>
+          </router-link>
         </div>
       </div>
     </header>
@@ -153,7 +153,9 @@
           <!-- 底部信息展示 -->
           <div class="card-footer">
             <div class="author-info">
-              <img :src="work.authorAvatar" alt="作者头像" class="author-avatar">
+              <router-link :to="'/user/' + work.authorId" class="author-avatar-container" title="查看个人主页">
+                <img :src="work.authorAvatar" alt="作者头像" class="author-avatar">
+              </router-link>
               <span class="author-name">{{ work.author }}</span>
             </div>
             <div class="stats-info" @click="(event) => handleLike(event, work.id)">

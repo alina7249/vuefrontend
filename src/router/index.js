@@ -57,6 +57,11 @@ const router = createRouter({
       name: 'photoDetail',
       component: () => import('../views/PhotoDetailView.vue'),
     },
+    {
+      path: '/user/:id?',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+    },
   ]
 })
 

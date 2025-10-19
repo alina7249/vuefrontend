@@ -13,16 +13,16 @@
         <router-link to="/activities" class="nav-link">活动</router-link>
       </div>
       <div class="navbar-user">
-        <template v-if="isLoggedIn">
-          <router-link to="/upload" class="nav-link upload-btn">上传作品</router-link>
-          <router-link to="/user" class="nav-link user-avatar">
-            <div class="avatar">{{ username.substring(0, 2) }}</div>
-          </router-link>
-        </template>
-        <template v-else>
-          <router-link to="/login" class="nav-link login-btn">登录</router-link>
-        </template>
-      </div>
+          <template v-if="isLoggedIn">
+            <router-link to="/upload" class="nav-link upload-btn">上传作品</router-link>
+            <router-link to="/user" class="nav-link user-avatar" title="查看个人主页">
+              <div class="avatar">{{ username.substring(0, 2) }}</div>
+            </router-link>
+          </template>
+          <template v-else>
+            <router-link to="/login" class="nav-link login-btn">登录</router-link>
+          </template>
+        </div>
     </nav>
 
     <!-- 主内容区域 -->

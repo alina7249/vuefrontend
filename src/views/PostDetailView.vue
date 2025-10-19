@@ -22,9 +22,9 @@
       <div class="post-main">
         <!-- 作者信息 -->
         <div class="author-section">
-          <div class="author-avatar">
+          <router-link :to="'/user/' + currentPost.authorId" class="author-avatar" title="查看个人主页">
             <img :src="currentPost.authorAvatar" :alt="currentPost.authorName" />
-          </div>
+          </router-link>
           <div class="author-info">
             <h3 class="author-name">{{ currentPost.authorName }}</h3>
             <p class="post-time">{{ formatPostTime(currentPost.createdAt) }}</p>

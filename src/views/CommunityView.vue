@@ -42,9 +42,9 @@
             <span class="position-number" :class="getRankClass(index)">{{ index + 1 }}</span>
           </div>
           
-          <div class="ranking-avatar">
+          <router-link :to="'/user/' + photographer.id" class="ranking-avatar" title="查看个人主页">
             <img :src="photographer.avatarUrl" :alt="photographer.name" />
-          </div>
+          </router-link>
           
           <div class="ranking-info">
             <div class="ranking-name-row">
@@ -271,9 +271,9 @@
             <h3>活跃用户</h3>
             <div class="active-users-list">
               <div v-for="user in activeUsers" :key="user.id" class="active-user-item">
-                <div class="user-avatar">
-                  <img :src="user.avatarUrl" :alt="user.name" />
-                </div>
+                <router-link :to="'/user/' + user.id" class="user-avatar" title="查看个人主页">
+            <img :src="user.avatarUrl" :alt="user.name" />
+          </router-link>
                 <div class="user-info">
                   <span class="user-name">{{ user.name }}</span>
                 </div>
@@ -314,9 +314,9 @@
               class="post-item"
               @click="viewPostDetail(post.id)"
             >
-              <div class="post-avatar">
+              <router-link :to="'/user/' + post.authorId" class="post-avatar" title="查看个人主页">
                 <img :src="post.authorAvatar" :alt="post.authorName" />
-              </div>
+              </router-link>
               
               <div class="post-content">
                 <h4 class="post-title">{{ post.title }}</h4>
