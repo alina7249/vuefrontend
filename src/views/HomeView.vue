@@ -1457,30 +1457,29 @@ onUnmounted(() => {
 /* 作品网格布局 - 弹性布局，响应式适配 */
 .grid-layout {
   display: grid;
-  /* 在大屏幕上使用自适应的列数，基于最小宽度300px自动调整 */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* 固定为3列布局 */
+  grid-template-columns: repeat(3, 1fr);
   /* 统一所有图片之间的间隙 */
   gap: 24px;
   justify-content: center;
   margin-bottom: 32px;
   width: 100%;
-  /* 移除固定的最大宽度限制，让布局能更好地适应大屏幕 */
-  margin-left: auto;
-  margin-right: auto;
+  /* 保持左右边界不变 */
+  margin-left: 0;
+  margin-right: 0;
 }
 
 /* 响应式调整 - 为不同屏幕尺寸设置合适的列数和间隙 */
 @media (max-width: 1200px) {
   .grid-layout {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    padding: 0 16px;
   }
 }
 
 @media (max-width: 900px) {
   .grid-layout {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
 }
@@ -1495,8 +1494,8 @@ onUnmounted(() => {
 /* 超大屏幕尺寸优化 */
 @media (min-width: 1600px) {
   .grid-layout {
-    /* 在超大屏幕上使用更大的最小宽度，可以显示更多列 */
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    /* 保持3列布局，但调整间隙 */
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
 }
