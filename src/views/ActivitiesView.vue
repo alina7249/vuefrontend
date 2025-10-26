@@ -62,7 +62,13 @@
       </div>
       
       <div class="competitions-grid">
-        <div v-for="competition in competitionsData" :key="competition.id" class="competition-card">
+        <div 
+          v-for="competition in competitionsData" 
+          :key="competition.id" 
+          class="competition-card"
+          @click="navigateToCompetition(competition.id)"
+          style="cursor: pointer;"
+        >
           <div class="competition-image">
             <img :src="competition.imageUrl" :alt="competition.title" />
             <div v-if="competition.status === 'ongoing'" class="status-badge ongoing">进行中</div>
@@ -102,10 +108,18 @@
             </div>
             
             <div class="competition-actions">
-              <button v-if="competition.status === 'ongoing'" class="join-button" @click="joinCompetition(competition.id)">
+              <button 
+                v-if="competition.status === 'ongoing'" 
+                class="join-button" 
+                @click.stop="joinCompetition(competition.id)"
+              >
                 立即参与
               </button>
-              <button v-else class="view-button" @click="viewCompetition(competition.id)">
+              <button 
+                v-else 
+                class="view-button" 
+                @click.stop="viewCompetition(competition.id)"
+              >
                 查看详情
               </button>
             </div>
@@ -168,7 +182,14 @@
       </div>
       
       <div class="events-grid">
-        <div v-for="event in eventsData" :key="event.id" class="event-card" :class="{ past: event.status === 'past' }">
+        <div 
+          v-for="event in eventsData" 
+          :key="event.id" 
+          class="event-card" 
+          :class="{ past: event.status === 'past' }"
+          @click="navigateToEvent(event.id)"
+          style="cursor: pointer;"
+        >
           <div class="event-image">
             <img :src="event.imageUrl" :alt="event.title" />
             <div v-if="event.status === 'upcoming'" class="status-badge upcoming">即将开始</div>
@@ -207,11 +228,19 @@
             </div>
             
             <div class="event-actions">
-              <button v-if="event.status === 'upcoming'" class="register-button" @click="registerEvent(event.id)"
-                :disabled="event.participants >= event.maxParticipants">
+              <button 
+                v-if="event.status === 'upcoming'" 
+                class="register-button" 
+                @click.stop="joinEvent(event.id)"
+                :disabled="event.participants >= event.maxParticipants"
+              >
                 {{ event.participants >= event.maxParticipants ? '名额已满' : '立即报名' }}
               </button>
-              <button v-else class="view-button" @click="viewEvent(event.id)">
+              <button 
+                v-else 
+                class="view-button" 
+                @click.stop="navigateToEvent(event.id)"
+              >
                 查看详情
               </button>
             </div>
@@ -790,12 +819,18 @@ const setTab = (tab) => {
 
 // 参与比赛
 const joinCompetition = (id) => {
-  router.push(`/activities/competitions/${id}/join`);
+  // 先导航到详情页，让用户可以看到更多信息后再决定是否参与
+  router.push(`/activities/competition/${id}`);
 };
 
 // 查看比赛详情
 const viewCompetition = (id) => {
-  router.push(`/activities/competitions/${id}`);
+  router.push(`/activities/competition/${id}`);
+};
+
+// 导航到比赛详情页
+const navigateToCompetition = (id) => {
+  router.push(`/activities/competition/${id}`);
 };
 
 // 发布活动
@@ -804,14 +839,24 @@ const publishEvent = () => {
   alert('发布活动功能正在开发中...');
 };
 
+// 导航到线下活动详情页
+const navigateToEvent = (id) => {
+  router.push(`/activities/event/${id}`);
+};
+
+// 报名参加线下活动
+const joinEvent = (id) => {
+  router.push(`/activities/event/${id}`);
+};
+
 // 报名活动
 const registerEvent = (id) => {
-  router.push(`/activities/events/${id}/register`);
+  router.push(`/activities/event/${id}`);
 };
 
 // 查看活动详情
 const viewEvent = (id) => {
-  router.push(`/activities/events/${id}`);
+  router.push(`/activities/event/${id}`);
 };
 
 // 查看获奖作品详情
@@ -1172,6 +1217,7 @@ const viewEventFromCalendar = (id) => {
   font-weight: 500;
   color: #FFFFFF;
   margin-bottom: 8px;
+  white-space: nowrap;
 }
 
 .competition-category.landscape {
@@ -1339,6 +1385,7 @@ const viewEventFromCalendar = (id) => {
   font-weight: 500;
   color: #FFFFFF;
   margin-bottom: 8px;
+  white-space: nowrap;
 }
 
 .event-type.outing {

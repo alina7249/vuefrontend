@@ -36,7 +36,12 @@
         </div>
         
         <div class="equipment-grid">
-          <div v-for="equipment in equipmentData" :key="equipment.id" class="equipment-card">
+          <div 
+            v-for="equipment in equipmentData" 
+            :key="equipment.id" 
+            class="equipment-card"
+            @click="navigateToEquipmentDetail(equipment.id)"
+          >
             <div class="equipment-image">
               <img :src="equipment.imageUrl" :alt="equipment.name" />
             </div>
@@ -74,6 +79,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // 器材筛选
 const equipmentType = ref('all');
@@ -92,6 +100,11 @@ const getBrandLabel = (brand) => {
     tamron: '腾龙',
   };
   return labels[brand] || brand;
+};
+
+// 导航到器材详情页
+const navigateToEquipmentDetail = (equipmentId) => {
+  router.push(`/equipment/${equipmentId}`);
 };
 
 // 模拟器材数据
@@ -348,4 +361,34 @@ const equipmentData = ref([
     font-size: 2rem;
   }
 }
+
+.equipment-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.equipment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.equipment-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.equipment-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.equipment-card:hover .equipment-image img {
+  transform: scale(1.05);
+}
+
+
 </style>

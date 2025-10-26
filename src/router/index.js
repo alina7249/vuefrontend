@@ -37,20 +37,35 @@ const router = createRouter({
       name: 'postDetail',
       component: () => import('../views/PostDetailView.vue'),
     },
+      {
+      path: '/tutorials',
+      name: 'tutorials',
+      component: () => import('../views/TutorialsView.vue'),
+    },
     {
-    path: '/tutorials',
-    name: 'tutorials',
-    component: () => import('../views/TutorialsView.vue'),
-  },
-  {
-    path: '/equipment',
-    name: 'equipment',
-    component: () => import('../views/EquipmentView.vue'),
-  },
+      path: '/tutorials/article/:id',
+      name: 'articleDetail',
+      component: () => import('../views/ArticleDetailView.vue'),
+    },
+    {
+      path: '/equipment',
+      name: 'equipment',
+      component: () => import('../views/EquipmentView.vue'),
+    },
+    {
+      path: '/equipment/:id',
+      name: 'equipmentDetail',
+      component: () => import('../views/EquipmentDetailView.vue'),
+    },
     {
       path: '/activities',
       name: 'activities',
       component: () => import('../views/ActivitiesView.vue'),
+    },
+    {
+      path: '/activities/:type/:id',
+      name: 'activityDetail',
+      component: () => import('../views/ActivityDetailView.vue'),
     },
     {
       path: '/photo/:id',
@@ -73,11 +88,7 @@ router.beforeEach((to, from, next) => {
   if ((to.name === 'login' || to.name === 'register') && isLoggedInUser) {
     next({ name: 'home' })
   }
-  // 如果未登录用户尝试访问受保护页面（除了登录和注册），重定向到登录页面
-  else if (to.name !== 'login' && to.name !== 'register' && !isLoggedInUser) {
-    next({ name: 'login' })
-  }
-  // 其他情况正常访问
+  // 开发环境允许所有用户访问所有页面
   else {
     next()
   }
