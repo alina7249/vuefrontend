@@ -9,7 +9,7 @@
         </button>
         <h1 class="page-title">个人主页</h1>
         <div v-if="isCurrentUser" class="header-actions">
-          <button class="edit-profile-btn" @click="editProfile">
+          <button class="edit-profile-btn" @click="openEditProfile">
             <span class="btn-icon">✏️</span>
             <span>编辑资料</span>
           </button>
@@ -44,6 +44,21 @@
             <span v-if="profileData.location" class="meta-item">
               <span class="meta-label">所在地:</span>
               <span class="meta-value">{{ profileData.location }}</span>
+            </span>
+            <span v-if="profileData.website" class="meta-item">
+              <span class="meta-label">个人网站:</span>
+              <a :href="profileData.website" target="_blank" class="meta-value website-link">{{ formatWebsite(profileData.website) }}</a>
+            </span>
+            <span v-if="profileData.qq" class="meta-item">
+              <span class="meta-label">QQ:</span>
+              <span class="meta-value">{{ profileData.qq }}</span>
+            </span>
+          </div>
+          
+          <div v-if="profileData.skills && profileData.skills.length > 0" class="user-skills">
+            <span class="skills-label">擅长领域:</span>
+            <span v-for="skill in profileData.skills" :key="skill" class="skill-tag">
+              {{ skill }}
             </span>
           </div>
           
@@ -90,13 +105,25 @@
     <!-- 内容选项卡 -->
     <div class="content-tabs">
       <button 
-        v-for="tab in tabs" 
-        :key="tab.value"
-        class="tab-button"
-        :class="{ active: activeTab === tab.value }"
-        @click="activeTab = tab.value"
+        class="tab-button" 
+        :class="{ active: activeTab === 'works' }"
+        @click="activeTab = 'works'"
       >
-        {{ tab.label }}
+        作品
+      </button>
+      <button 
+        class="tab-button" 
+        :class="{ active: activeTab === 'collections' }"
+        @click="activeTab = 'collections'"
+      >
+        收藏
+      </button>
+      <button 
+        class="tab-button" 
+        :class="{ active: activeTab === 'activities' }"
+        @click="activeTab = 'activities'"
+      >
+        动态
       </button>
     </div>
 
@@ -104,20 +131,15 @@
     <div class="profile-content">
       <!-- 作品列表 -->
       <div v-if="activeTab === 'works'" class="works-grid">
-        <div 
-          v-for="work in userWorks" 
-          :key="work.id"
-          class="work-item"
-          @click="viewWorkDetail(work.id)"
-        >
+        <div v-for="work in userWorks" :key="work.id" class="work-item">
           <div class="work-image">
-            <img :src="work.imageUrl" :alt="work.title" />
+            <img :src="work.image" alt="作品图片" />
           </div>
           <div class="work-info">
             <h3 class="work-title">{{ work.title }}</h3>
             <div class="work-stats">
-              <span class="stat">{{ work.likes }} ❤️</span>
-              <span class="stat">{{ work.comments }} 💬</span>
+              <span class="stat-like">{{ work.likes }} 喜欢</span>
+              <span class="stat-comment">{{ work.comments }} 评论</span>
             </div>
           </div>
         </div>
@@ -128,56 +150,43 @@
           <p class="no-works-text">
             {{ isCurrentUser ? '您还没有发布任何作品' : '该用户还没有发布任何作品' }}
           </p>
-          <button v-if="isCurrentUser" class="upload-first-work-btn">上传第一个作品</button>
         </div>
       </div>
 
       <!-- 收藏列表 -->
-      <div v-else-if="activeTab === 'collections'" class="collections-grid">
-        <div 
-          v-for="collection in userCollections" 
-          :key="collection.id"
-          class="collection-item"
-          @click="viewCollectionDetail(collection.id)"
-        >
-          <div class="collection-thumbnail">
-            <img 
-              v-for="(item, index) in collection.items.slice(0, 4)" 
-              :key="index"
-              :src="item.imageUrl" 
-              :alt="item.title" 
-              class="thumbnail-image"
-              :style="getThumbnailStyle(index, collection.items.length)"
-            />
+      <div v-if="activeTab === 'collections'" class="collections-grid">
+        <div v-for="collection in userCollections" :key="collection.id" class="collection-item">
+          <div class="collection-preview">
+            <img :src="collection.coverImage" alt="收藏集封面" />
+            <span class="collection-count">{{ collection.worksCount }} 个作品</span>
           </div>
-          <div class="collection-info">
-            <h3 class="collection-title">{{ collection.title }}</h3>
-            <p class="collection-count">{{ collection.items.length }} 个作品</p>
-          </div>
+          <h3 class="collection-title">{{ collection.title }}</h3>
         </div>
         
         <!-- 没有收藏提示 -->
         <div v-if="userCollections.length === 0" class="no-collections">
           <div class="no-collections-icon">⭐</div>
           <p class="no-collections-text">
-            {{ isCurrentUser ? '您还没有收藏任何作品' : '该用户还没有收藏任何作品' }}
+            {{ isCurrentUser ? '您还没有创建任何收藏集' : '该用户还没有创建任何收藏集' }}
           </p>
         </div>
       </div>
 
       <!-- 动态列表 -->
-      <div v-else-if="activeTab === 'activities'" class="activities-list">
-        <div 
-          v-for="activity in userActivities" 
-          :key="activity.id"
-          class="activity-item"
-        >
-          <div class="activity-icon">
-            {{ activity.icon }}
+      <div v-if="activeTab === 'activities'" class="activities-list">
+        <div v-for="activity in userActivities" :key="activity.id" class="activity-item">
+          <div class="activity-header">
+            <img :src="profileData.avatar || `https://picsum.photos/seed/${profileData.username}/200/200`" alt="用户头像" class="activity-avatar" />
+            <div class="activity-user-info">
+              <span class="activity-username">{{ profileData.username }}</span>
+              <span class="activity-time">{{ formatRelativeTime(activity.time) }}</span>
+            </div>
           </div>
           <div class="activity-content">
-            <p class="activity-text">{{ activity.text }}</p>
-            <span class="activity-time">{{ formatTimeAgo(activity.time) }}</span>
+            <p class="activity-text">{{ activity.content }}</p>
+            <div v-if="activity.media" class="activity-media">
+              <img :src="activity.media" alt="动态图片" />
+            </div>
           </div>
         </div>
         
@@ -187,6 +196,230 @@
           <p class="no-activities-text">
             {{ isCurrentUser ? '您还没有任何动态' : '该用户还没有任何动态' }}
           </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑资料弹窗 -->
+    <div v-if="isEditModalOpen" class="edit-profile-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">编辑个人资料</h2>
+          <button class="close-button" @click="closeEditProfile">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- 基本信息 -->
+          <div class="form-section">
+            <h3>基本信息</h3>
+            
+            <div class="form-group">
+              <label>用户名</label>
+              <input 
+                type="text" 
+                v-model="editFormData.username" 
+                placeholder="请输入用户名"
+                class="form-input"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>个人简介</label>
+              <textarea 
+                v-model="editFormData.bio" 
+                placeholder="介绍一下自己吧"
+                class="form-textarea"
+              ></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label>所在地</label>
+              <input 
+                type="text" 
+                v-model="editFormData.location" 
+                placeholder="请输入所在地"
+                class="form-input"
+              />
+            </div>
+          </div>
+          
+          <!-- 联系方式 -->
+          <div class="form-section">
+            <h3>联系方式</h3>
+            
+            <div class="form-group">
+              <label>个人网站</label>
+              <input 
+                type="url" 
+                v-model="editFormData.website" 
+                placeholder="https://"
+                class="form-input"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>邮箱</label>
+              <input 
+                type="email" 
+                v-model="editFormData.email" 
+                placeholder="请输入邮箱地址"
+                class="form-input"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>手机号码</label>
+              <input 
+                type="tel" 
+                v-model="editFormData.phone" 
+                placeholder="请输入手机号码"
+                class="form-input"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>QQ</label>
+              <input 
+                type="text" 
+                v-model="editFormData.qq" 
+                placeholder="请输入QQ号码"
+                class="form-input"
+              />
+            </div>
+            
+            <div class="form-group">
+              <label>微信</label>
+              <input 
+                type="text" 
+                v-model="editFormData.wechat" 
+                placeholder="请输入微信号"
+                class="form-input"
+              />
+            </div>
+          </div>
+          
+          <!-- 社交链接 -->
+          <div class="form-section">
+            <h3>社交链接</h3>
+            
+            <div class="social-links-grid">
+              <div class="social-link-item">
+                <div class="social-icon">🔵</div>
+                <div class="social-input-wrapper">
+                  <label>微博</label>
+                  <input 
+                    type="url" 
+                    v-model="editFormData.socialLinks.weibo" 
+                    placeholder="https://weibo.com/"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+              
+              <div class="social-link-item">
+                <div class="social-icon">📸</div>
+                <div class="social-input-wrapper">
+                  <label>Instagram</label>
+                  <input 
+                    type="url" 
+                    v-model="editFormData.socialLinks.instagram" 
+                    placeholder="https://instagram.com/"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+              
+              <div class="social-link-item">
+                <div class="social-icon">🐦</div>
+                <div class="social-input-wrapper">
+                  <label>Twitter</label>
+                  <input 
+                    type="url" 
+                    v-model="editFormData.socialLinks.twitter" 
+                    placeholder="https://twitter.com/"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 擅长领域 -->
+          <div class="form-section">
+            <h3>擅长领域</h3>
+            
+            <div class="skills-container">
+              <span 
+                v-for="skill in editFormData.skills" 
+                :key="skill"
+                class="skill-tag"
+              >
+                {{ skill }}
+                <button class="remove-skill-btn" @click="removeSkill(skill)">×</button>
+              </span>
+            </div>
+            
+            <div class="add-skill">
+              <input 
+                type="text" 
+                v-model="newSkill" 
+                placeholder="添加擅长领域"
+                class="add-skill-input"
+                @keyup.enter="addSkill"
+              />
+              <button 
+                class="add-skill-btn" 
+                @click="addSkill"
+                :disabled="!newSkill.trim()"
+              >
+                添加
+              </button>
+            </div>
+          </div>
+          
+          <!-- 头像和封面图 -->
+          <div class="form-section">
+            <h3>头像和封面</h3>
+            
+            <div class="media-upload-section">
+              <div class="upload-group">
+                <label>头像</label>
+                <div class="avatar-upload">
+                  <img 
+                    v-if="editFormData.avatar" 
+                    :src="editFormData.avatar" 
+                    alt="头像预览"
+                    class="avatar-preview"
+                  />
+                  <div v-else class="avatar-placeholder">
+                    <span>+</span>
+                  </div>
+                  <input type="file" accept="image/*" class="avatar-input" />
+                </div>
+              </div>
+              
+              <div class="upload-group">
+                <label>封面图</label>
+                <div class="cover-upload">
+                  <img 
+                    v-if="editFormData.coverImage" 
+                    :src="editFormData.coverImage" 
+                    alt="封面预览"
+                    class="cover-preview"
+                  />
+                  <div v-else class="cover-placeholder">
+                    <span>+</span>
+                  </div>
+                  <input type="file" accept="image/*" class="cover-input" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="cancel-button" @click="closeEditProfile">取消</button>
+          <button class="save-button" @click="saveProfile">保存</button>
         </div>
       </div>
     </div>
@@ -205,6 +438,11 @@ const userStore = useUserStore();
 // 状态管理
 const activeTab = ref('works');
 const isFollowing = ref(false);
+const isEditModalOpen = ref(false);
+const editFormData = ref({});
+const newSkill = ref('');
+
+// 模拟数据 - 个人资料
 const profileData = ref({
   id: 1,
   username: 'admin',
@@ -213,223 +451,198 @@ const profileData = ref({
   joinDate: '2023-01-01',
   certification: '',
   location: '北京',
+  website: '',
+  email: '',
+  phone: '',
+  qq: '',
+  wechat: '',
+  skills: ['人像摄影', '风光摄影'],
+  socialLinks: {
+    weibo: '',
+    instagram: '',
+    twitter: ''
+  },
+  coverImage: '',
   worksCount: 12,
   followersCount: 156,
-  followingCount: 45,
-  likesCount: 892,
-  coverImage: 'https://picsum.photos/seed/cover/1200/400'
+  followingCount: 89,
+  likesCount: 567
 });
 
-// 选项卡配置
-const tabs = [
-  { value: 'works', label: '作品' },
-  { value: 'collections', label: '收藏' },
-  { value: 'activities', label: '动态' }
-];
-
-// 认证标签
-const certificationLabels = {
-  'official': '官方认证',
-  'photographer': '摄影师认证',
-  'expert': '专家认证'
-};
-
-// 模拟用户作品数据
+// 模拟数据 - 作品列表
 const userWorks = ref([
   {
     id: 1,
     title: '城市夜景',
-    imageUrl: 'https://picsum.photos/seed/work1/600/400',
-    likes: 128,
-    comments: 32
+    image: 'https://picsum.photos/seed/work1/600/400',
+    likes: 45,
+    comments: 8
   },
   {
     id: 2,
-    title: '自然风光',
-    imageUrl: 'https://picsum.photos/seed/work2/600/400',
-    likes: 96,
-    comments: 24
+    title: '山间小路',
+    image: 'https://picsum.photos/seed/work2/600/400',
+    likes: 32,
+    comments: 5
   },
   {
     id: 3,
     title: '人像摄影',
-    imageUrl: 'https://picsum.photos/seed/work3/600/400',
-    likes: 215,
-    comments: 56
-  },
-  {
-    id: 4,
-    title: '静物特写',
-    imageUrl: 'https://picsum.photos/seed/work4/600/400',
-    likes: 87,
-    comments: 18
-  },
-  {
-    id: 5,
-    title: '街拍纪实',
-    imageUrl: 'https://picsum.photos/seed/work5/600/400',
-    likes: 143,
-    comments: 42
-  },
-  {
-    id: 6,
-    title: '创意摄影',
-    imageUrl: 'https://picsum.photos/seed/work6/600/400',
-    likes: 178,
-    comments: 48
+    image: 'https://picsum.photos/seed/work3/600/400',
+    likes: 67,
+    comments: 12
   }
 ]);
 
-// 模拟用户收藏数据
+// 模拟数据 - 收藏列表
 const userCollections = ref([
   {
     id: 1,
-    title: '精选风景',
-    items: [
-      { id: 1, imageUrl: 'https://picsum.photos/seed/col1-1/300/300', title: '山川湖海' },
-      { id: 2, imageUrl: 'https://picsum.photos/seed/col1-2/300/300', title: '日出日落' },
-      { id: 3, imageUrl: 'https://picsum.photos/seed/col1-3/300/300', title: '云雾缭绕' },
-      { id: 4, imageUrl: 'https://picsum.photos/seed/col1-4/300/300', title: '星空璀璨' }
-    ]
+    title: '风景摄影合集',
+    coverImage: 'https://picsum.photos/seed/collection1/600/400',
+    worksCount: 24
   },
   {
     id: 2,
-    title: '人像精选',
-    items: [
-      { id: 5, imageUrl: 'https://picsum.photos/seed/col2-1/300/300', title: '微笑瞬间' },
-      { id: 6, imageUrl: 'https://picsum.photos/seed/col2-2/300/300', title: '眼神故事' }
-    ]
+    title: '人像摄影精选',
+    coverImage: 'https://picsum.photos/seed/collection2/600/400',
+    worksCount: 18
   }
 ]);
 
-// 模拟用户动态数据
+// 模拟数据 - 动态列表
 const userActivities = ref([
   {
     id: 1,
-    icon: '📸',
-    text: '发布了新作品《城市夜景》',
-    time: '2小时前'
+    content: '今天拍摄了一组很棒的城市风光照片！',
+    time: '2024-01-15T14:30:00',
+    media: 'https://picsum.photos/seed/activity1/600/400'
   },
   {
     id: 2,
-    icon: '❤️',
-    text: '点赞了作品《自然风光》',
-    time: '昨天'
-  },
-  {
-    id: 3,
-    icon: '💬',
-    text: '评论了作品《人像摄影》',
-    time: '3天前'
-  },
-  {
-    id: 4,
-    icon: '⭐',
-    text: '收藏了作品《创意摄影》',
-    time: '1周前'
+    content: '分享一个摄影技巧：如何在弱光环境下拍摄清晰的照片',
+    time: '2024-01-10T09:15:00',
+    media: ''
   }
 ]);
 
-// 计算属性
+// 认证标签
+const certificationLabels = {
+  photographer: '认证摄影师',
+  designer: '认证设计师',
+  artist: '认证艺术家'
+};
+
+// 计算属性 - 是否是当前用户
 const isCurrentUser = computed(() => {
-  // 如果没有指定用户ID，则显示当前用户的主页
-  const userId = route.params.id;
-  return !userId || (userStore.userInfo && userId == userStore.userInfo.id);
+  // 实际项目中应该根据用户ID或token判断
+  return true;
 });
 
-// 方法
+// 方法 - 打开编辑资料
+const openEditProfile = () => {
+  // 复制当前资料到编辑表单
+  editFormData.value = {
+    ...JSON.parse(JSON.stringify(profileData.value))
+  };
+  isEditModalOpen.value = true;
+};
+
+// 方法 - 关闭编辑资料
+const closeEditProfile = () => {
+  isEditModalOpen.value = false;
+  newSkill.value = '';
+};
+
+// 方法 - 保存资料
+const saveProfile = () => {
+  // 复制编辑表单数据到资料对象
+  profileData.value = {
+    ...editFormData.value
+  };
+  
+  // 显示保存成功提示
+  alert('资料保存成功！');
+  closeEditProfile();
+};
+
+// 方法 - 添加擅长领域
+const addSkill = () => {
+  const skill = newSkill.value.trim();
+  if (skill && !editFormData.value.skills.includes(skill)) {
+    editFormData.value.skills.push(skill);
+    newSkill.value = '';
+  }
+};
+
+// 方法 - 移除擅长领域
+const removeSkill = (skill) => {
+  const index = editFormData.value.skills.indexOf(skill);
+  if (index > -1) {
+    editFormData.value.skills.splice(index, 1);
+  }
+};
+
+// 方法 - 切换关注状态
+const toggleFollow = () => {
+  isFollowing.value = !isFollowing.value;
+  // 实际项目中应该调用API更新关注状态
+};
+
+// 方法 - 格式化日期
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+};
+
+// 方法 - 格式化相对时间
+const formatRelativeTime = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diff = now - date;
+  
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 60) {
+    return `${minutes}分钟前`;
+  } else if (hours < 24) {
+    return `${hours}小时前`;
+  } else if (days < 30) {
+    return `${days}天前`;
+  } else {
+    return formatDate(dateString);
+  }
+};
+
+// 方法 - 格式化网站显示
+const formatWebsite = (url) => {
+  let displayUrl = url;
+  if (url.startsWith('https://')) {
+    displayUrl = url.substring(8);
+  } else if (url.startsWith('http://')) {
+    displayUrl = url.substring(7);
+  }
+  return displayUrl;
+};
+
+// 方法 - 返回上一页
 const goBack = () => {
   router.back();
 };
 
-const editProfile = () => {
-  // 编辑资料功能
-  console.log('编辑资料');
-  // 这里可以跳转到编辑资料页面或显示编辑资料弹窗
-};
-
-const toggleFollow = () => {
-  isFollowing.value = !isFollowing.value;
-  // 更新粉丝数
-  if (isFollowing.value) {
-    profileData.value.followersCount++;
-  } else {
-    profileData.value.followersCount--;
-  }
-};
-
-const viewWorkDetail = (workId) => {
-  router.push(`/photo/${workId}`);
-};
-
-const viewCollectionDetail = (collectionId) => {
-  // 查看收藏集详情
-  console.log('查看收藏集:', collectionId);
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
-
-const formatTimeAgo = (timeAgo) => {
-  // 简单的时间格式化
-  return timeAgo;
-};
-
-const getThumbnailStyle = (index, total) => {
-  // 根据索引返回不同的缩略图样式
-  if (total === 1) {
-    return {
-      width: '100%',
-      height: '100%'
-    };
-  } else if (total === 2) {
-    return {
-      width: '48%',
-      height: '100%',
-      marginRight: index === 0 ? '4%' : '0'
-    };
-  } else {
-    return {
-      width: '48%',
-      height: '48%',
-      marginRight: index % 2 === 0 ? '4%' : '0',
-      marginBottom: '4%'
-    };
-  }
-};
-
-// 组件挂载时加载数据
+// 组件挂载时执行
 onMounted(() => {
-  // 在实际应用中，这里应该根据用户ID获取用户数据
-  const userId = route.params.id;
-  if (userId && userStore.userInfo && userId != userStore.userInfo.id) {
-    // 加载其他用户的数据
-    console.log('加载用户ID:', userId, '的数据');
-    // 模拟加载其他用户数据
-    // 实际应用中应该调用API获取数据
-  } else if (userStore.userInfo) {
-    // 加载当前用户的数据
-    profileData.value = {
-      ...profileData.value,
-      id: userStore.userInfo.id,
-      username: userStore.userInfo.username,
-      bio: userStore.userInfo.bio || profileData.value.bio,
-      avatar: userStore.userInfo.avatar || profileData.value.avatar
-    };
-  }
+  // 实际项目中应该从API获取用户资料
 });
 </script>
 
 <style scoped>
+/* 页面容器 */
 .profile-page {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #f5f5f5;
 }
 
 /* 页面头部 */
@@ -453,8 +666,8 @@ onMounted(() => {
 .back-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 8px 12px;
   border: none;
   background-color: transparent;
   color: #212529;
@@ -537,104 +750,139 @@ onMounted(() => {
 }
 
 .profile-avatar {
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  border: 6px solid #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .certification-badge {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background-color: #10b981;
+  bottom: 0;
+  right: 0;
+  background-color: #0d6efd;
   color: #fff;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   border: 2px solid #fff;
 }
 
 .user-details {
   flex: 1;
-  min-width: 0;
 }
 
 .user-name {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
-  color: #1f2937;
+  color: #212529;
   margin: 0 0 12px 0;
 }
 
 .user-bio {
   font-size: 16px;
-  color: #4b5563;
+  color: #6c757d;
   margin: 0 0 16px 0;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .user-meta {
   display: flex;
-  gap: 24px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 16px;
 }
 
 .meta-item {
   display: flex;
+  align-items: center;
   gap: 6px;
   font-size: 14px;
-  color: #6b7280;
+  color: #6c757d;
 }
 
 .meta-label {
-  font-weight: 500;
+  color: #adb5bd;
 }
 
+.website-link {
+  color: #0d6efd;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.website-link:hover {
+  color: #0b5ed7;
+  text-decoration: underline;
+}
+
+.user-skills {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.skills-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.skill-tag {
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #e1e7ef;
+  border-radius: 16px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+/* 统计数据 */
 .user-stats {
   display: flex;
   gap: 40px;
-  margin-bottom: 24px;
-  padding: 16px 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
 }
 
 .stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1f2937;
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #6b7280;
+  color: #6c757d;
+  margin-top: 4px;
 }
 
+/* 操作按钮 */
 .profile-actions {
   display: flex;
   gap: 12px;
 }
 
 .follow-button {
-  padding: 10px 24px;
+  padding: 8px 24px;
   background-color: #0d6efd;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   transition: all 0.2s ease;
 }
 
@@ -643,116 +891,108 @@ onMounted(() => {
 }
 
 .follow-button.following {
-  background-color: #6c757d;
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
 }
 
 .follow-button.following:hover {
-  background-color: #5a6268;
+  background-color: #e9ecef;
 }
 
 .message-button {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 24px;
-  background-color: #fff;
-  color: #212529;
+  padding: 8px 16px;
+  background-color: #f8f9fa;
+  color: #495057;
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
+  font-size: 14px;
   transition: all 0.2s ease;
 }
 
 .message-button:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
+  background-color: #e9ecef;
 }
 
 /* 内容选项卡 */
 .content-tabs {
   background-color: #fff;
   border-bottom: 1px solid #e1e7ef;
-  position: sticky;
-  top: 60px;
-  z-index: 90;
+  margin-bottom: 20px;
 }
 
-.tabs-container {
+.content-tabs-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  display: flex;
+  gap: 40px;
 }
 
 .tab-button {
-  padding: 16px 24px;
-  background-color: transparent;
+  padding: 16px 0;
+  background: none;
   border: none;
-  color: #6b7280;
+  color: #6c757d;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
+  position: relative;
+  transition: color 0.2s ease;
 }
 
 .tab-button:hover {
   color: #212529;
-  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .tab-button.active {
   color: #0d6efd;
-  border-bottom-color: #0d6efd;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #0d6efd;
+  border-radius: 3px;
 }
 
 /* 内容区域 */
 .profile-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 0 20px;
 }
 
 /* 作品列表 */
 .works-grid {
   display: grid;
-  /* 在大屏幕上使用固定的3列布局 */
-  grid-template-columns: repeat(3, 1fr);
-  /* 确保所有图片之间的间隙大小统一 */
-  gap: 24px;
-  
-  /* 响应式调整 */
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .work-item {
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  /* 确保所有作品项高度统一 */
-  height: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .work-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .work-image {
-  /* 使用固定的宽高比，确保所有图片区域大小一致 */
-  aspect-ratio: 1 / 1;
+  height: 200px;
   overflow: hidden;
 }
 
@@ -772,76 +1012,79 @@ onMounted(() => {
 }
 
 .work-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: #212529;
   margin: 0 0 12px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .work-stats {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 
-.stat {
+.stat-like,
+.stat-comment {
+  font-size: 14px;
+  color: #6c757d;
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 14px;
-  color: #6b7280;
 }
 
 /* 收藏列表 */
 .collections-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  gap: 20px;
 }
 
 .collection-item {
   background-color: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
-  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .collection-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.collection-thumbnail {
+.collection-preview {
   height: 200px;
-  padding: 16px;
-  background-color: #f8f9fa;
+  overflow: hidden;
   position: relative;
 }
 
-.thumbnail-image {
+.collection-preview img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  position: absolute;
+  transition: transform 0.3s ease;
 }
 
-.collection-info {
-  padding: 16px;
-}
-
-.collection-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 8px 0;
+.collection-item:hover .collection-preview img {
+  transform: scale(1.05);
 }
 
 .collection-count {
-  font-size: 14px;
-  color: #6b7280;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.collection-title {
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
   margin: 0;
 }
 
@@ -849,53 +1092,73 @@ onMounted(() => {
 .activities-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .activity-item {
-  display: flex;
-  gap: 16px;
-  padding: 20px;
   background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.activity-icon {
-  font-size: 24px;
-  flex-shrink: 0;
+.activity-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.activity-content {
+.activity-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.activity-user-info {
   flex: 1;
-  min-width: 0;
 }
 
-.activity-text {
-  font-size: 16px;
-  color: #1f2937;
-  margin: 0 0 8px 0;
-  line-height: 1.5;
+.activity-username {
+  font-size: 15px;
+  font-weight: 600;
+  color: #212529;
+  display: block;
 }
 
 .activity-time {
-  font-size: 14px;
-  color: #9ca3af;
+  font-size: 13px;
+  color: #6c757d;
+  display: block;
+  margin-top: 2px;
 }
 
-/* 空状态 */
+.activity-content {
+  margin-left: 60px;
+}
+
+.activity-text {
+  font-size: 15px;
+  color: #212529;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.activity-media img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* 空状态样式 */
 .no-works,
 .no-collections,
 .no-activities {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
 }
 
 .no-works-icon,
@@ -908,74 +1171,471 @@ onMounted(() => {
 .no-works-text,
 .no-collections-text,
 .no-activities-text {
-  font-size: 18px;
-  color: #6b7280;
-  margin: 0 0 24px 0;
+  font-size: 16px;
+  margin: 0;
 }
 
-.upload-first-work-btn {
-  padding: 10px 24px;
+/* 编辑资料弹窗样式 */
+.edit-profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e1e7ef;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #6b7280;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.form-section {
+  margin-bottom: 32px;
+}
+
+.form-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* 社交链接样式 */
+.social-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.social-link-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.social-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  border-radius: 12px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.social-input-wrapper {
+  flex: 1;
+}
+
+.social-input-wrapper label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+/* 擅长领域样式 */
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #e7f3ff;
+  color: #0d6efd;
+  border: 1px solid #b3d9ff;
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.remove-skill-btn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.remove-skill-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.add-skill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.add-skill-input {
+  flex: 1;
+  max-width: 250px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.add-skill-input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.add-skill-btn {
+  padding: 10px 20px;
   background-color: #0d6efd;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   transition: background-color 0.2s ease;
 }
 
-.upload-first-work-btn:hover {
+.add-skill-btn:hover:not(:disabled) {
+  background-color: #0b5ed7;
+}
+
+.add-skill-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* 媒体上传样式 */
+.media-upload-section {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.upload-group {
+  margin-bottom: 24px;
+}
+
+.upload-group:last-child {
+  margin-bottom: 0;
+}
+
+.upload-group label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.avatar-upload,
+.cover-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cover-preview {
+  width: 300px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.avatar-placeholder,
+.cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  border: 2px dashed #9ca3af;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.cover-placeholder {
+  width: 300px;
+  height: 150px;
+}
+
+.avatar-placeholder:hover,
+.cover-placeholder:hover {
+  background-color: #d1d5db;
+  border-color: #6b7280;
+}
+
+.avatar-placeholder span,
+.cover-placeholder span {
+  font-size: 32px;
+  color: #6b7280;
+}
+
+.avatar-input,
+.cover-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 底部按钮样式 */
+.modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e1e7ef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #e5e7eb;
+}
+
+.save-button {
+  padding: 10px 20px;
+  background-color: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.save-button:hover {
   background-color: #0b5ed7;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .header-content {
+    padding: 16px;
+  }
+  
+  .page-title {
+    font-size: 18px;
+  }
+  
   .profile-info {
+    padding: 0 16px;
+    padding-top: 80px;
+    padding-bottom: 30px;
     flex-direction: column;
-    padding-top: 180px;
+    gap: 20px;
   }
   
   .avatar-container {
-    position: absolute;
-    top: -80px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static;
+    display: flex;
+    justify-content: center;
+    margin-top: -80px;
+    margin-bottom: -20px;
   }
   
   .profile-avatar {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
   }
   
-  .user-name {
-    text-align: center;
-    font-size: 24px;
-  }
-  
-  .user-bio {
+  .user-details {
     text-align: center;
   }
   
   .user-meta {
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 16px;
+  }
+  
+  .user-skills {
+    justify-content: center;
   }
   
   .user-stats {
+    justify-content: center;
     gap: 20px;
-    justify-content: space-around;
   }
   
   .profile-actions {
     justify-content: center;
   }
   
+  .content-tabs-container {
+    padding: 0 16px;
+    gap: 20px;
+  }
+  
+  .tab-button {
+    font-size: 14px;
+    padding: 16px 8px;
+  }
+  
+  .profile-content {
+    padding: 0 16px;
+  }
+  
   .works-grid,
   .collections-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+  }
+  
+  .activity-header {
+    margin-bottom: 12px;
+  }
+  
+  .activity-content {
+    margin-left: 0;
+  }
+  
+  .modal-content {
+    margin: 10px;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 16px;
+  }
+  
+  .social-links-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cover-preview,
+  .cover-placeholder {
+    width: 100%;
+    max-width: 300px;
   }
 }
 </style>
