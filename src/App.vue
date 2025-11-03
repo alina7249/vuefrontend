@@ -25,9 +25,9 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useAuthStore } from './stores'
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
+import { useAuthStore } from './store/modules/user'
+import Header from './components/Layout/Header.vue'
+import Footer from './components/Layout/Footer.vue'
 import { Toaster } from 'sonner'
 
 const authStore = useAuthStore()

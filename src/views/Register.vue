@@ -16,7 +16,7 @@
       <!--  返回按钮  -->
       <div class="mb-6">
         <RouterLink
-          to="/profile-center"
+          :to="'/profile-center'"
           class="inline-flex items-center space-x-1 text-[#B8C6D8]/70 hover:text-[#B8C6D8] transition-colors"
         >
           <i class="fa-solid fa-arrow-left"></i>

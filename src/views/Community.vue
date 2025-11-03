@@ -50,7 +50,7 @@
               <p class="text-[#B8C6D8] text-sm">
                 登录后可以创建话题和参与讨论
               </p>
-              <RouterLink to="/login" class="text-xs px-3 py-1 bg-[#4A5F8B] text-[#F5F7FA] rounded-full transition-colors">
+              <RouterLink :to="'/login'" class="text-xs px-3 py-1 bg-[#4A5F8B] text-[#F5F7FA] rounded-full transition-colors">
                 立即登录
               </RouterLink>
             </div>

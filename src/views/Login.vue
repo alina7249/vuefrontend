@@ -50,7 +50,7 @@
               id="username"
               name="username"
               type="text"
-              required="true"
+              :required="true"
               :value="state.username"
               @change="(e) => state.username = (e.target as HTMLInputElement).value"
               class="w-full px-4 py-3 rounded-lg border border-[#4A5568] bg-[#4A5568] text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#63B3ED] transition-colors"
@@ -66,7 +66,7 @@
               id="password"
               name="password"
               type="password"
-              required="true"
+              :required="true"
               :value="state.password"
               @change="(e) => state.password = (e.target as HTMLInputElement).value"
               class="w-full px-4 py-3 rounded-lg border border-[#4A5568] bg-[#4A5568] text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#63B3ED] transition-colors"
@@ -181,19 +181,21 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { reactive } from 'vue';
   import { useRouter, RouterLink } from 'vue-router';
   import { motion } from 'framer-motion';
   import { toast } from 'sonner';
-  // 这里假设使用一个简单的登录函数，后续可以替换为实际的认证store
+  // 模拟登录函数
+  const login = async (username: string, password: string): Promise<boolean> => {
+    // 实际项目中应替换为调用认证store的登录方法
+    return true; // 假设登录成功
+  };
   const router = useRouter();
-  
   const state = reactive({
-    username: '',
-    password: '',
-    isLoading: false
+    username: 'admin',
+    password: '123456',
+    isLoading: false,
   });
-  
   // 处理表单提交
   const handleSubmit = async (e: Event) => {
     e.preventDefault(); // 阻止默认提交行为
@@ -207,9 +209,7 @@
     state.isLoading = true;
 
     try {
-      // 模拟登录请求
-      // 实际项目中应替换为调用认证store的登录方法
-      const success = true; // 假设登录成功
+      const success = await login(state.username, state.password);
 
       if (success) {
         toast.success('登录成功，欢迎回来！');
@@ -227,5 +227,5 @@
 </script>
 
 <style scoped>
-/* Home page styles */
+/* Login page styles */
 </style>

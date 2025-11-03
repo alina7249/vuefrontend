@@ -15,13 +15,13 @@
     >
       <!--  返回按钮  -->
       <div class="mb-6">
-        <Link
-          to="/profile-center/works"
+        <RouterLink
+          :to="'/profile-center/works'"
           class="inline-flex items-center space-x-1 text-[#B8C6D8]/70 hover:text-[#B8C6D8] transition-colors"
         >
           <i class="fa-solid fa-arrow-left"></i>
           <span>返回作品集</span>
-        </Link>
+        </RouterLink>
       </div>
 
       <h1 class="text-3xl font-bold text-[#F5F7FA] mb-8 text-center">
@@ -29,20 +29,17 @@
       </h1>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!--  左侧作品信息  -->
-        <div class="lg:col-span-2 space-y-6">
-          <!--  作品图片 - 增加版权标签  -->
-          <div class="bg-[#2D3748] p-4 rounded-xl shadow-sm border border-[#4A5F8B] relative">
-            <!--  版权标签  -->
-            <div
-              :class="`absolute top-6 left-6 px-3 py-1 rounded text-xs ${
-                mockPhotoPost.copyrightType === '独家授权'
-                  ? 'bg-[#4A5F8B] text-[#F5F7FA]'
-                  : 'bg-[#6B7C93] text-[#F5F7FA]'
-              }`"
-            >
-              {{ mockPhotoPost.copyrightType }}
-            </div>
+          <!--  左侧作品信息  -->
+          <div class="lg:col-span-2 space-y-6">
+            <!--  作品图片 - 增加版权标签  -->
+            <div class="bg-[#2D3748] p-4 rounded-xl shadow-sm border border-[#4A5F8B] relative">
+              <!--  版权标签  -->
+              <div
+                class="absolute top-6 left-6 px-3 py-1 rounded text-xs"
+                :class="mockPhotoPost.copyrightType === '独家授权' ? 'bg-[#4A5F8B] text-[#F5F7FA]' : 'bg-[#6B7C93] text-[#F5F7FA]'"
+              >
+                {{ mockPhotoPost.copyrightType }}
+              </div>
             <img :src="mockPhotoPost.image" :alt="mockPhotoPost.title" class="w-full h-auto rounded-lg" />
           </div>
 
@@ -53,8 +50,8 @@
 
             <!--  作品标签  -->
             <div class="mt-6 flex flex-wrap gap-2">
-              <template v-for="(tag, index) in mockPhotoPost.tags" :key="index">
-                <span :key="index" class="px-3 py-1 bg-[#4A5F8B]/20 text-[#4A5F8B] rounded-full text-sm">
+              <template v-for="tag in mockPhotoPost.tags" :key="tag">
+                <span class="px-3 py-1 bg-[#4A5F8B]/20 text-[#4A5F8B] rounded-full text-sm">
                   #{{ tag }}
                 </span>
               </template>
@@ -106,7 +103,7 @@
 
           <!--  评论区  -->
           <div class="bg-[#2D3748] p-6 rounded-xl shadow-sm border border-[#4A5F8B]">
-            <h2 class="text-xl font-bold text-[#F5F7FA] mb-4">评论 ({{ comments.length }})</h2>
+            <h2 class="text-xl font-bold text-[#F5F7FA] mb-4">评论 ({{ state.comments.length }})</h2>
             <div class="space-y-4">
               <!--  评论输入框  -->
               <div class="flex space-x-4">
@@ -119,8 +116,8 @@
                 </div>
                 <div class="flex-1">
                   <textarea
-                    placeholder="写下您的评论..."
-                    :value="commentInput"
+                    :placeholder="'写下您的评论...'"
+                    :value="state.commentInput"
                     @change="(e) => (state.commentInput = e.target.value)"
                     class="w-full p-3 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B] transition-all resize-none h-24"
                   ></textarea>
@@ -137,8 +134,8 @@
 
               <!--  评论列表  -->
               <div class="space-y-4">
-                <template v-for="comment in comments" :key="">
-                  <div :key="comment.id" class="flex space-x-4">
+                <template v-for="comment in state.comments" :key="comment.id">
+                  <div class="flex space-x-4">
                     <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                       <img :src="comment.avatar" :alt="comment.author" class="w-full h-full object-cover" />
                     </div>
@@ -202,31 +199,29 @@
           <div class="bg-[#2D3748] p-6 rounded-xl shadow-sm border border-[#4A5F8B]">
             <div class="flex justify-between mb-6">
               <button
-                :class="`flex flex-col items-center justify-center ${isLiked ? 'text-[#F56565]' : 'text-[#4A5F8B]'}`"
-                @click="() => (state.isLiked = !isLiked)"
+                class="flex flex-col items-center justify-center"
+                :class="state.isLiked ? 'text-[#F56565]' : 'text-[#4A5F8B]'"
+                @click="() => (state.isLiked = !state.isLiked)"
               >
                 <div
-                  :class="`w-12 h-12 rounded-full ${
-                    isLiked ? 'bg-[#F56565]/20' : 'bg-[#4A5F8B]/20'
-                  } flex items-center justify-center mb-2`"
+                  class="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                  :class="state.isLiked ? 'bg-[#F56565]/20' : 'bg-[#4A5F8B]/20'"
                 >
-                  <i :class="`fa-solid fa-heart text-xl ${isLiked ? 'text-[#F56565]' : 'text-[#4A5F8B]'}`"></i>
-                </div>
-                <span :class="`text-sm ${isLiked ? 'text-[#F56565]' : 'text-[#B8C6D8]'}`">{{ likes }}</span>
+                  <i class="fa-solid fa-heart text-xl" :class="state.isLiked ? 'text-[#F56565]' : 'text-[#4A5F8B]'"></i>
+                  </div>
+                  <span class="text-sm" :class="state.isLiked ? 'text-[#F56565]' : 'text-[#B8C6D8]'">{{ state.likes }}</span>
               </button>
               <button
-                :class="`flex flex-col items-center justify-center ${
-                  isBookmarked ? 'text-[#F6AD55]' : 'text-[#4A5F8B]'
-                }`"
-                @click="() => (state.isBookmarked = !isBookmarked)"
+                class="flex flex-col items-center justify-center"
+                :class="state.isBookmarked ? 'text-[#F6AD55]' : 'text-[#4A5F8B]'"
+                @click="() => (state.isBookmarked = !state.isBookmarked)"
               >
                 <div
-                  :class="`w-12 h-12 rounded-full ${
-                    isBookmarked ? 'bg-[#F6AD55]/20' : 'bg-[#4A5F8B]/20'
-                  } flex items-center justify-center mb-2`"
+                  class="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+                  :class="state.isBookmarked ? 'bg-[#F6AD55]/20' : 'bg-[#4A5F8B]/20'"
                 >
-                  <i :class="`fa-solid fa-bookmark text-xl ${isBookmarked ? 'text-[#F6AD55]' : 'text-[#4A5F8B]'}`"></i>
-                </div>
+                  <i class="fa-solid fa-bookmark text-xl" :class="state.isBookmarked ? 'text-[#F6AD55]' : 'text-[#4A5F8B]'"></i>
+                  </div>
                 <span class="text-sm text-[#B8C6D8]">收藏</span>
               </button>
               <button class="flex flex-col items-center justify-center text-[#4A5F8B]">
@@ -260,8 +255,8 @@
             <h3 class="font-bold text-[#F5F7FA] mb-4">版权交易</h3>
 
             <div class="space-y-4">
-              <template v-for="option in mockPhotoPost.licensingOptions" :key="">
-                <div :key="option.id" class="p-4 bg-[#1E2532] rounded-lg border border-[#4A5F8B]">
+              <template v-for="option in mockPhotoPost.licensingOptions" :key="option.id">
+                <div class="p-4 bg-[#1E2532] rounded-lg border border-[#4A5F8B]">
                   <div class="flex justify-between items-center mb-2">
                     <h4 class="font-medium text-[#F5F7FA]">{{ option.name }}</h4>
                     <span class="font-bold text-[#4A5F8B]">¥{{ option.price }}</span>
@@ -318,14 +313,13 @@
           <div class="bg-[#2D3748] p-6 rounded-xl shadow-sm border border-[#4A5F8B]">
             <h3 class="font-bold text-[#F5F7FA] mb-4">相关推荐</h3>
             <div class="space-y-4">
-              <template v-for="item in [1, 2, 3]" :key="">
+              <template v-for="item in [1, 2, 3]" :key="item">
                 <motion.div
-                  :key="item"
-                  :whileHover="{
-                    scale: 1.03,
-                  }"
-                  class="group"
-                >
+                    :whileHover="{
+                      scale: 1.03
+                    }"
+                    class="group"
+                  >
                   <div
                     class="rounded-lg overflow-hidden border border-[#4A5F8B] group-hover:border-[#4A5F8B] transition-colors"
                   >
@@ -353,8 +347,10 @@
 
 <script setup lang="ts">
   import { reactive } from 'vue';
-  import { useParams, Link } from 'react-router-dom';
+  import { useRoute } from 'vue-router';
+  import { RouterLink } from 'vue-router';
   import { motion } from 'framer-motion';
+  import { useContext } from 'vue';
   import { AuthContext } from '../contexts/authContext';
   const mockPhotoPost = {
     id: '1',
@@ -398,7 +394,7 @@
       { id: 'exclusive', name: '独家授权', price: 3500, description: '获得作品独家使用权' },
     ],
   };
-  const { id } = useParams();
+  const { id } = useRoute().params;
   const { isAuthenticated } = useContext(AuthContext);
   const state = reactive({
     commentInput: '',
@@ -434,16 +430,16 @@
   });
   // 处理评论提交
   const handleCommentSubmit = () => {
-    if (!commentInput.trim()) return;
+    if (!state.commentInput.trim()) return;
     const newComment = {
-      id: comments.length + 1,
+      id: state.comments.length + 1,
       author: '我',
       avatar:
         'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=user%20avatar%20placeholder&sign=7190b82f8840cf19dd8427ccfc6e55c9',
-      content: commentInput,
+      content: state.commentInput,
       date: new Date().toISOString().split('T')[0],
     };
-    state.comments = [newComment, ...comments];
+    state.comments = [newComment, ...state.comments];
     state.commentInput = '';
   };
 </script>

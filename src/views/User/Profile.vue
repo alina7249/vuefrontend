@@ -16,12 +16,12 @@
       <!--  返回按钮  -->
       <div class="mb-6">
         <RouterLink
-          to="/"
-          class="inline-flex items-center space-x-1 text-[#B8C6D8]/70 hover:text-[#B8C6D8] transition-colors"
-        >
-          <i class="fa-solid fa-arrow-left"></i>
-          <span>返回首页</span>
-        </RouterLink>
+            :to="'/'"
+            class="inline-flex items-center space-x-1 text-[#B8C6D8]/70 hover:text-[#B8C6D8] transition-colors"
+          >
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>返回首页</span>
+          </RouterLink>
       </div>
 
       <!--  个人资料头部  -->

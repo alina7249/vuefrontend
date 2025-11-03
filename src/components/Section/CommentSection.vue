@@ -85,7 +85,7 @@
                   comment.isLiked ? 'text-[#4A5F8B]' : 'text-[#4A5059]/50 hover:text-[#4A5059]'
                 ]"
               >
-                <i :class="['fa-solid', comment.isLiked ? 'fa-heart' : 'fa-heart']"></i>
+                <i :class="[comment.isLiked ? 'fa-solid' : 'fa-regular', 'fa-heart']"></i>
                 <span>{{ comment.likes }}</span>
               </button>
               <button
@@ -160,7 +160,7 @@
                       reply.isLiked ? 'text-[#4A5F8B]' : 'text-[#4A5059]/50 hover:text-[#4A5059]'
                     ]"
                   >
-                    <i :class="['fa-solid', reply.isLiked ? 'fa-heart' : 'fa-heart']"></i>
+                    <i :class="[reply.isLiked ? 'fa-solid' : 'fa-regular', 'fa-heart']"></i>
                     <span>{{ reply.likes }}</span>
                   </button>
                 </div>

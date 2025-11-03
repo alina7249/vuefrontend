@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores'
+import { useAuthStore } from '../store/modules/user'
 
 // 懒加载路由组件
-const Home = () => import('../pages/Home.vue')
-const Login = () => import('../pages/Login.vue')
-const Register = () => import('../pages/Register.vue')
-const Profile = () => import('../pages/Profile.vue')
-const ProfileCenter = () => import('../pages/ProfileCenter.vue')
-const ProfileMembership = () => import('../pages/ProfileMembership.vue')
-const PhotoDetail = () => import('../pages/PhotoDetail.vue')
-const PhotoComments = () => import('../pages/PhotoComments.vue')
-const Community = () => import('../pages/Community.vue')
-const Resources = () => import('../pages/Resources.vue')
+const Home = () => import('../views/Home.vue')
+const Login = () => import('../views/Login.vue')
+const Register = () => import('../views/Register.vue')
+const Profile = () => import('../views/User/Profile.vue')
+const ProfileCenter = () => import('../views/ProfileCenter.vue')
+const ProfileMembership = () => import('../views/ProfileMembership.vue')
+const PhotoDetail = () => import('../views/PhotoDetail.vue')
+const PhotoComments = () => import('../views/PhotoComments.vue')
+const Community = () => import('../views/Community.vue')
+const Resources = () => import('../views/Resources.vue')
 
 const routes = [
   {
