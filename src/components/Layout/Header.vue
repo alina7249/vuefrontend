@@ -5,8 +5,7 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { motion } from 'framer-motion';
-import { useTheme } from '../hooks/useTheme';
-import ProfileDropdown from './ProfileDropdown.vue';
+import { useTheme } from '@/hooks/useTheme';
 </script>
 
 <style scoped>
