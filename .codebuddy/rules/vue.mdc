@@ -1,0 +1,26 @@
+---
+description: 
+alwaysApply: false
+enabled: true
+updatedAt: 2025-11-05T14:31:30.251Z
+provider: 
+---
+
+请将引用的React TSX组件文件转换为Vue 3 TypeScript（.vue）单文件组件（SFC），要求如下：
+1. 核心一致性：组件的内容、业务逻辑、交互行为、视觉表现（含动画效果、样式表现）与原版React组件完全一致，仅适配Vue 3语法格式
+2. 语法与类型适配：
+   - 将React JSX模板转为Vue <template>标签语法，React属性（如className/onClick/style）对应改为Vue语法（class/@click/:style）
+   - 将React Hooks（useState/useEffect/useRef/useContext等）转为Vue组合式API（ref/reactive/onMounted/useSlots等）
+   - TypeScript类型适配：React Props接口转为Vue的defineProps<Props>，状态/上下文类型对应Vue响应式变量类型
+   - 组件关联CSS适配：将React组件关联的普通CSS/CSS Modules代码，移至Vue SFC的<style>标签中；若为CSS Modules，需适配Vue的CSS Modules写法（如React中`styles.className`改为Vue中`$style.className`）
+3. 动画自动还原（覆盖所有场景）：
+   - 若React组件包含动画（无论使用Framer Motion、其他React动画库、CSS自定义动画、JS控制动画），自动使用Vue的motion-v库实现与原版完全一致的动画效果：
+     - 识别React动画的核心参数（过渡时长、缓动函数、状态切换逻辑等），映射为motion-v对应的属性（initial/animate/variants/whileHover/transition等）
+     - 若为CSS动画，自动将动画逻辑封装为motion-v的样式动画属性，保持视觉表现1:1匹配
+   - 若React组件无动画，正常完成组件格式转换即可
+4. 输出要求：
+   - 生成完整的Vue SFC文件（包含<template>、<script setup lang="ts">、原组件对应的<style>）
+   - 自动导入motion-v（若涉及动画）及必要依赖，无需额外手动修改即可直接在Vue 3项目中运行
+
+以下是需要转换的React TSX代码：
+【在此处粘贴你的React TSX代码】

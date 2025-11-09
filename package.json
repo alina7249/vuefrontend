@@ -4,29 +4,30 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev:client": "vite --host --port 3000",
-    "dev": "pnpm dev:client",
-    "build:client": "vite build --outDir dist/static",
-    "build": "if exist dist rmdir /s /q dist && pnpm build:client && if not exist dist mkdir dist && copy package.json dist && echo. > dist/build.flag"
+    "dev": "vite --host --port 3000",
+    "build": "vite build --outDir dist/static"
   },
   "dependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vueuse/motion": "^3.0.3",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.9.2",
-    "pinia": "^2.2.6",
-    "recharts": "^2.15.1",
-    "sonner": "^2.0.2",
+    "echarts": "^5.6.0",
+    "motion-v": "^1.7.4",
     "tailwind-merge": "^3.0.2",
-    "vue": "^3.5.13",
-    "vue-router": "^4.4.5",
+    "vue": "^3.5.24",
+    "vue-echarts": "^7.0.3",
+    "vue-router": "^4.6.3",
+    "vue-toastification": "^2.0.0-rc.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@types/vue-router": "^2.0.0",
     "autoprefixer": "^10.4.21",
-    "less": "^4.4.2",
-    "less-loader": "^12.3.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.2.0"
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vue-tsc": "^3.1.3"
   }
 }
