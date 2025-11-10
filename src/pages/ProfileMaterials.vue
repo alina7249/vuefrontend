@@ -18,7 +18,7 @@
 
   <!-- 已登录状态 -->
   <div v-else class="container mx-auto px-4 py-8 bg-[#1E2532] star-texture min-h-screen">
-    <div v-motion="{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } }">
+    <div>
       <!-- 返回按钮 -->
       <div class="mb-6">
         <RouterLink

@@ -29,7 +29,7 @@
       <div class="bg-[#F5F7FA] rounded-xl overflow-hidden shadow-sm border border-[#B8C6D8] star-texture mb-8">
         <!-- 封面图 -->
         <div class="h-64 overflow-hidden">
-          <img :src="profileUser.coverImage" alt="Cover" class="w-full h-full object-cover" />
+          <img :src="profileUser.coverImage" alt="Cover" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/800x256/4A5F8B/FFFFFF?text=封面'" />
         </div>
         
         <!-- 用户信息 -->
@@ -42,6 +42,7 @@
                   :src="profileUser.avatar"
                   :alt="profileUser.username"
                   class="w-full h-full object-cover"
+                  onerror="this.src='https://via.placeholder.com/160x160/4A5F8B/FFFFFF?text=头像'"
                 />
               </div>
             </div>

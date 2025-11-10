@@ -1,6 +1,6 @@
 <template>
-  <div class="container mx-auto px-4 py-8 bg-[#1E2532] star-texture min-h-screen" v-motion="motionRoot">
-    <div v-motion="{}">
+  <div class="container mx-auto px-4 py-8 bg-[#1E2532] star-texture min-h-screen">
+    <div>
       <!-- 返回按钮 -->
       <div class="mb-6">
         <RouterLink to="/profile-center" class="inline-flex items-center space-x-1 text-[#B8C6D8]/70 hover:text-[#B8C6D8] transition-colors">
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-          <div class="flex flex-col space-y-3 md:items-end">
+          <div class="flex flex-row space-x-3 md:items-end">
             <button class="px-6 py-3 bg-[#F5F7FA] text-[#4A5F8B] rounded-lg font-medium hover:bg-white transition-colors shadow-md">立即续费</button>
             <button class="px-6 py-3 bg-[#4A5F8B] text-[#F5F7FA] rounded-lg font-medium hover:bg-[#63B3ED] transition-colors">升级会员</button>
           </div>

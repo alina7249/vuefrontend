@@ -1,6 +1,7 @@
 <template>
-  <div
-    class="bg-[#2D3748] rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-[#4A5F8B] transition-all duration-300 border border-[#4A5F8B] h-[500px] flex flex-col"
+  <motion.div
+    :hover="{ y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' }"
+    class="bg-[#2D3748] rounded-xl overflow-hidden shadow-sm border border-[#4A5F8B] h-[500px] flex flex-col"
   >
     <!-- 图片容器 -->
     <div class="relative flex-shrink-0">
@@ -9,6 +10,7 @@
           :src="post.image"
           :alt="post.title"
           class="w-full h-60 object-cover transition-transform duration-300 hover:scale-105"
+          onerror="this.src='https://via.placeholder.com/400x240/4A5F8B/FFFFFF?text=作品'"
         />
       </RouterLink>
       
@@ -39,6 +41,7 @@
             :src="post.author.avatar"
             :alt="post.author.name"
             class="w-8 h-8 rounded-full object-cover border border-[#B8C6D8]"
+            onerror="this.src='https://via.placeholder.com/32x32/4A5F8B/FFFFFF?text=' + post.author.name.charAt(0)"
           />
         </RouterLink>
         <div>
@@ -94,13 +97,14 @@
         </button>
       </div>
     </div>
-  </div>
+  </motion.div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
+import { motion } from 'motion-v';
 
 // 摄影作品类型定义
 export interface PhotographyPost {

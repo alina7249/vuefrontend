@@ -48,7 +48,7 @@
                 <div class="flex flex-col sm:flex-row items-start sm:items-center mb-6">
                   <div class="relative mr-6 mb-4 sm:mb-0">
                     <div class="w-20 h-20 rounded-full border-2 border-[#4A5F8B] overflow-hidden shadow-md">
-                      <img :src="mockUserData.avatar" alt="User Avatar" class="w-full h-full object-cover" />
+                      <img :src="mockUserData.avatar" alt="User Avatar" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/4A5F8B/FFFFFF?text=头像'" />
                     </div>
                   </div>
 
@@ -140,9 +140,9 @@
                     v-motion="{
                       initial: { opacity: 0, y: 20 },
                       enter: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-                      hover: { scale: 1.02 }
+                      hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' }
                     }"
-                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] hover:shadow-lg transition-all"
+                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] transition-all"
                   >
                     <h3 class="text-sm font-medium text-[#B8C6D8] mb-1">作品数</h3>
                     <div class="flex items-end justify-between">
@@ -170,9 +170,9 @@
                     v-motion="{
                       initial: { opacity: 0, y: 20 },
                       enter: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } },
-                      hover: { scale: 1.02 }
+                      hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' }
                     }"
-                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] hover:shadow-lg transition-all"
+                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] transition-all"
                   >
                     <h3 class="text-sm font-medium text-[#B8C6D8] mb-1">获赞数</h3>
                     <div class="flex items-end justify-between">
@@ -200,9 +200,9 @@
                     v-motion="{
                       initial: { opacity: 0, y: 20 },
                       enter: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } },
-                      hover: { scale: 1.02 }
+                      hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' }
                     }"
-                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] hover:shadow-lg transition-all"
+                    class="bg-[#2D3748] rounded-lg p-4 border border-[#4A5F8B] transition-all"
                   >
                     <h3 class="text-sm font-medium text-[#B8C6D8] mb-1">收藏数</h3>
                     <div class="flex items-end justify-between">

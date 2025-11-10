@@ -198,7 +198,10 @@
         </div>
 
         <!-- 热门标签 -->
-        <div class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6">
+        <div 
+          v-motion="{ hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' } }"
+          class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6 transition-all"
+        >
           <h3 class="text-lg font-bold mb-4 text-[#F5F7FA]">热门风格</h3>
           <div class="flex flex-wrap gap-2">
             <RouterLink
@@ -213,7 +216,10 @@
         </div>
 
         <!-- 推荐艺术家 -->
-        <div class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6">
+        <div 
+          v-motion="{ hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' } }"
+          class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6 transition-all"
+        >
           <h3 class="text-lg font-bold mb-4 text-[#F5F7FA]">推荐艺术家</h3>
           <div class="space-y-4">
             <div v-for="photographer in featuredPhotographers" :key="photographer.id" class="flex items-center justify-between">
@@ -239,7 +245,10 @@
         </div>
 
         <!-- 艺术专题 -->
-        <div class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6">
+        <div 
+          v-motion="{ hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' } }"
+          class="bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-6 transition-all"
+        >
           <h3 class="text-lg font-bold mb-3 text-[#F5F7FA]">黑白影像专题</h3>
           <p class="text-sm text-[#B8C6D8] mb-4">
             探索黑白摄影的艺术魅力，感受光影交织的视觉语言和情感表达

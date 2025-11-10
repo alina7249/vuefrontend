@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8 bg-[#1E2532] min-h-screen" v-motion="{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } }">
+  <div class="container mx-auto px-4 py-8 bg-[#1E2532] min-h-screen">
       <!-- 返回按钮 -->
       <div class="mb-6">
         <RouterLink

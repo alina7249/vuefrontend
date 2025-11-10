@@ -45,18 +45,18 @@
         <h2 class="text-xl font-bold text-[#B8C6D8] mb-4">作品数据趋势</h2>
 
         <!-- 图表区域 -->
-        <div class="h-80">
+        <div class="h-80 min-h-[320px] md:min-h-[320px] lg:min-h-[320px]">
           <!-- 使用CSS实现图表 -->
-          <div class="relative h-full w-full">
+          <div class="relative h-full w-full group aspect-[16/9] md:aspect-[4/3] lg:aspect-[16/9]">
             <!-- 网格背景 -->
-            <div class="absolute inset-0 grid grid-cols-6 grid-rows-5 gap-0">
+            <div class="absolute inset-0 grid grid-cols-6 grid-rows-5 gap-0 border border-[#4A5F8B]/20">
               <div v-for="i in 30" :key="i" class="border-t border-r border-[#4A5F8B]/20"></div>
             </div>
             
             <!-- 数据线容器 -->
             <div class="relative h-full w-full">
               <!-- 浏览量线 -->
-              <svg class="absolute inset-0 w-full h-full">
+              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
                 <path 
                   :d="generateLinePath(monthlyViewsData, 'views')"
                   fill="none" 
@@ -68,18 +68,18 @@
                 <circle 
                   v-for="(item, index) in monthlyViewsData" 
                   :key="index"
-                  :cx="(index / (monthlyViewsData.length - 1)) * 100 + '%'"
-                  :cy="100 - (item.views / 300) * 100 + '%'"
+                  :cx="(index / (monthlyViewsData.length - 1)) * 100"
+                  :cy="100 - (item.views / 300) * 100"
                   r="4"
                   fill="#4A5F8B"
                   stroke="#FFFFFF"
                   stroke-width="2"
-                  class="transition-all duration-300 hover:r-6"
+                  class="transition-all duration-300 hover:r-6 cursor-pointer"
                 />
               </svg>
               
               <!-- 点赞量线 -->
-              <svg class="absolute inset-0 w-full h-full">
+              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
                 <path 
                   :d="generateLinePath(monthlyViewsData, 'likes')"
                   fill="none" 
@@ -91,41 +91,41 @@
                 <circle 
                   v-for="(item, index) in monthlyViewsData" 
                   :key="index"
-                  :cx="(index / (monthlyViewsData.length - 1)) * 100 + '%'"
-                  :cy="100 - (item.likes / 300) * 100 + '%'"
+                  :cx="(index / (monthlyViewsData.length - 1)) * 100"
+                  :cy="100 - (item.likes / 300) * 100"
                   r="4"
                   fill="#6B7C93"
                   stroke="#FFFFFF"
                   stroke-width="2"
-                  class="transition-all duration-300 hover:r-6"
+                  class="transition-all duration-300 hover:r-6 cursor-pointer"
                 />
               </svg>
             </div>
             
             <!-- X轴标签 -->
-            <div class="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-[#B8C6D8] px-2">
-              <span v-for="item in monthlyViewsData.filter((_, i) => i % 5 === 0)" :key="item.date">
+            <div class="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-[#B8C6D8] px-4">
+              <span v-for="item in monthlyViewsData.filter((_, i) => i % 5 === 0)" :key="item.date" class="text-[10px] md:text-xs">
                 {{ item.date }}
               </span>
             </div>
             
             <!-- Y轴标签 -->
-            <div class="absolute top-0 bottom-0 left-0 flex flex-col justify-between text-xs text-[#B8C6D8] py-2">
-              <span>300</span>
-              <span>200</span>
-              <span>100</span>
-              <span>0</span>
+            <div class="absolute top-0 bottom-0 left-0 flex flex-col justify-between text-xs text-[#B8C6D8] py-4 pl-2">
+              <span class="text-[10px] md:text-xs">300</span>
+              <span class="text-[10px] md:text-xs">200</span>
+              <span class="text-[10px] md:text-xs">100</span>
+              <span class="text-[10px] md:text-xs">0</span>
             </div>
             
             <!-- 图例 -->
             <div class="absolute top-2 right-2 flex space-x-4 text-sm">
               <div class="flex items-center">
                 <div class="w-3 h-0.5 bg-[#4A5F8B] mr-2"></div>
-                <span class="text-[#B8C6D8]">浏览量</span>
+                <span class="text-[#B8C6D8] text-[10px] md:text-xs">浏览量</span>
               </div>
               <div class="flex items-center">
                 <div class="w-3 h-0.5 bg-[#6B7C93] mr-2"></div>
-                <span class="text-[#B8C6D8]">点赞量</span>
+                <span class="text-[#B8C6D8] text-[10px] md:text-xs">点赞量</span>
               </div>
             </div>
             
@@ -133,14 +133,14 @@
             <div 
               v-for="(item, index) in monthlyViewsData" 
               :key="index"
-              class="absolute hidden group-hover:block bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-3 text-xs text-[#B8C6D8] shadow-lg"
+              class="absolute opacity-0 group-hover:opacity-100 bg-[#2D3748] border border-[#4A5F8B] rounded-lg p-2 md:p-3 text-[10px] md:text-xs text-[#B8C6D8] shadow-lg z-10 min-w-[120px] md:min-w-[140px] transition-opacity duration-300"
               :style="{ 
                 left: `${(index / (monthlyViewsData.length - 1)) * 100}%`,
                 bottom: `${(item.views / 300) * 100 + 5}%`,
                 transform: 'translateX(-50%)'
               }"
             >
-              <div class="font-medium">{{ item.workName }}</div>
+              <div class="font-medium truncate">{{ item.workName }}</div>
               <div>浏览量: {{ item.views }}</div>
               <div>点赞量: {{ item.likes }}</div>
               <div>日期: {{ item.date }}</div>
@@ -246,6 +246,7 @@
               :src="post.image"
               :alt="post.title"
               class="w-full h-48 object-cover"
+              onerror="this.src='https://via.placeholder.com/300x192/4A5F8B/FFFFFF?text=作品'"
             />
             <!-- 版权标签 -->
             <div :class="['absolute top-3 left-3 px-2 py-1 rounded text-xs', 

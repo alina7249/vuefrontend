@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8 bg-[#1E2532] min-h-screen">
     <div
-      v-motion="{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } }"
+      v-motion="{ initial: { opacity: 0, y: 20 }, enter: { opacity: 1, y: 0 }, transition: { duration: 0.5 } }"
     >
       <!-- 页面标题 -->
       <div class="mb-8 text-center">
@@ -91,7 +91,7 @@
             <div
               v-for="project in filteredProjects"
               :key="project.id"
-              v-motion="{ hover: { y: -3, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' } }"
+              v-motion="{ hover: { y: -5, boxShadow: '0 2px 12px rgba(74, 95, 139, 0.3)' } }"
               class="bg-gradient-to-r from-[#4A5F8B] to-[#6B7C93] rounded-xl overflow-hidden border border-[#4A5F8B] transition-all shadow-sm"
             >
               <!-- 项目信息头部 -->
@@ -133,6 +133,7 @@
                         :src="project.company.avatar"
                         :alt="project.company.name"
                         class="w-10 h-10 rounded-full object-cover border border-[#4A5F8B]"
+                        onerror="this.src='https://via.placeholder.com/40x40/4A5F8B/FFFFFF?text=' + project.company.name.charAt(0)"
                       />
                       <div
                         v-if="project.company.verified"

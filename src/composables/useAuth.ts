@@ -31,6 +31,8 @@ export function login(email: string, password: string): Promise<boolean> {
           avatar: '/images/avatars/admin.jpg',
           role: 'admin'
         }
+        // 设置 localStorage 认证状态，确保页面能正确识别登录状态
+        localStorage.setItem('isAuthenticated', 'true')
         resolve(true)
       } else if (email && password) {
         user.value = {
@@ -41,6 +43,8 @@ export function login(email: string, password: string): Promise<boolean> {
           avatar: '/images/avatars/user.jpg',
           role: 'user'
         }
+        // 设置 localStorage 认证状态，确保页面能正确识别登录状态
+        localStorage.setItem('isAuthenticated', 'true')
         resolve(true)
       } else {
         resolve(false)
@@ -62,6 +66,8 @@ export function register(name: string, email: string, password: string): Promise
           avatar: '/images/avatars/user.jpg',
           role: 'user'
         }
+        // 设置 localStorage 认证状态，确保页面能正确识别登录状态
+        localStorage.setItem('isAuthenticated', 'true')
         resolve(true)
       } else {
         resolve(false)

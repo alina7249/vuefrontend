@@ -62,7 +62,7 @@
           <select
             :value="selectedType"
             @change="(e) => selectedType = (e.target as HTMLSelectElement).value"
-            class="input appearance-none cursor-pointer"
+            class="input appearance-none"
           >
             <option v-for="type in equipmentTypes" :key="type" :value="type">{{ type }}</option>
           </select>
@@ -70,7 +70,7 @@
           <select
             :value="selectedBrand"
             @change="(e) => selectedBrand = (e.target as HTMLSelectElement).value"
-            class="input appearance-none cursor-pointer"
+            class="input appearance-none"
           >
             <option v-for="brand in brands" :key="brand" :value="brand">{{ brand }}</option>
           </select>
@@ -78,7 +78,7 @@
           <select
             :value="selectedPriceRange"
             @change="(e) => selectedPriceRange = (e.target as HTMLSelectElement).value"
-            class="input appearance-none cursor-pointer"
+            class="input appearance-none"
           >
             <option v-for="range in priceRanges" :key="range" :value="range">{{ range }}</option>
           </select>
@@ -87,7 +87,7 @@
             v-if="tradeType === 'used'"
             :value="selectedCondition"
             @change="(e) => selectedCondition = (e.target as HTMLSelectElement).value"
-            class="input appearance-none cursor-pointer"
+            class="input appearance-none"
           >
             <option v-for="condition in conditions" :key="condition" :value="condition">{{ condition }}</option>
           </select>
