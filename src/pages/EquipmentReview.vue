@@ -848,6 +848,138 @@ const translateKey = (key: string) => {
   
   return translations[key] || key
 }
+
+// 用户提问区相关数据和方法
+const popularEquipment = ref([
+  { id: '1', name: 'Canon EOS R5' },
+  { id: '2', name: 'Sony A7R IV' },
+  { id: '3', name: 'Nikon Z7 II' },
+  { id: '4', name: 'Fujifilm X-T4' },
+  { id: '5', name: 'Panasonic S1H' },
+  { id: '6', name: 'DJI Mavic 3' }
+])
+const selectedEquipmentForQuestion = ref<string | null>(null)
+const newQuestion = ref({
+  title: '',
+  content: ''
+})
+const questions = ref([
+  {
+    id: '1',
+    equipmentId: '1',
+    equipmentName: 'Canon EOS R5',
+    title: 'EOS R5的4K 120fps模式发热严重吗？',
+    content: '最近想入手一台EOS R5，主要用来拍摄视频，想了解一下4K 120fps模式下的发热情况，以及实际使用中的续航表现如何？希望有使用经验的朋友分享一下。',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    userName: '摄影师小王',
+    userAvatar: 'https://via.placeholder.com/30',
+    answers: [
+      { id: 'a1', content: '发热确实有点严重，建议搭配散热风扇使用', createdAt: new Date() }
+    ]
+  },
+  {
+    id: '2',
+    equipmentId: '2',
+    equipmentName: 'Sony A7R IV',
+    title: 'A7R IV和R5在风光摄影方面如何选择？',
+    content: '主要拍摄风光照片，偶尔兼顾人像。两款相机的高分辨率都很吸引我，但不知道在实际使用中哪款更适合风光拍摄？特别是在宽容度和动态范围方面。',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    userName: '风光爱好者',
+    userAvatar: 'https://via.placeholder.com/30',
+    answers: [
+      { id: 'a2', content: '索尼的宽容度更好，佳能的色彩科学更讨喜', createdAt: new Date() },
+      { id: 'a3', content: '我用的是A7R IV，后期空间非常大', createdAt: new Date() }
+    ]
+  },
+  {
+    id: '3',
+    equipmentId: '4',
+    equipmentName: 'Fujifilm X-T4',
+    title: 'X-T4的胶片模拟哪种最适合街拍？',
+    content: '刚开始接触富士系统，对各种胶片模拟还不太熟悉。请问大家在街拍时最喜欢用哪种胶片模拟预设？有没有什么自定义设置可以分享？',
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    userName: '街头摄影师',
+    userAvatar: 'https://via.placeholder.com/30',
+    answers: []
+  }
+])
+const questionSearchQuery = ref('')
+
+// 过滤问题列表
+const filteredQuestions = computed(() => {
+  let result = [...questions.value]
+  
+  if (questionSearchQuery.value) {
+    const query = questionSearchQuery.value.toLowerCase()
+    result = result.filter(question => 
+      question.title.toLowerCase().includes(query) ||
+      question.content.toLowerCase().includes(query) ||
+      question.equipmentName.toLowerCase().includes(query)
+    )
+  }
+  
+  // 按创建时间倒序排列
+  return result.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+})
+
+// 获取选中器材名称
+const getSelectedEquipmentName = () => {
+  const equipment = popularEquipment.value.find(e => e.id === selectedEquipmentForQuestion.value)
+  return equipment ? equipment.name : ''
+}
+
+// 提交问题
+const submitQuestion = () => {
+  if (!newQuestion.value.title.trim() || !newQuestion.value.content.trim() || !selectedEquipmentForQuestion.value) {
+    return
+  }
+  
+  const equipment = popularEquipment.value.find(e => e.id === selectedEquipmentForQuestion.value)
+  if (!equipment) return
+  
+  const question = {
+    id: Date.now().toString(),
+    equipmentId: selectedEquipmentForQuestion.value,
+    equipmentName: equipment.name,
+    title: newQuestion.value.title,
+    content: newQuestion.value.content,
+    createdAt: new Date(),
+    userName: '当前用户',
+    userAvatar: 'https://via.placeholder.com/30',
+    answers: []
+  }
+  
+  questions.value.unshift(question)
+  
+  // 重置表单
+  newQuestion.value = {
+    title: '',
+    content: ''
+  }
+  
+  // 模拟成功提示
+  console.log('问题提交成功:', question)
+}
+
+// 格式化日期
+const formatDate = (date: Date) => {
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  
+  if (days === 0) {
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    if (hours === 0) {
+      const minutes = Math.floor(diff / (1000 * 60))
+      return minutes === 0 ? '刚刚' : `${minutes}分钟前`
+    }
+    return `${hours}小时前`
+  } else if (days < 7) {
+    return `${days}天前`
+  } else {
+    return date.toLocaleDateString('zh-CN')
+  }
+}
 </script>
 
 <style scoped>
