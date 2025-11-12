@@ -15,6 +15,17 @@
         </p>
       </div>
 
+      <!-- 草稿箱提示 -->
+      <div v-if="isAuthenticated && savedDrafts.length > 0" class="mb-6 bg-[#2D3748]/80 border border-[#4A5F8B] rounded-lg p-4 flex items-center justify-between">
+        <div class="flex items-center">
+          <i class="fa-solid fa-file-lines text-[#4A5F8B] mr-3"></i>
+          <p class="text-[#B8C6D8]">您有 <span class="text-[#4A5F8B] font-medium">{{ savedDrafts.length }}</span> 个未完成的话题草稿</p>
+        </div>
+        <button class="px-4 py-2 bg-[#4A5F8B] text-[#F5F7FA] rounded-lg text-sm hover:bg-[#6B7C93] transition-colors" @click="showDrafts = true">
+          查看草稿
+        </button>
+      </div>
+
       <!-- 内容区域 -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- 主要内容 -->
@@ -25,6 +36,7 @@
               :whileHover="{ scale: 1.02 }"
               :whileTap="{ scale: 0.98 }"
               class="w-full py-3 px-6 bg-[#4A5F8B] text-[#F5F7FA] font-medium rounded-lg transition-colors flex items-center justify-center space-x-2"
+              @click="showCreateTopicModal = true"
             >
               <i class="fa-solid fa-plus"></i>
               <span>创建新话题</span>
@@ -67,6 +79,28 @@
               </option>
             </select>
           </div>
+          
+          <!-- 标签筛选 -->
+          <div class="flex flex-wrap gap-2 pt-3">
+            <button 
+              v-for="tag in availableTags" 
+              :key="tag.id"
+              :class="['px-3 py-1 rounded-full text-xs transition-colors', 
+                selectedTags.includes(tag.name) 
+                  ? 'bg-[#4A5F8B] text-[#F5F7FA] border border-[#4A5F8B]'
+                  : 'bg-[#2D3748] text-[#B8C6D8] border border-[#4A5F8B] hover:bg-[#4A5F8B]/50'
+              ]"
+              @click="toggleTag(tag.name)"
+            >
+              #{{ tag.name }}
+            </button>
+            <button v-if="selectedTags.length > 0" 
+              class="px-3 py-1 rounded-full text-xs bg-[#2D3748] text-[#B8C6D8] border border-[#4A5F8B] hover:bg-[#4A5F8B]/50 transition-colors"
+              @click="clearTags"
+            >
+              清除标签
+            </button>
+          </div>
 
           <!-- 话题列表卡片 - 使用底色深灰蓝 #2D3748，热帖标签浅蓝灰 #4A5F8B -->
           <div class="bg-[#2D3748] rounded-xl overflow-hidden shadow-sm">
@@ -75,13 +109,25 @@
                 论坛话题 ({{ filteredTopics.length }})
               </h2>
               <div class="flex space-x-2">
-                <button class="px-3 py-1 text-xs font-medium text-[#F5F7FA] bg-[#4A5F8B] rounded-full">
+                <button 
+                  class="px-3 py-1 text-xs font-medium rounded-full transition-colors"
+                  :class="activeSort === 'latest' ? 'bg-[#4A5F8B] text-[#F5F7FA]' : 'text-[#B8C6D8] hover:bg-[#4A5F8B] hover:text-[#F5F7FA]'"
+                  @click="setSortBy('latest')"
+                >
                   最新
                 </button>
-                <button class="px-3 py-1 text-xs font-medium text-[#B8C6D8] hover:bg-[#4A5F8B] hover:text-[#F5F7FA] rounded-full transition-colors">
+                <button 
+                  class="px-3 py-1 text-xs font-medium rounded-full transition-colors"
+                  :class="activeSort === 'popular' ? 'bg-[#4A5F8B] text-[#F5F7FA]' : 'text-[#B8C6D8] hover:bg-[#4A5F8B] hover:text-[#F5F7FA]'"
+                  @click="setSortBy('popular')"
+                >
                   热门
                 </button>
-                <button class="px-3 py-1 text-xs font-medium text-[#B8C6D8] hover:bg-[#4A5F8B] hover:text-[#F5F7FA] rounded-full transition-colors">
+                <button 
+                  class="px-3 py-1 text-xs font-medium rounded-full transition-colors"
+                  :class="activeSort === 'featured' ? 'bg-[#4A5F8B] text-[#F5F7FA]' : 'text-[#B8C6D8] hover:bg-[#4A5F8B] hover:text-[#F5F7FA]'"
+                  @click="setSortBy('featured')"
+                >
                   精华
                 </button>
               </div>
@@ -93,6 +139,7 @@
                 :key="topic.id"
                 :whileHover="{ backgroundColor: '#1E2532' }"
                 class="p-4 hover:shadow-[0_2px_8px_rgba(74,95,139,0.3)] transition-all cursor-pointer"
+                @click="viewTopic(topic.id)"
               >
                 <div class="flex items-start">
                   <!-- 分类标签 -->
@@ -110,6 +157,17 @@
                         热
                       </span>
                     </h3>
+                    
+                    <!-- 话题标签 -->
+                    <div class="flex flex-wrap gap-1 mb-2">
+                      <span 
+                        v-for="tag in topic.tags" 
+                        :key="tag"
+                        class="px-2 py-0.5 bg-[#2D3748] text-[#B8C6D8] rounded-full text-xs border border-[#4A5F8B]/50"
+                      >
+                        #{{ tag }}
+                      </span>
+                    </div>
                     
                     <div class="flex items-center text-sm text-[#B8C6D8]">
                       <div class="flex items-center mr-4">
@@ -133,6 +191,31 @@
                         <span>{{ topic.lastReply }}</span>
                       </div>
                     </div>
+                  </div>
+                  
+                  <!-- 操作按钮 -->
+                  <div v-if="isAuthenticated" class="flex flex-col ml-4 space-y-2">
+                    <button 
+                      class="text-[#B8C6D8] hover:text-[#4A5F8B] transition-colors p-1"
+                      :title="isFavorited(topic.id) ? '取消收藏' : '收藏话题'"
+                      @click.stop="toggleFavorite(topic.id)"
+                    >
+                      <i :class="`fa-solid ${isFavorited(topic.id) ? 'fa-bookmark' : 'fa-bookmark-o'}`"></i>
+                    </button>
+                    <button 
+                      class="text-[#B8C6D8] hover:text-[#4A5F8B] transition-colors p-1"
+                      :title="isSubscribed(topic.id) ? '取消订阅' : '订阅话题'"
+                      @click.stop="toggleSubscribe(topic.id)"
+                    >
+                      <i :class="`fa-solid ${isSubscribed(topic.id) ? 'fa-bell' : 'fa-bell-o'}`"></i>
+                    </button>
+                    <button 
+                      class="text-[#B8C6D8] hover:text-[#4A5F8B] transition-colors p-1"
+                      title="举报话题"
+                      @click.stop="reportTopic(topic.id)"
+                    >
+                      <i class="fa-solid fa-flag"></i>
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -177,26 +260,46 @@
         
         <!-- 侧边栏内容 -->
         <div class="space-y-6">
+          <!-- 热门话题榜单 -->
+          <div class="bg-[#2D3748] rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-[#F5F7FA]">热门话题榜单</h3>
+              <select 
+                v-model="trendingPeriod" 
+                class="text-xs bg-[#2D3748] border border-[#4A5F8B] text-[#B8C6D8] rounded-md px-2 py-1"
+              >
+                <option value="week">本周</option>
+                <option value="month">本月</option>
+              </select>
+            </div>
+            <div class="space-y-3">
+              <motion.div 
+                v-for="(topic, index) in trendingTopics" 
+                :key="topic.id"
+                :whileHover="{ x: 5, backgroundColor: '#1E2532' }"
+                class="flex items-start p-2 rounded-lg transition-colors cursor-pointer"
+                @click="viewTopic(topic.id)"
+              >
+                <span class="w-5 h-5 rounded-full bg-[#4A5F8B] text-[#F5F7FA] text-xs flex items-center justify-center mr-3 flex-shrink-0">
+                  {{ index + 1 }}
+                </span>
+                <div class="flex-1">
+                  <h4 class="text-sm font-medium text-[#F5F7FA] line-clamp-1">{{ topic.title }}</h4>
+                  <p class="text-xs text-[#B8C6D8] mt-1">{{ topic.replies }} 回复 · {{ topic.views }} 浏览</p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
           <!-- 社区活跃度图表 - 使用图表色块：浅蓝灰 #4A5F8B、#6B7C93 等蓝灰系；文字色浅冷灰 #B8C6D8 -->
           <div class="bg-[#2D3748] rounded-xl p-6 shadow-sm">
             <h3 class="text-lg font-bold mb-4 text-[#F5F7FA]">社区活跃度</h3>
             <div class="h-60">
-              <ResponsiveContainer :width="'100%'" :height="'100%'" :children="true">
-                <PieChart>
-                  <Pie
-                    :data="communityActivityData"
-                    cx="50%"
-                    cy="50%"
-                    :innerRadius="60"
-                    :outerRadius="80"
-                    :paddingAngle="5"
-                    dataKey="value"
-                    :label="(data: any) => `${data.name} ${(data.percent * 100).toFixed(0)}%`"
-                  >
-                    <Cell v-for="(entry, index) in communityActivityData" :key="entry.name" :fill="COLORS[index % COLORS.length]" />
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <VChart 
+                :option="pieChartOption" 
+                class="w-full h-full"
+                autoresize
+              />
             </div>
           </div>
 
@@ -262,14 +365,221 @@
           </div>
         </div>
       </div>
+      
+      <!-- 创建话题模态框 -->
+      <div v-if="showCreateTopicModal" class="fixed inset-0 bg-[#1E2532]/80 flex items-center justify-center z-50 p-4">
+        <motion.div 
+          :initial="{ opacity: 0, scale: 0.9 }"
+          :animate="{ opacity: 1, scale: 1 }"
+          :exit="{ opacity: 0, scale: 0.9 }"
+          class="bg-[#2D3748] rounded-xl shadow-lg w-full max-w-2xl max-h-[80vh] overflow-auto"
+        >
+          <div class="p-6 border-b border-[#4A5F8B]">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold text-[#F5F7FA]">创建新话题</h2>
+              <button class="text-[#B8C6D8] hover:text-[#F5F7FA]" @click="showCreateTopicModal = false">
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-[#B8C6D8] mb-2">标题</label>
+              <input 
+                v-model="newTopic.title" 
+                type="text" 
+                class="w-full px-4 py-2 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+                placeholder="请输入话题标题"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-[#B8C6D8] mb-2">分类</label>
+              <select 
+                v-model="newTopic.category" 
+                class="w-full px-4 py-2 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+              >
+                <option v-for="category in forumCategories" :key="category.id" :value="category.name">{{ category.name }}</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-[#B8C6D8] mb-2">内容</label>
+              <textarea 
+                v-model="newTopic.content" 
+                class="w-full px-4 py-2 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B] h-40"
+                placeholder="请输入话题内容"
+              ></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-[#B8C6D8] mb-2">标签 (用逗号分隔)</label>
+              <input 
+                v-model="newTopic.tagsInput" 
+                type="text" 
+                class="w-full px-4 py-2 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+                placeholder="例如: 人像摄影, 后期技巧, 索尼相机"
+              />
+            </div>
+          </div>
+          <div class="p-6 border-t border-[#4A5F8B] flex justify-between">
+            <button 
+              class="px-4 py-2 bg-[#2D3748] border border-[#4A5F8B] text-[#B8C6D8] rounded-lg hover:bg-[#4A5F8B]/20 transition-colors"
+              @click="saveDraft"
+            >
+              保存草稿
+            </button>
+            <div class="flex space-x-3">
+              <button 
+                class="px-4 py-2 bg-[#2D3748] border border-[#4A5F8B] text-[#B8C6D8] rounded-lg hover:bg-[#4A5F8B]/20 transition-colors"
+                @click="showCreateTopicModal = false"
+              >
+                取消
+              </button>
+              <button 
+                class="px-6 py-2 bg-[#4A5F8B] text-[#F5F7FA] rounded-lg hover:bg-[#6B7C93] transition-colors"
+                @click="submitTopic"
+              >
+                发布话题
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+      
+      <!-- 草稿箱模态框 -->
+      <div v-if="showDrafts" class="fixed inset-0 bg-[#1E2532]/80 flex items-center justify-center z-50 p-4">
+        <motion.div 
+          :initial="{ opacity: 0, scale: 0.9 }"
+          :animate="{ opacity: 1, scale: 1 }"
+          :exit="{ opacity: 0, scale: 0.9 }"
+          class="bg-[#2D3748] rounded-xl shadow-lg w-full max-w-2xl max-h-[80vh] overflow-auto"
+        >
+          <div class="p-6 border-b border-[#4A5F8B]">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold text-[#F5F7FA]">我的草稿箱</h2>
+              <button class="text-[#B8C6D8] hover:text-[#F5F7FA]" @click="showDrafts = false">
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <div v-if="savedDrafts.length === 0" class="text-center py-8">
+              <i class="fa-solid fa-file-lines text-[#4A5F8B] text-3xl mb-4"></i>
+              <p class="text-[#B8C6D8]">暂无保存的草稿</p>
+            </div>
+            <div v-else class="space-y-4">
+              <div 
+                v-for="draft in savedDrafts" 
+                :key="draft.id"
+                class="p-4 bg-[#1E2532] rounded-lg border border-[#4A5F8B]"
+              >
+                <div class="flex justify-between items-start mb-2">
+                  <h4 class="font-medium text-[#F5F7FA]">{{ draft.title || '未命名话题' }}</h4>
+                  <div class="flex space-x-2">
+                    <button class="text-[#B8C6D8] hover:text-[#4A5F8B]" @click="editDraft(draft.id)">
+                      <i class="fa-solid fa-edit"></i>
+                    </button>
+                    <button class="text-[#B8C6D8] hover:text-[#4A5F8B]" @click="deleteDraft(draft.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <p class="text-sm text-[#B8C6D8] line-clamp-2">{{ draft.content || '无内容' }}</p>
+                <p class="text-xs text-[#6B7C93] mt-2">保存时间: {{ draft.saveTime }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 border-t border-[#4A5F8B]">
+            <button 
+              class="w-full py-2 bg-[#4A5F8B] text-[#F5F7FA] rounded-lg hover:bg-[#6B7C93] transition-colors"
+              @click="showDrafts = false"
+            >
+              关闭
+            </button>
+          </div>
+        </motion.div>
+      </div>
+      
+      <!-- 举报模态框 -->
+      <div v-if="showReportModal" class="fixed inset-0 bg-[#1E2532]/80 flex items-center justify-center z-50 p-4">
+        <motion.div 
+          :initial="{ opacity: 0, scale: 0.9 }"
+          :animate="{ opacity: 1, scale: 1 }"
+          :exit="{ opacity: 0, scale: 0.9 }"
+          class="bg-[#2D3748] rounded-xl shadow-lg w-full max-w-md"
+        >
+          <div class="p-6 border-b border-[#4A5F8B]">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold text-[#F5F7FA]">举报话题</h2>
+              <button class="text-[#B8C6D8] hover:text-[#F5F7FA]" @click="showReportModal = false">
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="text-[#B8C6D8] mb-4">请选择举报原因：</p>
+            <div class="space-y-3">
+              <label 
+                v-for="reason in reportReasons" 
+                :key="reason.value"
+                class="flex items-center p-3 bg-[#1E2532] rounded-lg border border-[#4A5F8B] cursor-pointer hover:border-[#4A5F8B] transition-colors"
+              >
+                <input 
+                  type="radio" 
+                  :value="reason.value" 
+                  v-model="reportData.reason" 
+                  class="mr-3 accent-[#4A5F8B]"
+                />
+                <span class="text-[#F5F7FA]">{{ reason.label }}</span>
+              </label>
+            </div>
+            <div class="mt-4">
+              <textarea 
+                v-model="reportData.description" 
+                class="w-full px-4 py-2 bg-[#1E2532] border border-[#4A5F8B] text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A5F8B] h-24"
+                placeholder="请填写补充说明（选填）"
+              ></textarea>
+            </div>
+          </div>
+          <div class="p-6 border-t border-[#4A5F8B] flex justify-end space-x-3">
+            <button 
+              class="px-4 py-2 bg-[#2D3748] border border-[#4A5F8B] text-[#B8C6D8] rounded-lg hover:bg-[#4A5F8B]/20 transition-colors"
+              @click="showReportModal = false"
+            >
+              取消
+            </button>
+            <button 
+              class="px-6 py-2 bg-[#4A5F8B] text-[#F5F7FA] rounded-lg hover:bg-[#6B7C93] transition-colors"
+              @click="submitReport"
+            >
+              提交举报
+            </button>
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { motion } from 'motion-v'
 import { useAuth } from '@/composables/useAuth'
+import toastAPI from '@/composables/useToast'
+// 导入图表组件
+import { use } from 'echarts/core'
+import { PieChart as EchartsPieChart } from 'echarts/charts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { TooltipComponent, LegendComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
+
+// 注册必要的组件
+use([EchartsPieChart, CanvasRenderer, TooltipComponent, LegendComponent])
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  if (type === 'success') {
+    toastAPI.success(message)
+  } else {
+    toastAPI.error(message)
+  }
+}
 
 // 模拟论坛话题数据
 const forumTopics = [
@@ -286,6 +596,7 @@ const forumTopics = [
     views: 356,
     lastReply: '30分钟前',
     isHot: true,
+    tags: ['人像摄影', '光线控制', '技巧分享']
   },
   {
     id: '2',
@@ -300,6 +611,7 @@ const forumTopics = [
     views: 1245,
     lastReply: '2小时前',
     isHot: true,
+    tags: ['索尼', '佳能', '相机对比', '器材选择']
   },
   {
     id: '3',
@@ -314,6 +626,7 @@ const forumTopics = [
     views: 876,
     lastReply: '5小时前',
     isHot: false,
+    tags: ['后期', '修图', '工作流', 'Lightroom']
   },
   {
     id: '4',
@@ -328,6 +641,7 @@ const forumTopics = [
     views: 512,
     lastReply: '昨天',
     isHot: true,
+    tags: ['约拍', '活动', '人像', '外拍']
   },
   {
     id: '5',
@@ -342,6 +656,7 @@ const forumTopics = [
     views: 943,
     lastReply: '昨天',
     isHot: false,
+    tags: ['新手', '相机推荐', '入门', '器材选择']
   },
   {
     id: '6',
@@ -356,7 +671,20 @@ const forumTopics = [
     views: 678,
     lastReply: '3天前',
     isHot: false,
+    tags: ['城市', '夜景', '作品分享', '风光']
   },
+]
+
+// 热门标签数据
+const trendingTags = [
+  { id: '1', name: '摄影技巧', count: 567 },
+  { id: '2', name: '器材讨论', count: 432 },
+  { id: '3', name: '后期处理', count: 389 },
+  { id: '4', name: '风光摄影', count: 298 },
+  { id: '5', name: '人像摄影', count: 267 },
+  { id: '6', name: '城市夜景', count: 213 },
+  { id: '7', name: '新手教程', count: 189 },
+  { id: '8', name: '镜头推荐', count: 167 }
 ]
 
 // 论坛分类数据
@@ -381,21 +709,130 @@ const communityActivityData = [
 // 饼图颜色 - 使用设计规范中定义的蓝灰系颜色
 const COLORS = ['#4A5F8B', '#6B7C93', '#8B9BB6', '#A8B5C9', '#B8C6D8']
 
-// 热门话题标签
-const trendingTags = [
-  { id: '1', name: '人像摄影', count: 1245 },
-  { id: '2', name: '风景摄影', count: 987 },
-  { id: '3', name: '后期修图', count: 756 },
-  { id: '4', name: '索尼相机', count: 643 },
-  { id: '5', name: '佳能相机', count: 521 },
-  { id: '6', name: '尼康相机', count: 432 },
-  { id: '7', name: '富士相机', count: 321 },
-  { id: '8', name: '街头摄影', count: 289 },
+// ECharts 饼图配置
+const pieChartOption = {
+  tooltip: {
+    trigger: 'item',
+    formatter: '{a} <br/>{b}: {c} ({d}%)',
+    backgroundColor: 'rgba(45, 55, 72, 0.9)',
+    borderColor: '#4A5F8B',
+    textStyle: {
+      color: '#F5F7FA'
+    }
+  },
+  series: [
+    {
+      name: '社区活跃度',
+      type: 'pie',
+      radius: ['50%', '70%'],
+      center: ['50%', '50%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: '#2D3748',
+        borderWidth: 2
+      },
+      label: {
+        show: true,
+        formatter: '{b} {d}%',
+        color: '#B8C6D8'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '16',
+          fontWeight: 'bold',
+          color: '#F5F7FA'
+        }
+      },
+      labelLine: {
+        show: true,
+        lineStyle: {
+          color: '#4A5F8B'
+        }
+      },
+      data: communityActivityData.map((item, index) => ({
+        ...item,
+        itemStyle: {
+          color: COLORS[index % COLORS.length]
+        }
+      }))
+    }
+  ]
+}
+
+// 热门话题榜单数据
+const trendingTopics = computed(() => {
+  // 根据选择的周期获取不同的热门话题
+  return forumTopics
+    .sort((a, b) => b.views - a.views) // 按浏览量排序
+    .slice(0, 5) // 取前5个
+})
+
+// 可用标签列表
+const availableTags = [
+  { id: '1', name: '人像摄影' },
+  { id: '2', name: '风景摄影' },
+  { id: '3', name: '后期修图' },
+  { id: '4', name: '索尼相机' },
+  { id: '5', name: '佳能相机' },
+  { id: '6', name: '尼康相机' },
+  { id: '7', name: '富士相机' },
+  { id: '8', name: '街头摄影' },
+  { id: '9', name: '夜景摄影' },
+  { id: '10', name: '入门教程' },
+  { id: '11', name: '约拍活动' },
+  { id: '12', name: '器材推荐' },
 ]
 
 const { isAuthenticated } = useAuth()
 const selectedCategory = ref('all')
 const searchTerm = ref('')
+const selectedTags = ref<string[]>([])
+const activeSort = ref('latest')
+const trendingPeriod = ref('week')
+
+// 用户数据
+const favoritedTopics = ref<string[]>([])
+const subscribedTopics = ref<string[]>([])
+const savedDrafts = ref<any[]>([
+  {
+    id: '1',
+    title: '我的构图技巧分享',
+    content: '在这篇文章中，我想分享一些我多年来总结的构图技巧...',
+    category: '摄影技巧',
+    tags: ['构图', '技巧分享'],
+    saveTime: '2024-01-15 14:30'
+  }
+])
+
+// 模态框状态
+const showCreateTopicModal = ref(false)
+const showDrafts = ref(false)
+const showReportModal = ref(false)
+const reportedTopicId = ref('')
+
+// 举报数据
+const reportReasons = [
+  { value: 'spam', label: '垃圾信息/广告' },
+  { value: 'inappropriate', label: '不当内容' },
+  { value: 'copyright', label: '侵犯版权' },
+  { value: 'harassment', label: '骚扰/攻击' },
+  { value: 'other', label: '其他原因' }
+]
+const reportData = reactive({
+  reason: '',
+  description: ''
+})
+
+// 新话题数据
+const newTopic = reactive({
+  title: '',
+  content: '',
+  category: '',
+  tagsInput: '',
+  tags: [] as string[]
+})
 
 // 处理搜索输入
 const handleSearchInput = (event: Event) => {
@@ -409,13 +846,178 @@ const handleCategoryChange = (event: Event) => {
   selectedCategory.value = target.value
 }
 
+// 设置排序方式
+const setSortBy = (sort: string) => {
+  activeSort.value = sort
+}
+
+// 切换标签选择
+const toggleTag = (tag: string) => {
+  const index = selectedTags.value.indexOf(tag)
+  if (index > -1) {
+    selectedTags.value.splice(index, 1)
+  } else {
+    selectedTags.value.push(tag)
+  }
+}
+
+// 清除所有标签
+const clearTags = () => {
+  selectedTags.value = []
+}
+
+// 查看话题详情
+const viewTopic = (topicId: string) => {
+  // 这里应该跳转到话题详情页
+  console.log('查看话题:', topicId)
+  // router.push(`/community/topic/${topicId}`)
+}
+
+// 切换收藏状态
+const toggleFavorite = (topicId: string) => {
+  const index = favoritedTopics.value.indexOf(topicId)
+  if (index > -1) {
+    favoritedTopics.value.splice(index, 1)
+    showToast('已取消收藏', 'success')
+  } else {
+    favoritedTopics.value.push(topicId)
+    showToast('收藏成功', 'success')
+  }
+}
+
+// 检查是否已收藏
+const isFavorited = (topicId: string) => {
+  return favoritedTopics.value.includes(topicId)
+}
+
+// 切换订阅状态
+const toggleSubscribe = (topicId: string) => {
+  const index = subscribedTopics.value.indexOf(topicId)
+  if (index > -1) {
+    subscribedTopics.value.splice(index, 1)
+    showToast('已取消订阅', 'success')
+  } else {
+    subscribedTopics.value.push(topicId)
+    showToast('订阅成功，有新回复时会通知您', 'success')
+  }
+}
+
+// 检查是否已订阅
+const isSubscribed = (topicId: string) => {
+  return subscribedTopics.value.includes(topicId)
+}
+
+// 举报话题
+const reportTopic = (topicId: string) => {
+  reportedTopicId.value = topicId
+  reportData.reason = ''
+  reportData.description = ''
+  showReportModal.value = true
+}
+
+// 提交举报
+const submitReport = () => {
+  if (!reportData.reason) {
+    showToast('请选择举报原因', 'error')
+    return
+  }
+  
+  console.log('提交举报:', { topicId: reportedTopicId.value, ...reportData })
+  showToast('举报已提交，我们会尽快处理', 'success')
+  showReportModal.value = false
+}
+
+// 保存草稿
+const saveDraft = () => {
+  const tags = newTopic.tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag)
+  
+  const draft = {
+    id: Date.now().toString(),
+    title: newTopic.title,
+    content: newTopic.content,
+    category: newTopic.category,
+    tags: tags,
+    saveTime: new Date().toLocaleString('zh-CN')
+  }
+  
+  savedDrafts.value.push(draft)
+  showToast('草稿保存成功', 'success')
+}
+
+// 编辑草稿
+const editDraft = (draftId: string) => {
+  const draft = savedDrafts.value.find(d => d.id === draftId)
+  if (draft) {
+    newTopic.title = draft.title
+    newTopic.content = draft.content
+    newTopic.category = draft.category
+    newTopic.tagsInput = draft.tags.join(', ')
+    showDrafts.value = false
+    showCreateTopicModal.value = true
+  }
+}
+
+// 删除草稿
+const deleteDraft = (draftId: string) => {
+  const index = savedDrafts.value.findIndex(d => d.id === draftId)
+  if (index > -1) {
+    savedDrafts.value.splice(index, 1)
+    showToast('草稿已删除', 'success')
+  }
+}
+
+// 提交新话题
+const submitTopic = () => {
+  if (!newTopic.title || !newTopic.content || !newTopic.category) {
+    showToast('请填写完整信息', 'error')
+    return
+  }
+  
+  const tags = newTopic.tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag)
+  
+  console.log('发布话题:', {
+    ...newTopic,
+    tags: tags
+  })
+  
+  showToast('话题发布成功', 'success')
+  showCreateTopicModal.value = false
+  
+  // 重置表单
+  newTopic.title = ''
+  newTopic.content = ''
+  newTopic.category = ''
+  newTopic.tagsInput = ''
+}
+
 // 过滤话题
 const filteredTopics = computed(() => {
-  return forumTopics.filter(topic => {
+  let result = forumTopics.filter(topic => {
     const matchesCategory = selectedCategory.value === 'all' || topic.category === selectedCategory.value
     const matchesSearch = searchTerm.value === '' || topic.title.toLowerCase().includes(searchTerm.value.toLowerCase())
-    return matchesCategory && matchesSearch
+    const matchesTags = selectedTags.value.length === 0 || 
+      selectedTags.value.some(tag => topic.tags.includes(tag))
+    return matchesCategory && matchesSearch && matchesTags
   })
+  
+  // 根据排序方式排序
+  if (activeSort.value === 'popular') {
+    result = result.sort((a, b) => b.views - a.views)
+  } else if (activeSort.value === 'featured') {
+    result = result.filter(topic => topic.isHot).concat(result.filter(topic => !topic.isHot))
+  } else { // latest
+    // 默认按最后回复时间排序（这里使用模拟数据）
+    const timeOrder: Record<string, number> = {
+      '30分钟前': 1,
+      '2小时前': 2,
+      '5小时前': 3,
+      '昨天': 4,
+      '3天前': 5
+    }
+    result = result.sort((a, b) => (timeOrder[a.lastReply] || 99) - (timeOrder[b.lastReply] || 99))
+  }
+  
+  return result
 })
 </script>
 

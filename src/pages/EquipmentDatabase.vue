@@ -329,6 +329,36 @@
         </div>
       </div>
     </motion.div>
+    
+    <!-- 3D模型展示弹窗 -->
+    <div v-if="show3DModel" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+      <div class="bg-[#2D3748] rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-[#4A5F8B]">
+        <div class="flex justify-between items-center p-4 border-b border-[#4A5F8B]">
+          <h3 class="text-xl font-bold text-[#F5F7FA]">3D模型展示</h3>
+          <button @click="show3DModel = false" class="text-[#6B7C93] hover:text-[#F5F7FA]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="p-4">
+          <!-- 3D模型展示区域 -->
+          <div class="bg-[#1E2532] rounded-lg h-[60vh] flex items-center justify-center">
+            <div class="text-center">
+              <div class="text-5xl mb-4">🔄</div>
+              <h4 class="text-xl font-bold text-[#F5F7FA] mb-2">3D交互模型</h4>
+              <p class="text-[#B8C6D8]">拖动可360°旋转查看器材细节</p>
+              <p class="mt-4 text-sm text-[#6B7C93]">（模拟3D模型加载中...）</p>
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <button class="px-3 py-1 bg-[#2D3748] border border-[#4A5F8B] rounded text-sm text-[#F5F7FA] hover:bg-[#4A5F8B] transition-colors">正面视图</button>
+            <button class="px-3 py-1 bg-[#2D3748] border border-[#4A5F8B] rounded text-sm text-[#F5F7FA] hover:bg-[#4A5F8B] transition-colors">侧面视图</button>
+            <button class="px-3 py-1 bg-[#2D3748] border border-[#4A5F8B] rounded text-sm text-[#F5F7FA] hover:bg-[#4A5F8B] transition-colors">俯视图</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -588,6 +618,131 @@ const toggleCompareItem = (id: string) => {
 // 查看对比
 const viewComparison = () => {
   isComparisonMode.value = true
+}
+
+// 3D模型展示相关
+const show3DModel = ref(false)
+const selectedEquipmentId = ref('')
+const has3DModel = (id: string) => {
+  // 模拟部分热门器材有3D模型
+  return ['c1', 'c2', 'l1', 'a1'].includes(id)
+}
+
+const open3DModel = (id: string) => {
+  selectedEquipmentId.value = id
+  show3DModel.value = true
+}
+
+// 器材搭配推荐
+const equipmentRecommendations = computed(() => {
+  if (selectedItems.value.length === 0) return []
+  
+  // 模拟推荐逻辑
+  const recommendations: any[] = []
+  const allEquipment: any[] = [...mockCameras, ...mockLenses, ...mockAccessories]
+  
+  selectedItems.value.forEach(id => {
+    const equipment = allEquipment.find(item => item.id === id)
+    if (!equipment) return
+    
+    // 根据器材类型推荐搭配
+    if (equipment.type === '相机' || equipment.type.includes('camera')) {
+      // 推荐镜头和配件
+      const lensRecommendations = mockLenses.slice(0, 2).map(lens => ({
+        ...lens,
+        recommendationReason: '与您选择的相机完美搭配的专业镜头'
+      }))
+      const accessoryRecommendations = mockAccessories.slice(0, 1).map(acc => ({
+        ...acc,
+        recommendationReason: '提升拍摄体验的必备配件'
+      }))
+      recommendations.push(...lensRecommendations, ...accessoryRecommendations)
+    } else if (equipment.type === '镜头' || equipment.type.includes('lens')) {
+      // 推荐相机和滤镜等配件
+      const cameraRecommendations = mockCameras.slice(0, 1).map(camera => ({
+        ...camera,
+        recommendationReason: '搭配此镜头的理想相机'
+      }))
+      recommendations.push(...cameraRecommendations)
+    }
+  })
+  
+  // 去重并限制数量
+  return [...new Map(recommendations.map(item => [item.id, item])).values()].slice(0, 3)
+})
+
+// 用户提问区
+const questions = ref([
+  {
+    id: 'q1',
+    equipmentId: 'c1',
+    equipmentName: 'Sony A7R V',
+    question: '这款相机的弱光拍摄表现如何？',
+    asker: {
+      name: '摄影新手小王',
+      avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=young%20photographer%20avatar&sign=1a2b3c4d5e6f7g8h9i0j'
+    },
+    date: '2023-10-28',
+    answers: [
+      {
+        id: 'a1',
+        answer: 'A7R V的弱光表现非常出色，原生ISO可达32000，在高ISO下噪点控制很好。我经常在室内光线不足的环境下使用，效果令人满意。',
+        answerer: {
+          name: '资深摄影师老李',
+          avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=professional%20photographer%20avatar&sign=9j8i7h6g5f4e3d2c1b0a',
+          isExpert: true
+        },
+        date: '2023-10-29',
+        likes: 24
+      }
+    ]
+  },
+  {
+    id: 'q2',
+    equipmentId: 'l1',
+    equipmentName: 'Sony FE 24-70mm F2.8 GM II',
+    question: '这款镜头和上一代相比有什么主要提升？',
+    asker: {
+      name: '器材爱好者小张',
+      avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=equipment%20enthusiast%20avatar&sign=abcdef123456789'
+    },
+    date: '2023-10-25',
+    answers: []
+  }
+])
+
+const newQuestion = ref('')
+const selectedEquipmentForQuestion = ref('')
+
+const submitQuestion = () => {
+  if (!newQuestion.value.trim() || !selectedEquipmentForQuestion.value) return
+  
+  const equipment = [...mockCameras, ...mockLenses, ...mockAccessories]
+    .find(item => item.id === selectedEquipmentForQuestion.value)
+  
+  if (!equipment) return
+  
+  const question = {
+    id: `q${Date.now()}`,
+    equipmentId: selectedEquipmentForQuestion.value,
+    equipmentName: equipment.name,
+    question: newQuestion.value,
+    asker: {
+      name: '当前用户',
+      avatar: 'https://space.coze.cn/api/coze_space/gen_image?image_size=square&prompt=user%20avatar&sign=123456abcdef'
+    },
+    date: new Date().toISOString().split('T')[0],
+    answers: []
+  }
+  
+  questions.value.unshift(question)
+  newQuestion.value = ''
+  selectedEquipmentForQuestion.value = ''
+}
+
+// 获取特定器材的问题
+const getEquipmentQuestions = (id: string) => {
+  return questions.value.filter(q => q.equipmentId === id)
 }
 </script>
 

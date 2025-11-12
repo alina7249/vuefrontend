@@ -328,6 +328,92 @@
           </div>
         </div>
       </div>
+      
+      <!-- 器材租赁信息 -->
+      <div class="mt-12 bg-[#2D3748] p-6 rounded-xl border border-[#4A5F8B]">
+        <h2 class="text-2xl font-bold text-[#F5F7FA] mb-6">器材租赁服务</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div 
+            v-for="service in rentalServices" 
+            :key="service.id" 
+            class="bg-[#2D3748] rounded-lg p-5 border border-[#4A5F8B] hover:shadow-md transition-shadow"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <h3 class="text-lg font-bold text-[#F5F7FA]">{{ service.name }}</h3>
+              <div class="flex items-center text-yellow-400">
+                <i class="fa-solid fa-star mr-1"></i>
+                <span>{{ service.rating }}</span>
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="flex items-start">
+                <i class="fa-solid fa-map-marker-alt text-[#4A5F8B] mt-1 mr-3"></i>
+                <span class="text-[#B8C6D8]">{{ service.location }}</span>
+              </div>
+              <div class="flex items-start">
+                <i class="fa-solid fa-camera text-[#4A5F8B] mt-1 mr-3"></i>
+                <span class="text-[#B8C6D8]">可租赁: {{ service.availableEquipment.join('、') }}</span>
+              </div>
+              <div class="flex items-start">
+                <i class="fa-solid fa-tag text-[#4A5F8B] mt-1 mr-3"></i>
+                <span class="text-[#B8C6D8]">价格区间: {{ service.priceRange }}</span>
+              </div>
+              <div class="flex items-start">
+                <i class="fa-solid fa-phone text-[#4A5F8B] mt-1 mr-3"></i>
+                <span class="text-[#B8C6D8]">{{ service.contact }}</span>
+              </div>
+            </div>
+            
+            <a 
+              :href="service.website" 
+              target="_blank" 
+              class="mt-4 inline-block px-4 py-2 bg-[#4A5F8B] hover:bg-[#3A4F7B] text-[#F5F7FA] rounded-lg text-sm font-medium transition-colors"
+            >
+              访问官网
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 二手交易链接 -->
+      <div class="mt-12 bg-[#2D3748] p-6 rounded-xl border border-[#4A5F8B]">
+        <h2 class="text-2xl font-bold text-[#F5F7FA] mb-6">二手交易市场</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a 
+            v-for="link in secondHandLinks" 
+            :key="link.id"
+            :href="link.url"
+            :target="link.url.startsWith('http') ? '_blank' : '_self'"
+            class="bg-[#2D3748] rounded-lg p-5 border border-[#4A5F8B] hover:bg-[#4A5F8B] transition-colors flex flex-col items-center text-center"
+          >
+            <div class="w-12 h-12 bg-[#1E2532] rounded-full flex items-center justify-center mb-4">
+              <i class="fa-solid fa-handshake text-[#4A5F8B] text-xl"></i>
+            </div>
+            <h3 class="font-bold text-[#F5F7FA] mb-2">{{ link.platform }}</h3>
+            <p class="text-sm text-[#B8C6D8] mb-3">{{ link.description }}</p>
+            <span class="text-xs px-2 py-1 bg-green-900/50 text-green-300 rounded-full">{{ link.safety }}</span>
+          </a>
+        </div>
+        
+        <div class="mt-6 p-4 bg-[#1E2532] rounded-lg border border-[#4A5F8B]">
+          <h3 class="text-lg font-semibold text-[#F5F7FA] mb-3">二手价格参考</h3>
+          <p class="text-[#B8C6D8] text-sm mb-4">根据您的器材库，以下是部分器材的二手市场价格参考</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div 
+              v-for="item in equipmentList.slice(0, 6)" 
+              :key="item.id" 
+              class="flex justify-between items-center p-3 bg-[#2D3748] rounded-lg border border-[#4A5F8B]"
+            >
+              <span class="text-sm text-[#F5F7FA]">{{ item.name }}</span>
+              <span class="text-sm font-medium text-[#4A5F8B]">{{ getMarketPrice(item.name) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </motion.div>
   </div>
 </template>
@@ -336,6 +422,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { motion } from 'motion-v'
 import { RouterLink } from 'vue-router'
+import { useEquipmentRental } from '@/composables/useEquipmentRental'
+import { useSecondHandMarketplace } from '@/composables/useSecondHandMarketplace'
 import { useAuth } from '@/composables/useAuth'
 import toast from '@/composables/useToast'
 
@@ -547,6 +635,76 @@ const getTypeLabel = (type: string) => {
     other: '其他'
   }
   return typeMap[type as keyof typeof typeMap] || type
+}
+
+// 器材租赁信息
+const rentalServices = ref([
+  {
+    id: 'r1',
+    name: '摄影器材租赁中心',
+    location: '北京市朝阳区建国路88号',
+    rating: 4.8,
+    availableEquipment: ['相机', '镜头', '三脚架', '闪光灯'],
+    priceRange: '100-1000元/天',
+    contact: '400-888-7777',
+    website: 'https://rent.example.com'
+  },
+  {
+    id: 'r2',
+    name: '专业影像租赁',
+    location: '上海市浦东新区陆家嘴金融中心',
+    rating: 4.6,
+    availableEquipment: ['高级相机', '电影镜头', '航拍设备'],
+    priceRange: '200-2000元/天',
+    contact: '400-666-5555',
+    website: 'https://pro-rent.example.com'
+  }
+])
+
+// 获取推荐租赁服务
+const getRecommendedRental = (equipmentType: string) => {
+  return rentalServices.value.filter(service => 
+    service.availableEquipment.some(type => type.includes(equipmentType))
+  )[0]
+}
+
+// 二手交易链接
+const secondHandLinks = [
+  {
+    id: 's1',
+    platform: '摄影器材二手市场',
+    url: '/equipment-trade',
+    description: '平台内专业二手交易区',
+    safety: '平台担保交易'
+  },
+  {
+    id: 's2',
+    platform: '闲鱼摄影专区',
+    url: 'https://2.taobao.com',
+    description: '综合性二手交易平台',
+    safety: '可选平台担保'
+  },
+  {
+    id: 's3',
+    platform: '蜂鸟二手交易',
+    url: 'https://bbs.fengniao.com/forum/forumdisplay.php?fid=34',
+    description: '摄影爱好者聚集地',
+    safety: '论坛监管'
+  }
+]
+
+// 查看器材的二手市场价格参考
+const getMarketPrice = (equipmentName: string) => {
+  // 模拟二手市场价格数据
+  const mockPrices: { [key: string]: string } = {
+    'Sony A7M4': '12000-13500元',
+    'Canon EOS R6': '15000-16500元',
+    'Nikon Z6 II': '13000-14500元',
+    'DJI Mavic 3': '18000-20000元',
+    'Gitzo 碳纤维三脚架': '5000-6000元',
+    'Profoto A1X 闪光灯': '4000-4800元'
+  }
+  return mockPrices[equipmentName] || '暂无参考价格'
 }
 
 const getConditionLabel = (condition: string) => {

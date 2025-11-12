@@ -392,6 +392,134 @@
           </div>
         </div>
       </div>
+      
+      <!-- 用户提问区 -->
+      <div class="mt-12 bg-[#2D3748] p-6 rounded-xl border border-[#4A5F8B]">
+        <h2 class="text-2xl font-bold text-[#F5F7FA] mb-6">用户提问区</h2>
+        
+        <div class="mb-8">
+          <h3 class="text-xl font-semibold text-[#F5F7FA] mb-4">提问器材</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+            <div 
+              v-for="equipment in popularEquipment" 
+              :key="equipment.id"
+              :class="[
+                'p-4 rounded-lg border cursor-pointer transition-all',
+                selectedEquipmentForQuestion === equipment.id 
+                  ? 'bg-[#4A5F8B] border-[#4A5F8B] text-[#F5F7FA]'
+                  : 'bg-[#2D3748] border-[#4A5F8B] text-[#B8C6D8] hover:border-[#4A5F8B]'
+              ]"
+              @click="selectedEquipmentForQuestion = equipment.id"
+            >
+              <div class="flex items-center justify-between">
+                <span>{{ equipment.name }}</span>
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            v-if="selectedEquipmentForQuestion"
+            class="bg-[#1E2532] p-5 rounded-lg border border-[#4A5F8B] mt-6"
+          >
+            <h4 class="text-lg font-medium text-[#F5F7FA] mb-4">
+              提问关于: {{ getSelectedEquipmentName() }}
+            </h4>
+            
+            <div class="mb-4">
+              <label class="block text-[#B8C6D8] mb-2 text-sm">问题标题</label>
+              <input 
+                v-model="newQuestion.title"
+                type="text" 
+                placeholder="请输入问题标题" 
+                class="w-full px-4 py-2 bg-[#2D3748] border border-[#4A5F8B] rounded-lg text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+              >
+            </div>
+            
+            <div class="mb-4">
+              <label class="block text-[#B8C6D8] mb-2 text-sm">问题描述</label>
+              <textarea 
+                v-model="newQuestion.content"
+                rows="3" 
+                placeholder="详细描述您的问题..." 
+                class="w-full px-4 py-2 bg-[#2D3748] border border-[#4A5F8B] rounded-lg text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+              ></textarea>
+            </div>
+            
+            <button 
+              @click="submitQuestion"
+              :disabled="!newQuestion.title.trim() || !newQuestion.content.trim()"
+              class="px-6 py-2 bg-[#4A5F8B] hover:bg-[#3A4F7B] text-[#F5F7FA] rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              提交问题
+            </button>
+          </div>
+        </div>
+        
+        <!-- 已提问列表 -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-[#F5F7FA]">热门问题</h3>
+            <div class="relative">
+              <input 
+                v-model="questionSearchQuery"
+                type="text" 
+                placeholder="搜索问题..." 
+                class="pl-10 pr-4 py-2 bg-[#2D3748] border border-[#4A5F8B] rounded-lg text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#4A5F8B]"
+              >
+              <i class="fa-solid fa-search absolute left-3 top-2.5 text-[#4A5F8B]"></i>
+            </div>
+          </div>
+          
+          <div class="space-y-4">
+            <div 
+              v-for="question in filteredQuestions" 
+              :key="question.id"
+              class="bg-[#1E2532] p-5 rounded-lg border border-[#4A5F8B] hover:border-[#4A5F8B] transition-colors"
+            >
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h4 class="text-lg font-medium text-[#F5F7FA]">{{ question.title }}</h4>
+                  <span class="text-xs text-[#4A5F8B]">{{ question.equipmentName }}</span>
+                </div>
+                <div class="flex items-center text-[#4A5F8B]">
+                  <span class="text-sm mr-4">{{ formatDate(question.createdAt) }}</span>
+                  <div class="flex items-center">
+                    <i class="fa-solid fa-comment-dots mr-1"></i>
+                    <span>{{ question.answers.length }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <p class="text-[#B8C6D8] text-sm mb-3 line-clamp-2">{{ question.content }}</p>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img 
+                    :src="question.userAvatar"
+                    alt="User avatar" 
+                    class="w-6 h-6 rounded-full mr-2"
+                  >
+                  <span class="text-sm text-[#F5F7FA]">{{ question.userName }}</span>
+                </div>
+                
+                <button 
+                  class="text-sm text-[#4A5F8B] hover:text-[#3A4F7B] flex items-center"
+                >
+                  查看详情 <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex justify-center mt-8">
+            <button class="px-6 py-2 border border-[#4A5F8B] text-[#F5F7FA] rounded-lg hover:bg-[#4A5F8B] transition-colors">
+              查看更多问题
+            </button>
+          </div>
+        </div>
+      </div>
     </motion.div>
   </div>
 </template>
